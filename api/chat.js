@@ -84,7 +84,7 @@ export default async function handler(req, res) {
   const err = validate(req.body);
   if (err) return res.status(400).json({ error: err });
 
-  // Forward
+  // Forward — streaming SSE through to the client
   try {
     const upstream = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
@@ -97,7 +97,8 @@ export default async function handler(req, res) {
         model: process.env.CLAUDE_MODEL || DEFAULT_MODEL,
         max_tokens: 1024,
         system: req.body.system || undefined,
-        messages: req.body.messages
+        messages: req.body.messages,
+        stream: true
       })
     });
 
@@ -111,16 +112,25 @@ export default async function handler(req, res) {
       });
     }
 
-    const data = await upstream.json();
-    const text = (data.content || [])
-      .filter(b => b.type === 'text')
-      .map(b => b.text)
-      .join('\n');
+    res.setHeader('Content-Type', 'text/event-stream; charset=utf-8');
+    res.setHeader('Cache-Control', 'no-cache, no-transform');
+    res.setHeader('Connection', 'keep-alive');
+    res.setHeader('X-Accel-Buffering', 'no');
+    res.flushHeaders?.();
 
-    console.log(`OK — in: ${data.usage?.input_tokens}, out: ${data.usage?.output_tokens}`);
-    return res.status(200).json({ text, usage: data.usage });
+    const reader = upstream.body.getReader();
+    const decoder = new TextDecoder();
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      res.write(decoder.decode(value, { stream: true }));
+    }
+    res.end();
   } catch (e) {
     console.error('Proxy error:', e);
-    return res.status(500).json({ error: 'Proxy failure', detail: e.message });
+    if (!res.headersSent) {
+      return res.status(500).json({ error: 'Proxy failure', detail: e.message });
+    }
+    try { res.end(); } catch {}
   }
 }

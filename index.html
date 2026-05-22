@@ -5,37 +5,38 @@
 -->
 <style>
   :root {
-    /* Mayo brand */
-    --mayo-blue: #0078A0;
-    --mayo-blue-deep: #00567A;
-    --mayo-blue-dark: #003A55;
+    /* Mayo brand — per design system */
+    --mayo-blue: #0057B8;         /* blue60 — primary */
+    --mayo-blue-deep: #002443;    /* blue80 — dark */
+    --mayo-blue-dark: #001A33;    /* hover on dark */
+    --mayo-blue-light: #E1F0FF;   /* blue05 */
     --mayo-yellow: #FFB81C;
 
-    /* Surfaces */
-    --bg: #F5F2EC;
+    /* Surfaces — neutral system */
+    --bg: #FFFFFF;                /* neutral00 primary */
     --surface: #FFFFFF;
-    --surface-2: #FAFAF7;
-    --surface-3: #F3F1ED;
+    --surface-2: #F6F7F9;
+    --surface-3: #EBEBEB;         /* neutral05 secondary */
 
-    /* Type */
-    --ink: #1A1F26;
-    --ink-1: #2D3540;
-    --ink-2: #5C6470;
-    --ink-3: #8A929C;
-    --ink-4: #B8BDC4;
+    /* Type — near-black ink */
+    --ink: #080808;               /* neutral80 */
+    --ink-1: #2A2D33;
+    --ink-2: #565B66;
+    --ink-3: #8B919C;
+    --ink-4: #C2C6CD;
 
     /* Lines */
-    --rule: #E8E5DD;
-    --rule-2: #DDD9CF;
+    --rule: #E5E7EB;
+    --rule-2: #D6D9DD;
 
-    /* User bubble */
-    --user-bubble: #EFEAE0;
-    --user-bubble-ink: #1A1F26;
+    /* User bubble — light blue accent */
+    --user-bubble: #E1F0FF;
+    --user-bubble-ink: #002443;
 
     /* Shadows */
-    --shadow-card: 0 1px 2px rgba(20, 25, 40, 0.04), 0 4px 16px rgba(20, 25, 40, 0.04);
-    --shadow-float: 0 20px 60px -10px rgba(20, 25, 40, 0.25), 0 8px 24px -8px rgba(20, 25, 40, 0.15);
-    --shadow-fab: 0 6px 20px rgba(0, 120, 160, 0.35), 0 2px 6px rgba(0, 120, 160, 0.2);
+    --shadow-card: 0 1px 2px rgba(8, 8, 8, 0.04), 0 4px 16px rgba(8, 8, 8, 0.05);
+    --shadow-float: 0 24px 64px -12px rgba(0, 36, 67, 0.28), 0 10px 28px -10px rgba(0, 36, 67, 0.18);
+    --shadow-fab: 0 8px 24px rgba(0, 87, 184, 0.38), 0 2px 6px rgba(0, 87, 184, 0.22);
 
     /* Type stacks */
     --font-display: 'Charter', 'Iowan Old Style', 'Palatino Linotype', Georgia, serif;
@@ -68,24 +69,28 @@
   .logo {
     display: flex;
     align-items: center;
-    gap: 10px;
-    font-family: var(--font-display);
-    font-size: 22px;
+    gap: 12px;
     color: var(--mayo-blue);
-    font-weight: 400;
-    letter-spacing: -0.01em;
   }
   .logo-mark {
-    width: 32px; height: 32px;
-    border-radius: 50%;
-    background: var(--mayo-blue);
-    color: white;
+    width: 36px; height: 36px;
     display: grid;
     place-items: center;
-    font-family: var(--font-display);
-    font-size: 16px;
-    font-weight: 700;
+    color: var(--mayo-blue);
   }
+  .logo-mark svg { width: 100%; height: 100%; }
+  .logo-text {
+    font-family: var(--font-display);
+    line-height: 0.95;
+    letter-spacing: 0.04em;
+    font-weight: 600;
+    font-size: 13px;
+    color: var(--mayo-blue);
+    text-transform: uppercase;
+    display: flex;
+    flex-direction: column;
+  }
+  .logo-text span { display: block; }
   .nav-links {
     display: flex;
     gap: 24px;
@@ -194,8 +199,9 @@
   }
   .fab:hover {
     transform: translateY(-2px) scale(1.04);
-    box-shadow: 0 10px 28px rgba(0, 120, 160, 0.45), 0 4px 10px rgba(0, 120, 160, 0.25);
+    box-shadow: 0 12px 32px rgba(0, 87, 184, 0.50), 0 4px 10px rgba(0, 87, 184, 0.28);
   }
+  .fab:active { transform: translateY(0) scale(0.98); }
   .fab svg { width: 26px; height: 26px; color: white; }
   .fab-pulse {
     position: absolute;
@@ -269,16 +275,16 @@
     width: 400px;
     height: min(720px, calc(100vh - 48px));
     background: var(--surface);
-    border-radius: 24px;
+    border-radius: 20px;
     box-shadow: var(--shadow-float);
     z-index: 300;
     display: flex;
     flex-direction: column;
     overflow: hidden;
-    transform: translateY(20px) scale(0.96);
+    transform: translateY(24px) scale(0.94);
     opacity: 0;
     pointer-events: none;
-    transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.25s ease;
+    transition: transform 0.38s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.28s ease;
     transform-origin: bottom right;
   }
   .chat-widget.open {
@@ -286,18 +292,26 @@
     opacity: 1;
     pointer-events: auto;
   }
+  .messages-wrap {
+    flex: 1;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+  }
 
-  /* Widget header */
+  /* Widget header — Mayo brand-blue band */
   .widget-header {
-    padding: 18px 20px;
+    padding: 18px 20px 22px;
     display: flex;
     align-items: center;
-    border-bottom: 1px solid var(--rule);
-    background: var(--surface);
+    background: var(--mayo-blue);
+    color: white;
     position: relative;
+    flex-shrink: 0;
   }
   .widget-close {
-    background: transparent;
+    background: rgba(255, 255, 255, 0.12);
     border: none;
     width: 32px;
     height: 32px;
@@ -305,35 +319,52 @@
     cursor: pointer;
     display: grid;
     place-items: center;
-    color: var(--ink-2);
-    transition: background 0.15s;
+    color: white;
+    transition: background 0.15s, transform 0.15s;
   }
-  .widget-close:hover { background: var(--surface-3); color: var(--ink); }
-  .widget-close svg { width: 18px; height: 18px; }
+  .widget-close:hover { background: rgba(255, 255, 255, 0.22); transform: scale(1.04); }
+  .widget-close:active { transform: scale(0.96); }
+  .widget-close svg { width: 16px; height: 16px; }
 
-  .widget-title {
+  .widget-title-wrap {
     position: absolute;
     left: 50%;
     transform: translateX(-50%);
-    font-family: var(--font-body);
-    font-size: 15px;
-    font-weight: 600;
-    color: var(--ink);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .widget-title-mark {
+    width: 22px; height: 22px;
+    color: white;
+    opacity: 0.95;
+  }
+  .widget-title {
+    font-family: var(--font-display);
+    font-size: 18px;
+    font-weight: 500;
+    color: white;
     letter-spacing: -0.01em;
   }
   .widget-status {
     margin-left: auto;
     font-size: 11px;
-    color: var(--ink-3);
+    color: rgba(255, 255, 255, 0.85);
     display: flex;
     align-items: center;
-    gap: 5px;
+    gap: 6px;
+    letter-spacing: 0.02em;
   }
   .status-dot {
     width: 7px; height: 7px;
     border-radius: 50%;
-    background: #2BB673;
-    box-shadow: 0 0 0 2px rgba(43, 182, 115, 0.2);
+    background: #4ADE80;
+    box-shadow: 0 0 0 2px rgba(74, 222, 128, 0.3);
+    animation: status-pulse 2.4s ease-in-out infinite;
+  }
+  @keyframes status-pulse {
+    0%, 100% { box-shadow: 0 0 0 2px rgba(74, 222, 128, 0.3); }
+    50% { box-shadow: 0 0 0 4px rgba(74, 222, 128, 0.15); }
   }
 
   /* Safety banner — 911 messaging at top of chat */
@@ -374,15 +405,15 @@
   .messages::-webkit-scrollbar-track { background: transparent; }
 
   .msg {
-    margin-bottom: 16px;
-    animation: msg-rise 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    margin-bottom: 18px;
+    animation: msg-rise 0.42s cubic-bezier(0.16, 1, 0.3, 1) both;
   }
   @keyframes msg-rise {
-    from { opacity: 0; transform: translateY(8px); }
+    from { opacity: 0; transform: translateY(10px); }
     to { opacity: 1; transform: translateY(0); }
   }
 
-  /* User message — right-aligned bubble */
+  /* User message — right-aligned blue bubble */
   .msg.user {
     display: flex;
     justify-content: flex-end;
@@ -390,11 +421,12 @@
   .msg.user .msg-body {
     background: var(--user-bubble);
     color: var(--user-bubble-ink);
-    padding: 12px 16px;
+    padding: 11px 15px;
     border-radius: 18px 18px 4px 18px;
     max-width: 85%;
     font-size: 14.5px;
     line-height: 1.45;
+    box-shadow: 0 1px 2px rgba(0, 36, 67, 0.05);
   }
 
   /* Bot message — flush left, no bubble */
@@ -537,12 +569,13 @@
     flex-wrap: wrap;
   }
   .chip {
-    background: var(--surface-3);
-    color: var(--ink-1);
-    border: 1px solid transparent;
+    background: var(--surface);
+    color: var(--mayo-blue);
+    border: 1px solid var(--rule-2);
     padding: 8px 13px;
     border-radius: 999px;
     font-size: 12.5px;
+    font-weight: 500;
     cursor: pointer;
     white-space: nowrap;
     transition: all 0.15s;
@@ -550,10 +583,12 @@
     line-height: 1.2;
   }
   .chip:hover {
-    background: var(--mayo-blue);
-    color: white;
+    background: var(--mayo-blue-light);
+    color: var(--mayo-blue-deep);
     border-color: var(--mayo-blue);
+    transform: translateY(-1px);
   }
+  .chip:active { transform: translateY(0); }
 
   /* Thinking dots */
   .thinking {
@@ -561,18 +596,34 @@
     gap: 4px;
     align-items: center;
     padding: 4px 0;
+    transition: opacity 0.2s ease;
   }
+  .thinking.fade-out { opacity: 0; }
   .thinking span {
     width: 7px; height: 7px;
     border-radius: 50%;
-    background: var(--ink-3);
-    animation: dot 1.4s infinite ease-in-out;
+    background: var(--mayo-blue);
+    animation: dot 1.3s infinite ease-in-out;
   }
   .thinking span:nth-child(2) { animation-delay: 0.16s; }
   .thinking span:nth-child(3) { animation-delay: 0.32s; }
   @keyframes dot {
-    0%, 80%, 100% { opacity: 0.3; transform: scale(0.8); }
+    0%, 80%, 100% { opacity: 0.25; transform: scale(0.7); }
     40% { opacity: 1; transform: scale(1); }
+  }
+
+  /* Streaming caret */
+  .stream-caret {
+    display: inline-block;
+    width: 2px;
+    height: 1em;
+    background: var(--mayo-blue);
+    margin-left: 1px;
+    vertical-align: text-bottom;
+    animation: caret-blink 1s steps(2) infinite;
+  }
+  @keyframes caret-blink {
+    50% { opacity: 0; }
   }
 
   /* Composer */
@@ -588,11 +639,13 @@
     background: var(--surface-3);
     border-radius: 24px;
     padding: 8px 8px 8px 16px;
-    transition: background 0.15s;
+    border: 1.5px solid transparent;
+    transition: background 0.18s, border-color 0.18s, box-shadow 0.18s;
   }
   .composer:focus-within {
-    background: var(--surface-2);
-    box-shadow: 0 0 0 2px rgba(0, 120, 160, 0.15);
+    background: var(--surface);
+    border-color: var(--mayo-blue);
+    box-shadow: 0 0 0 4px rgba(0, 87, 184, 0.10);
   }
   .composer textarea {
     flex: 1;
@@ -633,12 +686,54 @@
   .composer-send {
     background: var(--mayo-blue);
     color: white;
+    transition: background 0.15s, transform 0.12s, opacity 0.15s;
   }
   .composer-send:hover { background: var(--mayo-blue-deep); color: white; }
+  .composer-send:active { transform: scale(0.92); }
   .composer-send:disabled {
     background: var(--ink-4);
     cursor: not-allowed;
+    opacity: 0.65;
   }
+  .composer-send:disabled:hover { background: var(--ink-4); }
+
+  /* Stop button — replaces send during streaming */
+  .composer-stop {
+    background: var(--ink-1);
+    color: white;
+  }
+  .composer-stop:hover { background: var(--ink); color: white; }
+  .composer-stop svg { width: 14px; height: 14px; }
+
+  /* Scroll-to-bottom pill */
+  .scroll-pill {
+    position: absolute;
+    bottom: 8px;
+    left: 50%;
+    transform: translateX(-50%) translateY(20px);
+    background: var(--surface);
+    color: var(--ink-1);
+    border: 1px solid var(--rule-2);
+    border-radius: 999px;
+    padding: 6px 14px 6px 10px;
+    font-size: 12px;
+    font-weight: 500;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    cursor: pointer;
+    box-shadow: 0 4px 14px rgba(0, 36, 67, 0.12);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.18s, transform 0.18s;
+    z-index: 5;
+  }
+  .scroll-pill.show {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+    pointer-events: auto;
+  }
+  .scroll-pill svg { width: 14px; height: 14px; color: var(--mayo-blue); }
 
   .disclaimer-line {
     text-align: center;
@@ -678,8 +773,14 @@
 <div class="page">
   <nav class="page-nav">
     <div class="logo">
-      <span class="logo-mark">M</span>
-      <span>Mayo Clinic</span>
+      <span class="logo-mark" aria-hidden="true">
+        <svg viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M14 6 Q14 16 20 20 Q26 16 26 6 Q22 9 20 9 Q18 9 14 6 Z" fill="currentColor" stroke="none"/>
+          <line x1="20" y1="20" x2="20" y2="34"/>
+          <line x1="14" y1="27" x2="26" y2="27"/>
+        </svg>
+      </span>
+      <span class="logo-text"><span>Mayo</span><span>Clinic</span></span>
     </div>
     <div class="nav-links">
       <span>Care at Mayo Clinic</span>
@@ -734,12 +835,19 @@
 <div class="chat-widget" id="widget" role="dialog" aria-label="Mayo Assistant">
   <header class="widget-header">
     <button class="widget-close" id="closeBtn" aria-label="Close chat">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
         <line x1="18" y1="6" x2="6" y2="18"/>
         <line x1="6" y1="6" x2="18" y2="18"/>
       </svg>
     </button>
-    <span class="widget-title">Mayo Assistant</span>
+    <div class="widget-title-wrap">
+      <svg class="widget-title-mark" viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M14 6 Q14 16 20 20 Q26 16 26 6 Q22 9 20 9 Q18 9 14 6 Z" fill="currentColor" stroke="none"/>
+        <line x1="20" y1="20" x2="20" y2="34"/>
+        <line x1="14" y1="27" x2="26" y2="27"/>
+      </svg>
+      <span class="widget-title">Mayo Assistant</span>
+    </div>
     <span class="widget-status"><span class="status-dot"></span>Online</span>
   </header>
 
@@ -752,7 +860,15 @@
     <span><strong>For medical emergencies, call 911.</strong> This assistant can't provide medical advice or access your records.</span>
   </div>
 
-  <div class="messages" id="messages"></div>
+  <div class="messages-wrap">
+    <div class="messages" id="messages"></div>
+    <button class="scroll-pill" id="scrollPill" aria-label="Scroll to latest">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="6 9 12 15 18 9"/>
+      </svg>
+      New messages
+    </button>
+  </div>
 
   <div class="suggestions" id="suggestions">
     <button class="chip" data-q="How do I request an appointment at Mayo Clinic?">How do I make an appointment?</button>
@@ -784,10 +900,15 @@
           <line x1="8" y1="23" x2="16" y2="23"/>
         </svg>
       </button>
-      <button class="composer-btn composer-send" id="sendBtn" aria-label="Send">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <button class="composer-btn composer-send" id="sendBtn" aria-label="Send" disabled>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
           <line x1="12" y1="19" x2="12" y2="5"/>
           <polyline points="5 12 12 5 19 12"/>
+        </svg>
+      </button>
+      <button class="composer-btn composer-stop" id="stopBtn" aria-label="Stop generating" style="display:none">
+        <svg viewBox="0 0 24 24" fill="currentColor" stroke="none">
+          <rect x="6" y="6" width="12" height="12" rx="2"/>
         </svg>
       </button>
     </div>
@@ -931,10 +1052,14 @@ When in doubt, direct the patient to call the appropriate appointment line rathe
   const messagesEl = document.getElementById('messages');
   const inputEl = document.getElementById('input');
   const sendBtn = document.getElementById('sendBtn');
+  const stopBtn = document.getElementById('stopBtn');
+  const scrollPill = document.getElementById('scrollPill');
   const suggestionsEl = document.getElementById('suggestions');
 
   const history = [];
   let widgetOpened = false;
+  let activeController = null;   // AbortController for in-flight request
+  let stickToBottom = true;       // autoscroll only when user is at bottom
 
   function openWidget() {
     widget.classList.add('open');
@@ -957,6 +1082,9 @@ When in doubt, direct the patient to call the appropriate appointment line rathe
   fab.addEventListener('click', openWidget);
   closeBtn.addEventListener('click', closeWidget);
   scrim.addEventListener('click', closeWidget);
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && widget.classList.contains('open')) closeWidget();
+  });
 
   function escapeHtml(s) {
     return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
@@ -1082,9 +1210,42 @@ When in doubt, direct the patient to call the appropriate appointment line rathe
     return wrap;
   }
 
-  function scrollToBottom() {
-    messagesEl.scrollTop = messagesEl.scrollHeight;
+  /* Live streaming bubble: replace thinking with empty body that grows */
+  function createStreamBubble() {
+    const wrap = document.createElement('div');
+    wrap.className = 'msg bot';
+    const body = document.createElement('div');
+    body.className = 'msg-body stream-text';
+    wrap.appendChild(body);
+    return { wrap, body, textEl: body };
   }
+
+  function updateStream(textEl, fullText) {
+    // Hide any incomplete control token from the user mid-stream
+    const cut = fullText.indexOf('<<');
+    const visible = cut === -1 ? fullText : fullText.slice(0, cut);
+    const { html } = renderMarkdown(visible || ' ');
+    // Inject a blinking caret at the end of the last paragraph
+    const withCaret = html.replace(/<\/(p|li)>(?=[^<]*$)/, '<span class="stream-caret"></span></$1>');
+    textEl.innerHTML = withCaret;
+    if (stickToBottom) scrollToBottom();
+  }
+
+  function scrollToBottom(smooth = false) {
+    messagesEl.scrollTo({ top: messagesEl.scrollHeight, behavior: smooth ? 'smooth' : 'auto' });
+  }
+
+  /* Track whether the user is pinned to bottom; show pill if not */
+  messagesEl.addEventListener('scroll', () => {
+    const nearBottom = messagesEl.scrollHeight - messagesEl.scrollTop - messagesEl.clientHeight < 40;
+    stickToBottom = nearBottom;
+    scrollPill.classList.toggle('show', !nearBottom);
+  });
+  scrollPill.addEventListener('click', () => {
+    stickToBottom = true;
+    scrollToBottom(true);
+    scrollPill.classList.remove('show');
+  });
 
   function renderMarkdown(text) {
     const paras = text.split(/\n\n+/).filter(Boolean);
@@ -1129,26 +1290,36 @@ When in doubt, direct the patient to call the appropriate appointment line rathe
     return { clean, citations, actions };
   }
 
+  function setStreamingUI(streaming) {
+    sendBtn.style.display = streaming ? 'none' : '';
+    stopBtn.style.display = streaming ? 'grid' : 'none';
+    updateSendEnabled();
+  }
+  function updateSendEnabled() {
+    sendBtn.disabled = !inputEl.value.trim() || activeController !== null;
+  }
+
   async function ask(userText) {
-    if (!userText.trim()) return;
+    if (!userText.trim() || activeController) return;
     suggestionsEl.style.display = 'none';
 
     addUserMessage(userText);
     history.push({ role: 'user', content: userText });
 
     const thinking = addThinking();
-    sendBtn.disabled = true;
+    activeController = new AbortController();
+    setStreamingUI(true);
+
+    let bubble = null;
+    let fullText = '';
+    let aborted = false;
 
     try {
-      // Calls the Vercel serverless proxy at /api/chat.
-      // The proxy holds the API key server-side and forwards to Anthropic.
       const response = await fetch("/api/chat", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          system: SYSTEM_PROMPT,
-          messages: history
-        })
+        headers: { "Content-Type": "application/json", "Accept": "text/event-stream" },
+        body: JSON.stringify({ system: SYSTEM_PROMPT, messages: history }),
+        signal: activeController.signal
       });
 
       if (!response.ok) {
@@ -1157,33 +1328,86 @@ When in doubt, direct the patient to call the appropriate appointment line rathe
         throw new Error(errBody.error || `Server returned ${response.status}`);
       }
 
-      const data = await response.json();
-      const reply = data.text;
+      const reader = response.body.getReader();
+      const decoder = new TextDecoder();
+      let buffer = '';
 
-      if (!reply) {
-        throw new Error('Empty response from model');
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        buffer += decoder.decode(value, { stream: true });
+
+        let sep;
+        while ((sep = buffer.indexOf('\n\n')) >= 0) {
+          const block = buffer.slice(0, sep);
+          buffer = buffer.slice(sep + 2);
+
+          let eventName = 'message';
+          let dataStr = '';
+          for (const line of block.split('\n')) {
+            if (line.startsWith('event:')) eventName = line.slice(6).trim();
+            else if (line.startsWith('data:')) dataStr += line.slice(5).trim();
+          }
+          if (!dataStr) continue;
+
+          if (eventName === 'content_block_delta') {
+            try {
+              const obj = JSON.parse(dataStr);
+              const delta = obj.delta?.text;
+              if (delta) {
+                if (!bubble) {
+                  // First token — fade out thinking, swap in live bubble
+                  const dots = thinking.querySelector('.thinking');
+                  if (dots) dots.classList.add('fade-out');
+                  bubble = createStreamBubble();
+                  thinking.replaceWith(bubble.wrap);
+                }
+                fullText += delta;
+                updateStream(bubble.textEl, fullText);
+              }
+            } catch {}
+          } else if (eventName === 'error') {
+            try {
+              const obj = JSON.parse(dataStr);
+              throw new Error(obj.error?.message || 'Stream error');
+            } catch (e) { throw e; }
+          }
+        }
       }
 
-      thinking.remove();
-      const { clean, citations, actions } = parseResponse(reply);
+      // Done streaming — drop caret, finalize with citations/actions/feedback
+      if (!fullText) throw new Error('Empty response from model');
+
+      const { clean, citations, actions } = parseResponse(fullText);
+      if (bubble) bubble.wrap.remove(); else thinking.remove();
       addBotMessage(clean, citations, actions);
-      // Store the CLEAN reply in history so control tokens don't accumulate
       history.push({ role: 'assistant', content: clean });
     } catch (err) {
-      console.error('Chat error:', err);
-      thinking.remove();
-      const errMsg = (err && err.message) ? err.message : String(err);
-      // Show the real error inline so we can debug without devtools
-      addBotMessage(
-        `**Debug — request failed:**\n\n\`${errMsg}\`\n\nIf this is the demo environment, please share this error message so it can be fixed. For real appointments, please call your Mayo Clinic campus or visit mayoclinic.org/appointments.`,
-        [], [], { feedback: false }
-      );
-      // Roll back the failed user turn so retry works
-      if (history.length && history[history.length - 1].role === 'user') {
-        history.pop();
+      aborted = err.name === 'AbortError';
+      if (aborted) {
+        // Keep what was streamed so far as the assistant turn
+        const { clean, citations, actions } = parseResponse(fullText);
+        if (bubble) bubble.wrap.remove(); else thinking.remove();
+        if (clean) {
+          addBotMessage(clean + '\n\n_(stopped)_', citations, actions);
+          history.push({ role: 'assistant', content: clean });
+        } else {
+          // Rolled-back turn so a retry works
+          if (history.length && history[history.length - 1].role === 'user') history.pop();
+        }
+      } else {
+        console.error('Chat error:', err);
+        if (bubble) bubble.wrap.remove(); else thinking.remove();
+        const errMsg = (err && err.message) ? err.message : String(err);
+        addBotMessage(
+          `**Debug — request failed:**\n\n\`${errMsg}\`\n\nIf this is the demo environment, please share this error message so it can be fixed. For real appointments, please call your Mayo Clinic campus or visit mayoclinic.org/appointments.`,
+          [], [], { feedback: false }
+        );
+        if (history.length && history[history.length - 1].role === 'user') history.pop();
       }
     } finally {
-      sendBtn.disabled = false;
+      activeController = null;
+      setStreamingUI(false);
       inputEl.focus();
     }
   }
@@ -1197,9 +1421,14 @@ When in doubt, direct the patient to call the appropriate appointment line rathe
 
   sendBtn.addEventListener('click', () => {
     const text = inputEl.value;
+    if (!text.trim() || activeController) return;
     inputEl.value = '';
     inputEl.style.height = 'auto';
+    updateSendEnabled();
     ask(text);
+  });
+  stopBtn.addEventListener('click', () => {
+    if (activeController) activeController.abort();
   });
   inputEl.addEventListener('keydown', (e) => {
     if (e.key === 'Enter' && !e.shiftKey) {
@@ -1210,6 +1439,7 @@ When in doubt, direct the patient to call the appropriate appointment line rathe
   inputEl.addEventListener('input', () => {
     inputEl.style.height = 'auto';
     inputEl.style.height = Math.min(inputEl.scrollHeight, 100) + 'px';
+    updateSendEnabled();
   });
   suggestionsEl.addEventListener('click', (e) => {
     if (e.target.classList.contains('chip')) {
