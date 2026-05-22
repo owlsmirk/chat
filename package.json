@@ -1,0 +1,10 @@
+{
+  "name": "mayo-assistant-proxy-vercel",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Vercel serverless proxy for the Mayo Clinic Scheduling Assistant chat widget",
+  "engines": {
+    "node": ">=18.x"
+  }
+}

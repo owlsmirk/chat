@@ -1,0 +1,1219 @@
+<!--
+  Mayo Clinic Scheduling Assistant — Prototype v2
+  Premium mobile chat widget, demoed inside a mock Mayo page.
+  Uses Claude Sonnet 4 via the Anthropic API (no key needed here).
+-->
+<style>
+  :root {
+    /* Mayo brand */
+    --mayo-blue: #0078A0;
+    --mayo-blue-deep: #00567A;
+    --mayo-blue-dark: #003A55;
+    --mayo-yellow: #FFB81C;
+
+    /* Surfaces */
+    --bg: #F5F2EC;
+    --surface: #FFFFFF;
+    --surface-2: #FAFAF7;
+    --surface-3: #F3F1ED;
+
+    /* Type */
+    --ink: #1A1F26;
+    --ink-1: #2D3540;
+    --ink-2: #5C6470;
+    --ink-3: #8A929C;
+    --ink-4: #B8BDC4;
+
+    /* Lines */
+    --rule: #E8E5DD;
+    --rule-2: #DDD9CF;
+
+    /* User bubble */
+    --user-bubble: #EFEAE0;
+    --user-bubble-ink: #1A1F26;
+
+    /* Shadows */
+    --shadow-card: 0 1px 2px rgba(20, 25, 40, 0.04), 0 4px 16px rgba(20, 25, 40, 0.04);
+    --shadow-float: 0 20px 60px -10px rgba(20, 25, 40, 0.25), 0 8px 24px -8px rgba(20, 25, 40, 0.15);
+    --shadow-fab: 0 6px 20px rgba(0, 120, 160, 0.35), 0 2px 6px rgba(0, 120, 160, 0.2);
+
+    /* Type stacks */
+    --font-display: 'Charter', 'Iowan Old Style', 'Palatino Linotype', Georgia, serif;
+    --font-body: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Segoe UI', sans-serif;
+  }
+
+  * { box-sizing: border-box; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
+
+  html, body { margin: 0; padding: 0; background: var(--bg); color: var(--ink); font-family: var(--font-body); }
+
+  /* ────────────────────────────────────────────────────────────────
+     PAGE SHELL — mock Mayo Clinic page
+     ──────────────────────────────────────────────────────────────── */
+  .page {
+    min-height: 100vh;
+    background: var(--bg);
+  }
+
+  .page-nav {
+    background: var(--surface);
+    border-bottom: 1px solid var(--rule);
+    padding: 14px 32px;
+    display: flex;
+    align-items: center;
+    gap: 32px;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+  }
+  .logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-family: var(--font-display);
+    font-size: 22px;
+    color: var(--mayo-blue);
+    font-weight: 400;
+    letter-spacing: -0.01em;
+  }
+  .logo-mark {
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    background: var(--mayo-blue);
+    color: white;
+    display: grid;
+    place-items: center;
+    font-family: var(--font-display);
+    font-size: 16px;
+    font-weight: 700;
+  }
+  .nav-links {
+    display: flex;
+    gap: 24px;
+    font-size: 13px;
+    color: var(--ink-1);
+  }
+  .nav-links span { cursor: default; }
+  .nav-links span:hover { color: var(--mayo-blue); }
+  .nav-cta {
+    margin-left: auto;
+    background: var(--mayo-blue);
+    color: white;
+    padding: 9px 18px;
+    border-radius: 4px;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: default;
+  }
+
+  /* Hero section */
+  .hero {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 56px 32px 32px;
+  }
+  .breadcrumb {
+    font-size: 12px;
+    color: var(--ink-3);
+    margin-bottom: 18px;
+    letter-spacing: 0.02em;
+  }
+  .breadcrumb a { color: var(--mayo-blue); text-decoration: none; }
+  h1.page-title {
+    font-family: var(--font-display);
+    font-size: 44px;
+    line-height: 1.1;
+    font-weight: 400;
+    letter-spacing: -0.02em;
+    margin: 0 0 16px;
+    color: var(--ink);
+    max-width: 18ch;
+  }
+  .lede {
+    font-size: 18px;
+    line-height: 1.6;
+    color: var(--ink-1);
+    max-width: 60ch;
+    margin: 0 0 32px;
+  }
+
+  /* Content cards */
+  .content-grid {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 32px 120px;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+  }
+  .card {
+    background: var(--surface);
+    border-radius: 8px;
+    padding: 24px;
+    border: 1px solid var(--rule);
+  }
+  .card h3 {
+    font-family: var(--font-display);
+    font-size: 20px;
+    font-weight: 500;
+    letter-spacing: -0.01em;
+    margin: 0 0 8px;
+    color: var(--ink);
+  }
+  .card p {
+    font-size: 14px;
+    line-height: 1.55;
+    color: var(--ink-2);
+    margin: 0 0 14px;
+  }
+  .card-link {
+    font-size: 13px;
+    color: var(--mayo-blue);
+    font-weight: 500;
+    letter-spacing: 0.01em;
+  }
+  .card-link::after { content: " →"; }
+
+  /* ────────────────────────────────────────────────────────────────
+     FLOATING ACTION BUTTON
+     ──────────────────────────────────────────────────────────────── */
+  .fab {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: var(--mayo-blue);
+    box-shadow: var(--shadow-fab);
+    cursor: pointer;
+    display: grid;
+    place-items: center;
+    z-index: 100;
+    transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.2s;
+    border: none;
+  }
+  .fab:hover {
+    transform: translateY(-2px) scale(1.04);
+    box-shadow: 0 10px 28px rgba(0, 120, 160, 0.45), 0 4px 10px rgba(0, 120, 160, 0.25);
+  }
+  .fab svg { width: 26px; height: 26px; color: white; }
+  .fab-pulse {
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    background: var(--mayo-blue);
+    animation: fab-ring 2.5s ease-out infinite;
+    z-index: -1;
+  }
+  @keyframes fab-ring {
+    0% { transform: scale(1); opacity: 0.4; }
+    100% { transform: scale(1.5); opacity: 0; }
+  }
+
+  .fab-label {
+    position: fixed;
+    bottom: 38px;
+    right: 96px;
+    background: var(--ink);
+    color: white;
+    padding: 8px 14px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 500;
+    z-index: 99;
+    pointer-events: none;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    opacity: 0;
+    transform: translateX(8px);
+    transition: opacity 0.2s, transform 0.2s;
+    white-space: nowrap;
+  }
+  .fab-label::after {
+    content: "";
+    position: absolute;
+    right: -5px;
+    top: 50%;
+    transform: translateY(-50%) rotate(45deg);
+    width: 10px;
+    height: 10px;
+    background: var(--ink);
+  }
+  .fab:hover ~ .fab-label,
+  .show-label .fab-label {
+    opacity: 1;
+    transform: translateX(0);
+  }
+
+  /* ────────────────────────────────────────────────────────────────
+     CHAT WIDGET — slides in from bottom-right
+     ──────────────────────────────────────────────────────────────── */
+  .chat-scrim {
+    position: fixed;
+    inset: 0;
+    background: rgba(20, 25, 40, 0);
+    pointer-events: none;
+    transition: background 0.3s ease;
+    z-index: 200;
+  }
+  .chat-scrim.open {
+    background: rgba(20, 25, 40, 0.35);
+    pointer-events: auto;
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+  }
+
+  .chat-widget {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    width: 400px;
+    height: min(720px, calc(100vh - 48px));
+    background: var(--surface);
+    border-radius: 24px;
+    box-shadow: var(--shadow-float);
+    z-index: 300;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    transform: translateY(20px) scale(0.96);
+    opacity: 0;
+    pointer-events: none;
+    transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.25s ease;
+    transform-origin: bottom right;
+  }
+  .chat-widget.open {
+    transform: translateY(0) scale(1);
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  /* Widget header */
+  .widget-header {
+    padding: 18px 20px;
+    display: flex;
+    align-items: center;
+    border-bottom: 1px solid var(--rule);
+    background: var(--surface);
+    position: relative;
+  }
+  .widget-close {
+    background: transparent;
+    border: none;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    cursor: pointer;
+    display: grid;
+    place-items: center;
+    color: var(--ink-2);
+    transition: background 0.15s;
+  }
+  .widget-close:hover { background: var(--surface-3); color: var(--ink); }
+  .widget-close svg { width: 18px; height: 18px; }
+
+  .widget-title {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    font-family: var(--font-body);
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--ink);
+    letter-spacing: -0.01em;
+  }
+  .widget-status {
+    margin-left: auto;
+    font-size: 11px;
+    color: var(--ink-3);
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+  .status-dot {
+    width: 7px; height: 7px;
+    border-radius: 50%;
+    background: #2BB673;
+    box-shadow: 0 0 0 2px rgba(43, 182, 115, 0.2);
+  }
+
+  /* Safety banner — 911 messaging at top of chat */
+  .safety-banner {
+    padding: 10px 16px;
+    background: linear-gradient(180deg, #FFF8E6 0%, #FFFAEC 100%);
+    border-bottom: 1px solid #F0E4C0;
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    font-size: 12px;
+    line-height: 1.45;
+    color: #5C4A1A;
+  }
+  .safety-banner svg {
+    width: 16px;
+    height: 16px;
+    flex-shrink: 0;
+    color: #B8861C;
+    margin-top: 1px;
+  }
+  .safety-banner strong {
+    color: #3A2E0A;
+    font-weight: 600;
+  }
+
+  /* Messages area */
+  .messages {
+    flex: 1;
+    overflow-y: auto;
+    padding: 20px 18px 8px;
+    background: var(--surface);
+    scrollbar-width: thin;
+    scrollbar-color: var(--ink-4) transparent;
+  }
+  .messages::-webkit-scrollbar { width: 6px; }
+  .messages::-webkit-scrollbar-thumb { background: var(--ink-4); border-radius: 3px; }
+  .messages::-webkit-scrollbar-track { background: transparent; }
+
+  .msg {
+    margin-bottom: 16px;
+    animation: msg-rise 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  @keyframes msg-rise {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* User message — right-aligned bubble */
+  .msg.user {
+    display: flex;
+    justify-content: flex-end;
+  }
+  .msg.user .msg-body {
+    background: var(--user-bubble);
+    color: var(--user-bubble-ink);
+    padding: 12px 16px;
+    border-radius: 18px 18px 4px 18px;
+    max-width: 85%;
+    font-size: 14.5px;
+    line-height: 1.45;
+  }
+
+  /* Bot message — flush left, no bubble */
+  .msg.bot .msg-body {
+    font-size: 14.5px;
+    line-height: 1.55;
+    color: var(--ink);
+    max-width: 100%;
+  }
+  .msg.bot .msg-body p { margin: 0 0 8px; }
+  .msg.bot .msg-body p:last-child { margin-bottom: 0; }
+  .msg.bot .msg-body strong { font-weight: 600; color: var(--ink); }
+  .msg.bot .msg-body ul, .msg.bot .msg-body ol {
+    margin: 6px 0 8px;
+    padding-left: 20px;
+  }
+  .msg.bot .msg-body li { margin-bottom: 3px; }
+
+  /* Inline citation chips ("mayoclinic.org +2") */
+  .cite-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    background: var(--surface-3);
+    color: var(--ink-1);
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-size: 11.5px;
+    font-weight: 500;
+    margin-left: 4px;
+    text-decoration: none;
+    vertical-align: baseline;
+    transition: background 0.15s;
+    cursor: pointer;
+  }
+  .cite-chip:hover { background: #E8E4D9; }
+  .cite-chip svg { width: 10px; height: 10px; }
+  .cite-chip .plus-n {
+    color: var(--ink-2);
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* Citation drawer (opens below message) */
+  .cite-drawer {
+    margin-top: 8px;
+    padding: 10px 12px;
+    background: var(--surface-3);
+    border-radius: 12px;
+    font-size: 12.5px;
+    display: none;
+  }
+  .cite-drawer.open { display: block; animation: msg-rise 0.25s ease; }
+  .cite-drawer-title {
+    font-size: 10.5px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--ink-3);
+    font-weight: 600;
+    margin-bottom: 6px;
+  }
+  .cite-drawer a {
+    display: block;
+    color: var(--mayo-blue);
+    text-decoration: none;
+    padding: 4px 0;
+    line-height: 1.35;
+  }
+  .cite-drawer a:hover { text-decoration: underline; }
+
+  /* Feedback row (thumbs) */
+  .feedback {
+    display: flex;
+    gap: 4px;
+    margin-top: 8px;
+  }
+  .feedback button {
+    background: transparent;
+    border: none;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    cursor: pointer;
+    color: var(--ink-3);
+    display: grid;
+    place-items: center;
+    transition: all 0.15s;
+  }
+  .feedback button:hover { background: var(--surface-3); color: var(--ink-1); }
+  .feedback button.active { color: var(--mayo-blue); background: rgba(0, 120, 160, 0.08); }
+  .feedback svg { width: 15px; height: 15px; }
+
+  /* CTAs — stacked pill buttons */
+  .cta-stack {
+    margin-top: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .cta {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 13px 18px;
+    border-radius: 999px;
+    border: 1px solid var(--rule-2);
+    background: var(--surface);
+    color: var(--ink);
+    font-size: 14px;
+    font-weight: 500;
+    text-decoration: none;
+    transition: all 0.15s;
+    cursor: pointer;
+  }
+  .cta:hover {
+    background: var(--surface-3);
+    border-color: var(--ink-4);
+  }
+  .cta .cta-arrow {
+    margin-left: auto;
+    color: var(--ink-3);
+  }
+  .cta svg { width: 16px; height: 16px; }
+  .cta.primary {
+    background: var(--mayo-blue);
+    color: white;
+    border-color: var(--mayo-blue);
+  }
+  .cta.primary:hover {
+    background: var(--mayo-blue-deep);
+    border-color: var(--mayo-blue-deep);
+  }
+  .cta.primary .cta-arrow { color: rgba(255, 255, 255, 0.7); }
+
+  /* Suggestion chips */
+  .suggestions {
+    padding: 4px 18px 8px;
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+  }
+  .chip {
+    background: var(--surface-3);
+    color: var(--ink-1);
+    border: 1px solid transparent;
+    padding: 8px 13px;
+    border-radius: 999px;
+    font-size: 12.5px;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all 0.15s;
+    font-family: inherit;
+    line-height: 1.2;
+  }
+  .chip:hover {
+    background: var(--mayo-blue);
+    color: white;
+    border-color: var(--mayo-blue);
+  }
+
+  /* Thinking dots */
+  .thinking {
+    display: flex;
+    gap: 4px;
+    align-items: center;
+    padding: 4px 0;
+  }
+  .thinking span {
+    width: 7px; height: 7px;
+    border-radius: 50%;
+    background: var(--ink-3);
+    animation: dot 1.4s infinite ease-in-out;
+  }
+  .thinking span:nth-child(2) { animation-delay: 0.16s; }
+  .thinking span:nth-child(3) { animation-delay: 0.32s; }
+  @keyframes dot {
+    0%, 80%, 100% { opacity: 0.3; transform: scale(0.8); }
+    40% { opacity: 1; transform: scale(1); }
+  }
+
+  /* Composer */
+  .composer-wrap {
+    padding: 12px 18px 16px;
+    background: var(--surface);
+    border-top: 1px solid var(--rule);
+  }
+  .composer {
+    display: flex;
+    align-items: flex-end;
+    gap: 8px;
+    background: var(--surface-3);
+    border-radius: 24px;
+    padding: 8px 8px 8px 16px;
+    transition: background 0.15s;
+  }
+  .composer:focus-within {
+    background: var(--surface-2);
+    box-shadow: 0 0 0 2px rgba(0, 120, 160, 0.15);
+  }
+  .composer textarea {
+    flex: 1;
+    border: none;
+    outline: none;
+    background: transparent;
+    resize: none;
+    font-family: inherit;
+    font-size: 14.5px;
+    line-height: 1.4;
+    color: var(--ink);
+    padding: 6px 0;
+    max-height: 100px;
+    min-height: 22px;
+  }
+  .composer textarea::placeholder {
+    color: var(--ink-3);
+  }
+  .composer-btn {
+    background: transparent;
+    border: none;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    cursor: pointer;
+    color: var(--ink-2);
+    display: grid;
+    place-items: center;
+    transition: all 0.15s;
+    flex-shrink: 0;
+  }
+  .composer-btn:hover {
+    background: rgba(0, 0, 0, 0.05);
+    color: var(--ink);
+  }
+  .composer-btn svg { width: 20px; height: 20px; }
+
+  .composer-send {
+    background: var(--mayo-blue);
+    color: white;
+  }
+  .composer-send:hover { background: var(--mayo-blue-deep); color: white; }
+  .composer-send:disabled {
+    background: var(--ink-4);
+    cursor: not-allowed;
+  }
+
+  .disclaimer-line {
+    text-align: center;
+    font-size: 11px;
+    color: var(--ink-3);
+    line-height: 1.45;
+    margin-top: 10px;
+  }
+
+  /* Mobile responsiveness */
+  @media (max-width: 640px) {
+    .chat-widget {
+      bottom: 0;
+      right: 0;
+      left: 0;
+      width: 100%;
+      height: 100vh;
+      height: 100dvh;
+      border-radius: 0;
+    }
+    .fab { bottom: 16px; right: 16px; }
+    .page-nav { padding: 12px 16px; gap: 16px; }
+    .nav-links { display: none; }
+    .hero { padding: 32px 20px 20px; }
+    h1.page-title { font-size: 32px; }
+    .lede { font-size: 16px; }
+    .content-grid {
+      grid-template-columns: 1fr;
+      padding: 0 20px 100px;
+    }
+  }
+</style>
+
+<!-- ════════════════════════════════════════════════════════════════
+     MOCK MAYO PAGE
+     ═══════════════════════════════════════════════════════════════ -->
+<div class="page">
+  <nav class="page-nav">
+    <div class="logo">
+      <span class="logo-mark">M</span>
+      <span>Mayo Clinic</span>
+    </div>
+    <div class="nav-links">
+      <span>Care at Mayo Clinic</span>
+      <span>Health Library</span>
+      <span>For Medical Professionals</span>
+      <span>Research</span>
+    </div>
+    <div class="nav-cta">Request appointment</div>
+  </nav>
+
+  <section class="hero">
+    <div class="breadcrumb"><a href="#">Home</a> / Request an appointment</div>
+    <h1 class="page-title">Start your appointment request.</h1>
+    <p class="lede">
+      Most patients can request an appointment online or by phone — and most don't
+      need a referral. Tell us about your needs and a coordinator will plan your visit.
+    </p>
+  </section>
+
+  <section class="content-grid">
+    <div class="card">
+      <h3>New patients</h3>
+      <p>Share your information and pick a follow-up time that works for you.</p>
+      <span class="card-link">Request online</span>
+    </div>
+    <div class="card">
+      <h3>Returning patients</h3>
+      <p>Sign in to your patient account to schedule with your care team.</p>
+      <span class="card-link">Sign in</span>
+    </div>
+    <div class="card">
+      <h3>Referring physicians</h3>
+      <p>Refer a patient or request a consultation with a Mayo specialist.</p>
+      <span class="card-link">Provider portal</span>
+    </div>
+  </section>
+</div>
+
+<!-- ════════════════════════════════════════════════════════════════
+     FAB + WIDGET
+     ═══════════════════════════════════════════════════════════════ -->
+<div class="chat-scrim" id="scrim"></div>
+
+<button class="fab" id="fab" aria-label="Open Mayo Assistant">
+  <span class="fab-pulse"></span>
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+  </svg>
+</button>
+<div class="fab-label">Ask Mayo Assistant</div>
+
+<div class="chat-widget" id="widget" role="dialog" aria-label="Mayo Assistant">
+  <header class="widget-header">
+    <button class="widget-close" id="closeBtn" aria-label="Close chat">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <line x1="18" y1="6" x2="6" y2="18"/>
+        <line x1="6" y1="6" x2="18" y2="18"/>
+      </svg>
+    </button>
+    <span class="widget-title">Mayo Assistant</span>
+    <span class="widget-status"><span class="status-dot"></span>Online</span>
+  </header>
+
+  <div class="safety-banner">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+      <line x1="12" y1="9" x2="12" y2="13"/>
+      <line x1="12" y1="17" x2="12.01" y2="17"/>
+    </svg>
+    <span><strong>For medical emergencies, call 911.</strong> This assistant can't provide medical advice or access your records.</span>
+  </div>
+
+  <div class="messages" id="messages"></div>
+
+  <div class="suggestions" id="suggestions">
+    <button class="chip" data-q="How do I request an appointment at Mayo Clinic?">How do I make an appointment?</button>
+    <button class="chip" data-q="Do I need a referral to be seen?">Do I need a referral?</button>
+    <button class="chip" data-q="Does Mayo Clinic accept my insurance?">Insurance</button>
+    <button class="chip" data-q="What is a pre-service deposit?">Pre-service deposits</button>
+    <button class="chip" data-q="I don't have insurance — what are my options?">Uninsured options</button>
+    <button class="chip" data-q="How do I get a cost estimate for a procedure?">Cost estimates</button>
+    <button class="chip" data-q="What happens after I request an appointment?">After I request</button>
+    <button class="chip" data-q="Where are Mayo Clinic's campuses?">Campus locations</button>
+    <button class="chip" data-q="How do I access Patient Online Services?">Patient portal</button>
+    <button class="chip" data-q="What if my insurance denies a claim?">Denied claims</button>
+    <button class="chip" data-q="What is the No Surprises Act?">No Surprises Act</button>
+    <button class="chip" data-q="What financial assistance is available?">Financial assistance</button>
+  </div>
+
+  <div class="composer-wrap">
+    <div class="composer">
+      <textarea
+        id="input"
+        placeholder="Type your question..."
+        rows="1"
+        aria-label="Type your question"></textarea>
+      <button class="composer-btn" aria-label="Voice input" title="Voice input">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/>
+          <path d="M19 10v2a7 7 0 0 1-14 0v-2"/>
+          <line x1="12" y1="19" x2="12" y2="23"/>
+          <line x1="8" y1="23" x2="16" y2="23"/>
+        </svg>
+      </button>
+      <button class="composer-btn composer-send" id="sendBtn" aria-label="Send">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="12" y1="19" x2="12" y2="5"/>
+          <polyline points="5 12 12 5 19 12"/>
+        </svg>
+      </button>
+    </div>
+    <div class="disclaimer-line">
+      AI can make mistakes. Please verify important information before acting on it.
+    </div>
+  </div>
+</div>
+
+<script type="module">
+  // ────────────────────────────────────────────────────────────────
+  //  KNOWLEDGE BASE — paraphrased from public mayoclinic.org, verified May 2026
+  //  Scope: U.S. patients only.
+  // ────────────────────────────────────────────────────────────────
+  const KNOWLEDGE_BASE = [
+    { id: "kb-001", url: "https://www.mayoclinic.org/appointments",
+      title: "Requesting an appointment — overview",
+      content: `Mayo Clinic offers three intake paths: new patients submit information online and choose a follow-up time; returning patients request through their patient account; referring physicians have a separate path. Appointments can also be requested by phone during local business hours. The online form lets patients request a callback rather than wait on hold. Emergencies should be directed to 911 rather than the appointment line.`
+    },
+    { id: "kb-002", url: "https://www.mayoclinic.org/appointments",
+      title: "U.S. appointment phone numbers and hours",
+      content: `Mayo Clinic in Minnesota (Rochester) Central Appointment Office: 507-538-3270, 7 a.m. to 6 p.m. Central time, Monday-Friday. Minnesota Children's: 855-629-6543, same hours. Mayo Clinic in Arizona (Phoenix/Scottsdale) Central Appointment Office: 480-301-8484, 8 a.m. to 5 p.m. Mountain time, Monday-Friday. Mayo Clinic in Florida (Jacksonville) Central Appointment Office: 904-953-0853, 8 a.m. to 5 p.m. Eastern time, Monday-Friday. Mayo Clinic Health System locations (Iowa, Minnesota, Wisconsin) are listed at mayoclinichealthsystem.org/request-appointment/phone.`
+    },
+    { id: "kb-003", url: "https://www.mayoclinic.org/appointments/faq",
+      title: "How the appointment request process works",
+      content: `An appointment coordinator is assigned to build a care team and issue a full visit itinerary. A specific provider cannot be guaranteed. Wait times vary by medical need and specialty. After an itinerary is issued, the coordinating provider reviews medical history, orders necessary tests, and presents results and recommendations at the end of the visit.`
+    },
+    { id: "kb-004", url: "https://www.mayoclinic.org/appointments/faq",
+      title: "Referrals",
+      content: `Mayo Clinic generally does not require a doctor's referral. However, the patient's insurance plan may require one. Patients should check with their insurance company; if a referral is needed, Mayo can help. Physicians who refer patients have a separate intake path.`
+    },
+    { id: "kb-005", url: "https://www.mayoclinic.org/appointments/faq",
+      title: "Conditions and specialties treated",
+      content: `Mayo Clinic is consistently ranked among the top U.S. hospitals and is regularly recognized in Cancer, Cardiology and Heart Surgery, Diabetes and Endocrinology, Gastroenterology, Geriatrics, Gynecology, Neurology and Neurosurgery, Orthopedics, Pulmonology, and Urology.`
+    },
+    { id: "kb-006", url: "https://www.mayoclinic.org/locations",
+      title: "Mayo Clinic locations",
+      content: `Three U.S. campuses: Mayo Clinic in Arizona (Phoenix/Scottsdale), Mayo Clinic in Florida (Jacksonville), Mayo Clinic in Minnesota (Rochester). The Mayo Clinic Health System is a regional network serving communities in southern Minnesota, western Wisconsin, and northern Iowa.`
+    },
+    { id: "kb-007", url: "https://www.mayoclinic.org/patient-visitor-guide/travel-services",
+      title: "Patient Travel Services",
+      content: `Mayo Clinic offers Patient Travel Services to help patients plan their trip — hotel accommodations, transportation, and special accommodations based on health needs. Packing checklists and campus maps are available in advance.`
+    },
+    { id: "kb-008", url: "https://www.mayoclinic.org/billing-insurance",
+      title: "Billing and insurance overview",
+      content: `Mayo Clinic's billing area covers: paying bills online, preparing before arrival, accepted insurance plans, insurance and self-pay options, understanding bills, insurer approvals, price estimates and per-campus transparency, charitable care, copay assistance, and the federal No Surprises Act. Patient Account Services handles questions.`
+    },
+    { id: "kb-009", url: "https://www.mayoclinic.org/billing-insurance/before-arrival",
+      title: "Before arriving — what to address",
+      content: `Before a Mayo Clinic visit, patients should: complete the patient and financial checklist; obtain insurance pre-authorizations; sign the Mayo Clinic Authorizations and Service Terms form (required for all patients or guardians prior to care); complete registration; and arrange any required pre-service deposits.`
+    },
+    { id: "kb-010", url: "https://www.mayoclinic.org/billing-insurance/insurance/accepted-insurance",
+      title: "Insurance types accepted",
+      content: `Mayo Clinic has arrangements with several types of insurers: contracted plans, Medicare, Medicaid, TRICARE, HMOs, out-of-network noncontracted plans, and other types like disability, motor vehicle, prescription card, and workers' compensation. Patients should verify their specific plan with the campus they plan to visit.`
+    },
+    { id: "kb-011", url: "https://www.mayoclinic.org/billing-insurance/insurance/insurance-approvals",
+      title: "Insurance approvals — pre-certification and prior authorizations",
+      content: `Many plans require pre-certification before care. Investigating coverage can take up to six weeks. Services that may require pre-certification: outpatient and inpatient hospital services, observation, invasive procedures, CT, MRI, PET scans, colonoscopies. Patients are responsible for knowing plan requirements. If prior authorization isn't obtained, the patient may owe more — possibly all — of the cost. A pre-service deposit may be required.`
+    },
+    { id: "kb-012", url: "https://www.mayoclinic.org/billing-insurance/insurance/uninsured-patients",
+      title: "Uninsured (self-pay) or underinsured patients",
+      content: `"Underinsured" can mean a high deductible, high out-of-pocket maximum, limited-benefit plan, or out-of-network plan. With out-of-network insurance, patients are responsible for the difference between Mayo Clinic's rates and what insurance pays. Mayo Clinic offers an Uninsured Discount Policy: discounted prices on medically necessary care for qualified uninsured U.S. residents (not applied to cosmetic or non-medically-necessary elective care). Eligibility requires applying for Medicaid or other available assistance first.`
+    },
+    { id: "kb-013", url: "https://www.mayoclinic.org/billing-insurance/before-arrival/pre-service-deposits",
+      title: "Pre-service deposits",
+      content: `Pre-service deposits are required for: elective cosmetic surgery, noncontracted (out-of-network or reference-based payer) plans, plans requiring referral, health ministry reimbursement plans, and services denied by insurance. Amounts are based on estimates. Refunds are issued if deposits exceed actual charges. Financial Counseling can prepare estimates — call 1-507-284-2421 or 1-833-479-5483.`
+    },
+    { id: "kb-014", url: "https://www.mayoclinic.org/billing-insurance/financial-assistance",
+      title: "Charitable care and financial assistance",
+      content: `Mayo Clinic offers financial assistance for patients unable to pay for medically necessary care. Financial assistance documents are published separately for Arizona, Florida, and Minnesota campuses. A Copay and Grant Assistance program helps with out-of-pocket drug costs.`
+    },
+    { id: "kb-015", url: "https://www.mayoclinic.org/billing-insurance/price-estimates",
+      title: "Price estimates and transparency",
+      content: `Mayo Clinic offers an online Cost Estimator at estimator.mayoclinic.org for estimating service costs. Each campus also publishes price transparency pages (Arizona, Florida, Minnesota). CMS chargemaster pricing including COVID-19 test pricing is available. Personalized estimates reflecting a patient's insurance can be requested in advance.`
+    },
+    { id: "kb-016", url: "https://www.mayoclinic.org/billing-insurance/no-surprises-act",
+      title: "No Surprises Act",
+      content: `Mayo Clinic complies with the federal No Surprises Act, which provides consumer protections against surprise medical billing.`
+    },
+    { id: "kb-017", url: "https://www.mayoclinic.org/billing-insurance/contact-us",
+      title: "Billing and insurance contact",
+      content: `Billing and insurance questions go to Mayo Clinic Patient Account Services. A glossary of billing and insurance terms, topic-based FAQs, and a page on understanding the Mayo Clinic bill are also available.`
+    },
+    { id: "kb-018", url: "https://onlineservices.mayoclinic.org/content/staticpatient/showpage/patientonline",
+      title: "Patient Online Services and the Mayo Clinic app",
+      content: `Patient Online Services is Mayo Clinic's secure portal. Existing patients view test results, message their care team, request or view appointments, pay bills, and access medical records. Available on the web and through the Mayo Clinic app (iOS and Android). New patients typically create an account after their first appointment is scheduled.`
+    }
+  ];
+
+  // ────────────────────────────────────────────────────────────────
+  //  System prompt
+  // ────────────────────────────────────────────────────────────────
+  const SYSTEM_PROMPT = `You are a virtual assistant for Mayo Clinic patients, helping with appointment scheduling, preparation, locations, insurance, billing, and referrals. You are NOT a clinician and have NO access to patient records.
+
+CORE RULES — these are absolute:
+
+1. SCOPE — U.S. PATIENTS ONLY. This assistant handles U.S. patient inquiries for the Arizona, Florida, and Minnesota campuses, plus the Mayo Clinic Health System (Iowa, Minnesota, Wisconsin). You DO NOT handle:
+   - International patient inquiries (travel from outside the U.S.)
+   - Mayo Clinic Healthcare London / UK inquiries
+   When a patient mentions international travel, a non-U.S. address or country, the UK / London / Mayo Clinic Healthcare London, currency outside USD, or interpreter services for traveling internationally — DO NOT answer from the knowledge base. Respond warmly that a specialized assistant handles those inquiries:
+     - International (non-UK): "Our international patient services team has a dedicated assistant. Visit mayoclinic.org/international or email intl.isit@mayo.edu."
+     - UK / London: "Mayo Clinic Healthcare in London is supported by a separate team. Please visit mayoclinic.org/uk for help with appointments there."
+   Keep the handoff brief and friendly; do not attempt to answer.
+
+2. GROUND EVERY ANSWER IN THE PROVIDED KNOWLEDGE BASE. Never invent phone numbers, addresses, hours, policies, or procedures. If the knowledge base doesn't cover something, say so plainly.
+
+3. NO MEDICAL ADVICE. Do not diagnose, suggest treatments, evaluate symptoms, recommend medications, or interpret test results. For clinical questions:
+   - Brief acknowledgment
+   - State that you can't provide medical guidance
+   - Direction to call their care team or 911 for emergencies
+
+4. EMERGENCY ROUTING. Any mention of chest pain, stroke symptoms, severe bleeding, suicidal thoughts, difficulty breathing → "If this may be an emergency, please call 911 right now."
+
+5. NO BOOKING ACTIONS. You cannot schedule, cancel, or change appointments. Provide phone numbers and request-form links instead.
+
+6. NO PHI. Don't ask for medical history, conditions, or medications. If shared unprompted, don't analyze — refocus on the logistical question.
+
+7. CITATIONS. End every substantive answer with a JSON block on its own line at the very end:
+   <<CITATIONS>>[{"id":"kb-XXX","title":"...","url":"..."}]<<END>>
+   Only cite entries you actually used.
+
+8. TONE. Warm, professional, concise. No marketing language. No emoji. Short paragraphs. Use bold sparingly for key facts only. Avoid bullet lists unless genuinely enumerating distinct items.
+
+9. CTAs. When appropriate, end with one or two:
+   <<ACTION>>{"type":"phone","label":"Call Rochester","value":"507-538-3270"}<<END>>
+   <<ACTION>>{"type":"link","label":"Request appointment online","value":"https://www.mayoclinic.org/appointments"}<<END>>
+
+KNOWLEDGE BASE (use only these facts):
+
+${KNOWLEDGE_BASE.map(e => `[${e.id}] ${e.title}\nURL: ${e.url}\n${e.content}`).join('\n\n---\n\n')}
+
+When in doubt, direct the patient to call the appropriate appointment line rather than guess.`;
+
+  // ────────────────────────────────────────────────────────────────
+  //  UI wiring
+  // ────────────────────────────────────────────────────────────────
+  const fab = document.getElementById('fab');
+  const widget = document.getElementById('widget');
+  const scrim = document.getElementById('scrim');
+  const closeBtn = document.getElementById('closeBtn');
+  const messagesEl = document.getElementById('messages');
+  const inputEl = document.getElementById('input');
+  const sendBtn = document.getElementById('sendBtn');
+  const suggestionsEl = document.getElementById('suggestions');
+
+  const history = [];
+  let widgetOpened = false;
+
+  function openWidget() {
+    widget.classList.add('open');
+    scrim.classList.add('open');
+    fab.style.display = 'none';
+    document.querySelector('.fab-label').style.display = 'none';
+    setTimeout(() => inputEl.focus(), 300);
+    if (!widgetOpened) {
+      widgetOpened = true;
+      greet();
+    }
+  }
+  function closeWidget() {
+    widget.classList.remove('open');
+    scrim.classList.remove('open');
+    fab.style.display = 'grid';
+    document.querySelector('.fab-label').style.display = '';
+  }
+
+  fab.addEventListener('click', openWidget);
+  closeBtn.addEventListener('click', closeWidget);
+  scrim.addEventListener('click', closeWidget);
+
+  function escapeHtml(s) {
+    return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  }
+
+  function hostnameOf(url) {
+    try { return new URL(url).hostname.replace(/^www\./, ''); }
+    catch { return 'mayoclinic.org'; }
+  }
+
+  function addUserMessage(text) {
+    const div = document.createElement('div');
+    div.className = 'msg user';
+    div.innerHTML = `<div class="msg-body">${escapeHtml(text)}</div>`;
+    messagesEl.appendChild(div);
+    scrollToBottom();
+  }
+
+  function addBotMessage(text, citations = [], actions = [], opts = {}) {
+    const wrap = document.createElement('div');
+    wrap.className = 'msg bot';
+
+    const body = document.createElement('div');
+    body.className = 'msg-body';
+
+    // Render content
+    const { html, lastParagraph } = renderMarkdown(text);
+
+    // If we have citations, append the chip to the last paragraph
+    if (citations.length && lastParagraph) {
+      const host = hostnameOf(citations[0].url);
+      const extras = citations.length - 1;
+      const chipHtml = `<a href="${citations[0].url}" target="_blank" rel="noopener" class="cite-chip" data-toggle="drawer">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M15 3h6v6"/><path d="M10 14L21 3"/><path d="M21 14v5a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5"/></svg>
+        ${host}${extras > 0 ? ` <span class="plus-n">+${extras}</span>` : ''}
+      </a>`;
+      body.innerHTML = html.replace(/<\/p>(?=[^<]*$)/, chipHtml + '</p>');
+    } else {
+      body.innerHTML = html;
+    }
+
+    wrap.appendChild(body);
+
+    // Citation drawer (collapsed by default)
+    if (citations.length) {
+      const drawer = document.createElement('div');
+      drawer.className = 'cite-drawer';
+      drawer.innerHTML = `<div class="cite-drawer-title">Sources</div>` +
+        citations.map(c => `<a href="${c.url}" target="_blank" rel="noopener">→ ${escapeHtml(c.title)}</a>`).join('');
+      wrap.appendChild(drawer);
+
+      // Toggle drawer on chip click
+      const chip = body.querySelector('.cite-chip');
+      if (chip) {
+        chip.addEventListener('click', (e) => {
+          if (e.metaKey || e.ctrlKey) return; // allow open-in-new-tab
+          e.preventDefault();
+          drawer.classList.toggle('open');
+        });
+      }
+    }
+
+    // CTAs
+    if (actions.length) {
+      const stack = document.createElement('div');
+      stack.className = 'cta-stack';
+      actions.forEach((a, i) => {
+        const el = document.createElement('a');
+        el.className = 'cta' + (i === 0 ? ' primary' : '');
+        if (a.type === 'phone') {
+          el.href = `tel:${a.value.replace(/[^0-9+]/g, '')}`;
+          el.innerHTML = `
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+            <span>${escapeHtml(a.label)}</span>
+            <span class="cta-arrow">${escapeHtml(a.value)}</span>
+          `;
+        } else {
+          el.href = a.value;
+          el.target = '_blank';
+          el.rel = 'noopener';
+          el.innerHTML = `
+            <span>${escapeHtml(a.label)}</span>
+            <svg class="cta-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+          `;
+        }
+        stack.appendChild(el);
+      });
+      wrap.appendChild(stack);
+    }
+
+    // Feedback row (skip for greeting / errors)
+    if (opts.feedback !== false) {
+      const fb = document.createElement('div');
+      fb.className = 'feedback';
+      fb.innerHTML = `
+        <button data-fb="up" aria-label="Helpful">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"/></svg>
+        </button>
+        <button data-fb="down" aria-label="Not helpful">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 15v4a3 3 0 0 0 3 3l4-9V2H5.72a2 2 0 0 0-2 1.7l-1.38 9a2 2 0 0 0 2 2.3zm7-13h2.67A2.31 2.31 0 0 1 22 4v7a2.31 2.31 0 0 1-2.33 2H17"/></svg>
+        </button>
+      `;
+      fb.querySelectorAll('button').forEach(b => {
+        b.addEventListener('click', () => {
+          fb.querySelectorAll('button').forEach(x => x.classList.remove('active'));
+          b.classList.add('active');
+        });
+      });
+      wrap.appendChild(fb);
+    }
+
+    messagesEl.appendChild(wrap);
+    scrollToBottom();
+    return wrap;
+  }
+
+  function addThinking() {
+    const wrap = document.createElement('div');
+    wrap.className = 'msg bot';
+    wrap.innerHTML = `<div class="msg-body"><div class="thinking"><span></span><span></span><span></span></div></div>`;
+    messagesEl.appendChild(wrap);
+    scrollToBottom();
+    return wrap;
+  }
+
+  function scrollToBottom() {
+    messagesEl.scrollTop = messagesEl.scrollHeight;
+  }
+
+  function renderMarkdown(text) {
+    const paras = text.split(/\n\n+/).filter(Boolean);
+    const htmlParts = paras.map(para => {
+      // Bulleted list
+      if (/^[-*]\s/m.test(para) && para.split('\n').every(l => !l.trim() || /^[-*]\s/.test(l))) {
+        const items = para.split('\n').filter(l => /^[-*]\s/.test(l))
+          .map(l => `<li>${inline(l.replace(/^[-*]\s+/, ''))}</li>`).join('');
+        return `<ul>${items}</ul>`;
+      }
+      // Numbered list
+      if (/^\d+\.\s/m.test(para) && para.split('\n').every(l => !l.trim() || /^\d+\.\s/.test(l))) {
+        const items = para.split('\n').filter(l => /^\d+\.\s/.test(l))
+          .map(l => `<li>${inline(l.replace(/^\d+\.\s+/, ''))}</li>`).join('');
+        return `<ol>${items}</ol>`;
+      }
+      return `<p>${inline(para).replace(/\n/g, '<br>')}</p>`;
+    });
+    return { html: htmlParts.join(''), lastParagraph: paras.length > 0 };
+  }
+  function inline(text) {
+    return text.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+  }
+
+  function parseResponse(text) {
+    let citations = [];
+    let actions = [];
+
+    const citMatch = text.match(/<<CITATIONS>>(.*?)<<END>>/s);
+    if (citMatch) {
+      try { citations = JSON.parse(citMatch[1].trim()); } catch (e) {}
+    }
+    const actionRe = /<<ACTION>>(.*?)<<END>>/gs;
+    let m;
+    while ((m = actionRe.exec(text)) !== null) {
+      try { actions.push(JSON.parse(m[1].trim())); } catch (e) {}
+    }
+    const clean = text
+      .replace(/<<CITATIONS>>.*?<<END>>/gs, '')
+      .replace(/<<ACTION>>.*?<<END>>/gs, '')
+      .trim();
+    return { clean, citations, actions };
+  }
+
+  async function ask(userText) {
+    if (!userText.trim()) return;
+    suggestionsEl.style.display = 'none';
+
+    addUserMessage(userText);
+    history.push({ role: 'user', content: userText });
+
+    const thinking = addThinking();
+    sendBtn.disabled = true;
+
+    try {
+      // Calls the Vercel serverless proxy at /api/chat.
+      // The proxy holds the API key server-side and forwards to Anthropic.
+      const response = await fetch("/api/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          system: SYSTEM_PROMPT,
+          messages: history
+        })
+      });
+
+      if (!response.ok) {
+        const errBody = await response.json().catch(() => ({}));
+        console.error('Proxy error', response.status, errBody);
+        throw new Error(errBody.error || `Server returned ${response.status}`);
+      }
+
+      const data = await response.json();
+      const reply = data.text;
+
+      if (!reply) {
+        throw new Error('Empty response from model');
+      }
+
+      thinking.remove();
+      const { clean, citations, actions } = parseResponse(reply);
+      addBotMessage(clean, citations, actions);
+      // Store the CLEAN reply in history so control tokens don't accumulate
+      history.push({ role: 'assistant', content: clean });
+    } catch (err) {
+      console.error('Chat error:', err);
+      thinking.remove();
+      const errMsg = (err && err.message) ? err.message : String(err);
+      // Show the real error inline so we can debug without devtools
+      addBotMessage(
+        `**Debug — request failed:**\n\n\`${errMsg}\`\n\nIf this is the demo environment, please share this error message so it can be fixed. For real appointments, please call your Mayo Clinic campus or visit mayoclinic.org/appointments.`,
+        [], [], { feedback: false }
+      );
+      // Roll back the failed user turn so retry works
+      if (history.length && history[history.length - 1].role === 'user') {
+        history.pop();
+      }
+    } finally {
+      sendBtn.disabled = false;
+      inputEl.focus();
+    }
+  }
+
+  function greet() {
+    addBotMessage(
+      "Hi, I'm the Mayo Assistant. I can help you find appointment information, understand insurance and billing, locate a campus, or prepare for a visit. What can I help you with?",
+      [], [], { feedback: false }
+    );
+  }
+
+  sendBtn.addEventListener('click', () => {
+    const text = inputEl.value;
+    inputEl.value = '';
+    inputEl.style.height = 'auto';
+    ask(text);
+  });
+  inputEl.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      sendBtn.click();
+    }
+  });
+  inputEl.addEventListener('input', () => {
+    inputEl.style.height = 'auto';
+    inputEl.style.height = Math.min(inputEl.scrollHeight, 100) + 'px';
+  });
+  suggestionsEl.addEventListener('click', (e) => {
+    if (e.target.classList.contains('chip')) {
+      ask(e.target.dataset.q);
+    }
+  });
+</script>
