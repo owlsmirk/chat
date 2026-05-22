@@ -66,31 +66,31 @@
     top: 0;
     z-index: 10;
   }
+  /* Mayo Clinic logo: stacked wordmark + three-shield emblem */
   .logo {
     display: flex;
-    align-items: center;
-    gap: 12px;
-    color: var(--mayo-blue);
-  }
-  .logo-mark {
-    width: 36px; height: 36px;
-    display: grid;
-    place-items: center;
-    color: var(--mayo-blue);
-  }
-  .logo-mark svg { width: 100%; height: 100%; }
-  .logo-text {
-    font-family: var(--font-display);
-    line-height: 0.95;
-    letter-spacing: 0.04em;
-    font-weight: 600;
-    font-size: 13px;
-    color: var(--mayo-blue);
-    text-transform: uppercase;
-    display: flex;
     flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    color: var(--mayo-blue-deep);
+    line-height: 1;
   }
-  .logo-text span { display: block; }
+  .logo-wordmark {
+    font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'Helvetica Neue', sans-serif;
+    font-weight: 900;
+    font-size: 14px;
+    letter-spacing: 0.02em;
+    text-align: center;
+    line-height: 0.95;
+    color: var(--mayo-blue-deep);
+  }
+  .logo-wordmark span { display: block; }
+  .logo-mark {
+    width: 36px;
+    height: 24px;
+    color: var(--mayo-blue-deep);
+  }
+  .logo-mark svg { width: 100%; height: 100%; display: block; }
   .nav-links {
     display: flex;
     gap: 24px;
@@ -335,10 +335,12 @@
     gap: 10px;
   }
   .widget-title-mark {
-    width: 22px; height: 22px;
+    width: 30px;
+    height: 22px;
     color: white;
     opacity: 0.95;
   }
+  .widget-title-mark svg { width: 100%; height: 100%; display: block; }
   .widget-title {
     font-family: var(--font-display);
     font-size: 18px;
@@ -590,6 +592,58 @@
   }
   .chip:active { transform: translateY(0); }
 
+  /* Contextual follow-up chips, attached under a bot reply */
+  .followups {
+    margin-top: 14px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    transition: opacity 0.2s ease, transform 0.2s ease;
+  }
+  .followups.fade-out {
+    opacity: 0;
+    transform: translateY(-4px);
+    pointer-events: none;
+  }
+  .followup-chip {
+    background: var(--surface);
+    border: 1px solid var(--rule-2);
+    color: var(--mayo-blue-deep);
+    padding: 8px 13px;
+    border-radius: 999px;
+    font-size: 12.5px;
+    font-weight: 500;
+    cursor: pointer;
+    font-family: inherit;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    white-space: nowrap;
+    max-width: 100%;
+    line-height: 1.2;
+    transition: background 0.15s, border-color 0.15s, transform 0.12s, color 0.15s;
+    animation: chip-pop 0.32s cubic-bezier(0.16, 1, 0.3, 1) both;
+  }
+  .followup-chip::before {
+    content: "";
+    width: 12px;
+    height: 12px;
+    background: var(--mayo-blue);
+    -webkit-mask: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'><path d='M7 17 L17 7 M9 7 H17 V15'/></svg>") center/contain no-repeat;
+            mask: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'><path d='M7 17 L17 7 M9 7 H17 V15'/></svg>") center/contain no-repeat;
+    flex-shrink: 0;
+  }
+  .followup-chip:hover {
+    background: var(--mayo-blue-light);
+    border-color: var(--mayo-blue);
+    transform: translateY(-1px);
+  }
+  .followup-chip:active { transform: translateY(0); }
+  @keyframes chip-pop {
+    from { opacity: 0; transform: translateY(8px) scale(0.96); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+  }
+
   /* Thinking dots */
   .thinking {
     display: flex;
@@ -772,15 +826,15 @@
      ═══════════════════════════════════════════════════════════════ -->
 <div class="page">
   <nav class="page-nav">
-    <div class="logo">
+    <div class="logo" aria-label="Mayo Clinic">
+      <span class="logo-wordmark"><span>MAYO</span><span>CLINIC</span></span>
       <span class="logo-mark" aria-hidden="true">
-        <svg viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M14 6 Q14 16 20 20 Q26 16 26 6 Q22 9 20 9 Q18 9 14 6 Z" fill="currentColor" stroke="none"/>
-          <line x1="20" y1="20" x2="20" y2="34"/>
-          <line x1="14" y1="27" x2="26" y2="27"/>
+        <svg viewBox="0 0 100 80" fill="none" stroke="currentColor" stroke-width="4.5" stroke-linejoin="round">
+          <path d="M5 4 L37 4 L37 36 A16 16 0 0 1 5 36 Z"/>
+          <path d="M63 4 L95 4 L95 36 A16 16 0 0 1 63 36 Z"/>
+          <path d="M34 22 L66 22 L66 54 A16 16 0 0 1 34 54 Z"/>
         </svg>
       </span>
-      <span class="logo-text"><span>Mayo</span><span>Clinic</span></span>
     </div>
     <div class="nav-links">
       <span>Care at Mayo Clinic</span>
@@ -841,11 +895,13 @@
       </svg>
     </button>
     <div class="widget-title-wrap">
-      <svg class="widget-title-mark" viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-        <path d="M14 6 Q14 16 20 20 Q26 16 26 6 Q22 9 20 9 Q18 9 14 6 Z" fill="currentColor" stroke="none"/>
-        <line x1="20" y1="20" x2="20" y2="34"/>
-        <line x1="14" y1="27" x2="26" y2="27"/>
-      </svg>
+      <span class="widget-title-mark" aria-hidden="true">
+        <svg viewBox="0 0 100 80" fill="none" stroke="currentColor" stroke-width="6" stroke-linejoin="round">
+          <path d="M5 4 L37 4 L37 36 A16 16 0 0 1 5 36 Z"/>
+          <path d="M63 4 L95 4 L95 36 A16 16 0 0 1 63 36 Z"/>
+          <path d="M34 22 L66 22 L66 54 A16 16 0 0 1 34 54 Z"/>
+        </svg>
+      </span>
       <span class="widget-title">Mayo Assistant</span>
     </div>
     <span class="widget-status"><span class="status-dot"></span>Online</span>
@@ -1041,6 +1097,97 @@ KNOWLEDGE BASE (use only these facts):
 ${KNOWLEDGE_BASE.map(e => `[${e.id}] ${e.title}\nURL: ${e.url}\n${e.content}`).join('\n\n---\n\n')}
 
 When in doubt, direct the patient to call the appropriate appointment line rather than guess.`;
+
+  // ────────────────────────────────────────────────────────────────
+  //  Contextual follow-up chips
+  //  Keyed off the citation IDs the model returned, falling back to
+  //  text keywords, then to a generic set. Already-asked questions
+  //  are filtered out.
+  // ────────────────────────────────────────────────────────────────
+  const FOLLOWUP_BY_KB = {
+    'kb-001': ["Do I need a referral?", "How long until I'm seen?", "Can I request a callback instead of waiting on hold?"],
+    'kb-002': ["What if I'm calling outside business hours?", "Which campus should I call?", "Where are Mayo's campuses?"],
+    'kb-003': ["Can I choose my doctor?", "What happens after my visit?", "How long does a typical visit take?"],
+    'kb-004': ["Does my insurance plan need a referral?", "How do I request an appointment?", "What if my doctor won't refer me?"],
+    'kb-005': ["Which campus treats my condition?", "How are wait times for specialty care?"],
+    'kb-006': ["What's the phone number for that campus?", "Are travel services available?", "Is the Mayo Clinic Health System the same as Mayo Clinic?"],
+    'kb-007': ["Where can I stay during my visit?", "Are there Mayo-recommended hotels?", "Do you help with special-needs travel?"],
+    'kb-008': ["How do I pay my bill online?", "What is the No Surprises Act?", "What financial assistance is available?"],
+    'kb-009': ["What is a pre-service deposit?", "What do I need to bring to my visit?", "What's the Authorizations and Service Terms form?"],
+    'kb-010': ["Does Mayo accept Medicare?", "What about out-of-network plans?", "Do I need pre-authorization?"],
+    'kb-011': ["How long does pre-authorization take?", "What if my insurance denies coverage?", "What is a pre-service deposit?"],
+    'kb-012': ["What is the Uninsured Discount Policy?", "How do I apply for Medicaid?", "Is financial assistance available?"],
+    'kb-013': ["How is the deposit amount calculated?", "Will I get a refund if I overpay?", "Who do I call about my deposit?"],
+    'kb-014': ["How do I apply for financial assistance?", "Is there help with prescription costs?", "Does this apply to all campuses?"],
+    'kb-015': ["How do I get a personalized estimate?", "Where do I find price transparency?", "Does the estimate include my insurance?"],
+    'kb-016': ["What does the No Surprises Act protect against?", "What if I got a surprise bill?"],
+    'kb-017': ["How do I contact Patient Account Services?", "Where's the billing glossary?", "How do I understand my Mayo Clinic bill?"],
+    'kb-018': ["How do I sign up for Patient Online Services?", "Can I message my care team?", "Where do I see my test results?"]
+  };
+
+  /* Keyword fallback when no citations matched */
+  const FOLLOWUP_BY_KEYWORD = [
+    { match: /\b(appointment|schedule|book)\b/i, items: ["Do I need a referral?", "What happens after I request?", "Where are Mayo's campuses?"] },
+    { match: /\b(insurance|coverage|plan|in.?network|out.?of.?network)\b/i, items: ["What if my insurance denies a claim?", "Do I need pre-authorization?", "What about pre-service deposits?"] },
+    { match: /\b(bill|cost|price|estimate|charge|payment)\b/i, items: ["What is the No Surprises Act?", "What financial assistance is available?", "How do I get a cost estimate?"] },
+    { match: /\b(campus|location|Rochester|Arizona|Florida|Jacksonville|Phoenix|Scottsdale|Minnesota)\b/i, items: ["What's the phone number for that campus?", "Are travel services available?"] },
+    { match: /\b(portal|app|account|records|test results)\b/i, items: ["How do I create an account?", "Can I message my care team?"] }
+  ];
+
+  const FOLLOWUP_FALLBACK = [
+    "How do I make an appointment?",
+    "Does Mayo Clinic accept my insurance?",
+    "Where are Mayo's campuses?",
+    "What financial assistance is available?"
+  ];
+
+  function pickFollowups(replyText, citations) {
+    const asked = new Set(history.filter(h => h.role === 'user').map(h => h.content.toLowerCase().trim()));
+    const seen = new Set();
+    const out = [];
+    const push = (q) => {
+      const k = q.toLowerCase().trim();
+      if (asked.has(k) || seen.has(k)) return;
+      seen.add(k);
+      out.push(q);
+    };
+
+    for (const c of (citations || [])) {
+      for (const q of (FOLLOWUP_BY_KB[c.id] || [])) push(q);
+    }
+    if (out.length < 3) {
+      for (const t of FOLLOWUP_BY_KEYWORD) {
+        if (t.match.test(replyText)) t.items.forEach(push);
+      }
+    }
+    if (out.length < 3) FOLLOWUP_FALLBACK.forEach(push);
+    return out.slice(0, 4);
+  }
+
+  function clearPriorFollowups() {
+    messagesEl.querySelectorAll('.followups').forEach(el => el.remove());
+  }
+
+  function addFollowupsTo(wrap, suggestions) {
+    if (!suggestions.length) return;
+    const row = document.createElement('div');
+    row.className = 'followups';
+    suggestions.forEach((q, i) => {
+      const btn = document.createElement('button');
+      btn.className = 'followup-chip';
+      btn.style.animationDelay = (i * 50) + 'ms';
+      btn.textContent = q;
+      btn.addEventListener('click', () => {
+        if (activeController) return;
+        row.classList.add('fade-out');
+        setTimeout(() => row.remove(), 200);
+        ask(q);
+      });
+      row.appendChild(btn);
+    });
+    wrap.appendChild(row);
+    if (stickToBottom) scrollToBottom(true);
+  }
 
   // ────────────────────────────────────────────────────────────────
   //  UI wiring
@@ -1302,6 +1449,7 @@ When in doubt, direct the patient to call the appropriate appointment line rathe
   async function ask(userText) {
     if (!userText.trim() || activeController) return;
     suggestionsEl.style.display = 'none';
+    clearPriorFollowups();
 
     addUserMessage(userText);
     history.push({ role: 'user', content: userText });
@@ -1380,8 +1528,9 @@ When in doubt, direct the patient to call the appropriate appointment line rathe
 
       const { clean, citations, actions } = parseResponse(fullText);
       if (bubble) bubble.wrap.remove(); else thinking.remove();
-      addBotMessage(clean, citations, actions);
+      const botWrap = addBotMessage(clean, citations, actions);
       history.push({ role: 'assistant', content: clean });
+      addFollowupsTo(botWrap, pickFollowups(clean, citations));
     } catch (err) {
       aborted = err.name === 'AbortError';
       if (aborted) {
