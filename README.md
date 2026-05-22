@@ -1,8 +1,8 @@
-# Mayo Clinic Scheduling Assistant — Vercel Deployment
+#  Scheduling Assistant — Vercel Deployment
 
 Deploy the chat widget + proxy to Vercel in about 10 minutes. No terminal, no
 Node.js install — everything happens in your browser.
-
+ 
 ## What you're deploying
 
 ```
