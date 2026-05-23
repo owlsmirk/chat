@@ -1539,7 +1539,6 @@
       console.warn('show: unknown target', targetId);
       return;
     }
-    const isMobile = window.matchMedia('(max-width: 640px)').matches;
     const wasOpen = widget.classList.contains('open');
 
     const doHighlight = () => {
@@ -1557,10 +1556,14 @@
       }, 3400);
     };
 
-    if (isMobile && wasOpen) {
+    /* Dismiss the widget on both desktop and mobile so the highlight
+       isn't behind the blurred scrim. Hide the FAB too — the "Back
+       to chat" pill replaces it as the temporary entry point. */
+    if (wasOpen) {
       closeWidget();
-      // Wait for the slide-down to clear before we scroll the page
-      setTimeout(doHighlight, 360);
+      fab.style.display = 'none';
+      document.querySelector('.fab-label').style.display = 'none';
+      setTimeout(doHighlight, 320);
       backToChatBtn.classList.add('show');
     } else {
       doHighlight();
