@@ -750,6 +750,19 @@
   }
   .composer-btn svg { width: 20px; height: 20px; }
 
+  /* Mic button — listening state */
+  .composer-btn.listening {
+    background: var(--mayo-blue);
+    color: white;
+    animation: mic-pulse 1.4s ease-out infinite;
+  }
+  .composer-btn.listening:hover { background: var(--mayo-blue-deep); color: white; }
+  @keyframes mic-pulse {
+    0%   { box-shadow: 0 0 0 0 rgba(0, 87, 184, 0.45); }
+    70%  { box-shadow: 0 0 0 10px rgba(0, 87, 184, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(0, 87, 184, 0); }
+  }
+
   .composer-send {
     background: var(--mayo-blue);
     color: white;
@@ -967,7 +980,7 @@
         placeholder="Type your question..."
         rows="1"
         aria-label="Type your question"></textarea>
-      <button class="composer-btn" aria-label="Voice input" title="Voice input">
+      <button class="composer-btn" id="micBtn" aria-label="Voice input" title="Voice input" aria-pressed="false">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/>
           <path d="M19 10v2a7 7 0 0 1-14 0v-2"/>
@@ -1616,4 +1629,64 @@ When in doubt, direct the patient to call the appropriate appointment line rathe
       ask(e.target.dataset.q);
     }
   });
+
+  // ────────────────────────────────────────────────────────────────
+  //  Voice input (Web Speech API)
+  //  Chrome, Edge, Safari iOS 14.5+ — others fall back to text-only.
+  // ────────────────────────────────────────────────────────────────
+  const micBtn = document.getElementById('micBtn');
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (!SR) {
+    micBtn.style.display = 'none';
+  } else {
+    const recog = new SR();
+    recog.lang = 'en-US';
+    recog.interimResults = true;
+    recog.continuous = false;
+    let listening = false;
+    let baseText = '';
+
+    const setListening = (on) => {
+      listening = on;
+      micBtn.classList.toggle('listening', on);
+      micBtn.setAttribute('aria-pressed', on ? 'true' : 'false');
+      micBtn.setAttribute('aria-label', on ? 'Stop voice input' : 'Voice input');
+    };
+
+    micBtn.addEventListener('click', () => {
+      if (listening) {
+        recog.stop();
+      } else {
+        baseText = inputEl.value.trimEnd();
+        try { recog.start(); } catch (e) { /* already started */ }
+      }
+    });
+
+    recog.addEventListener('start', () => setListening(true));
+    recog.addEventListener('end', () => {
+      setListening(false);
+      inputEl.focus();
+    });
+    recog.addEventListener('error', (e) => {
+      setListening(false);
+      if (e.error === 'not-allowed' || e.error === 'service-not-allowed') {
+        console.warn('Microphone permission denied');
+      }
+    });
+    recog.addEventListener('result', (event) => {
+      let interim = '';
+      let finalChunk = '';
+      for (let i = event.resultIndex; i < event.results.length; i++) {
+        const t = event.results[i][0].transcript;
+        if (event.results[i].isFinal) finalChunk += t;
+        else interim += t;
+      }
+      const sep = baseText ? ' ' : '';
+      inputEl.value = (baseText + sep + finalChunk + interim).replace(/\s+/g, ' ').trim();
+      inputEl.style.height = 'auto';
+      inputEl.style.height = Math.min(inputEl.scrollHeight, 100) + 'px';
+      if (finalChunk) baseText = (baseText + sep + finalChunk).trim();
+      updateSendEnabled();
+    });
+  }
 </script>
