@@ -318,29 +318,22 @@
     min-height: 0;
   }
 
-  /* Widget header — Mayo brand-blue band */
+  /* Widget header — light, seamless surface. The dark blue chrome
+     read as 2010s product; modern chat assistants stay neutral and
+     let the brand show through accents (FAB, CTAs, send button). */
   .widget-header {
     padding: 14px 16px;
     display: flex;
     align-items: center;
     gap: 8px;
-    /* Subtle vertical depth — darker navy at top fading into Mayo blue */
-    background: linear-gradient(180deg, #002A52 0%, #003D7A 55%, var(--mayo-blue) 100%);
-    color: white;
+    background: var(--surface);
+    color: var(--ink);
+    border-bottom: 1px solid var(--rule);
     position: relative;
     flex-shrink: 0;
   }
-  /* Hairline highlight along the top edge — adds the "lit from above" feel */
-  .widget-header::before {
-    content: '';
-    position: absolute;
-    top: 0; left: 0; right: 0;
-    height: 1px;
-    background: linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.22) 50%, transparent 100%);
-    pointer-events: none;
-  }
 
-  /* Header buttons share the same ghost-circle treatment */
+  /* Header buttons — ghost on light */
   .widget-close,
   .widget-menu-btn {
     background: transparent;
@@ -351,14 +344,14 @@
     cursor: pointer;
     display: grid;
     place-items: center;
-    color: rgba(255, 255, 255, 0.85);
+    color: var(--ink-2);
     transition: background 0.18s ease, color 0.18s ease, transform 0.12s ease;
     flex-shrink: 0;
   }
   .widget-close:hover,
   .widget-menu-btn:hover {
-    background: rgba(255, 255, 255, 0.14);
-    color: white;
+    background: var(--surface-3);
+    color: var(--ink);
   }
   .widget-close:active,
   .widget-menu-btn:active { transform: scale(0.94); }
@@ -433,12 +426,12 @@
   /* Language toggle pill — sits in the header next to close */
   .lang-toggle {
     background: transparent;
-    border: 1px solid rgba(255, 255, 255, 0.22);
-    color: rgba(255, 255, 255, 0.92);
+    border: 1px solid var(--rule-2);
+    color: var(--ink-1);
     font-family: var(--font-body);
     font-size: 11px;
     font-weight: 600;
-    letter-spacing: 0.08em;
+    letter-spacing: 0.06em;
     padding: 0 10px;
     height: 24px;
     border-radius: 999px;
@@ -448,9 +441,9 @@
     flex-shrink: 0;
   }
   .lang-toggle:hover {
-    background: rgba(255, 255, 255, 0.12);
-    border-color: rgba(255, 255, 255, 0.4);
-    color: white;
+    background: var(--surface-3);
+    border-color: var(--ink-4);
+    color: var(--ink);
   }
   .lang-toggle:active { transform: scale(0.94); }
 
@@ -460,9 +453,9 @@
     transform: translateX(-50%);
     font-family: var(--font-body);
     font-size: 15px;
-    font-weight: 500;
-    color: rgba(255, 255, 255, 0.96);
-    letter-spacing: -0.01em;
+    font-weight: 600;
+    color: var(--ink);
+    letter-spacing: -0.015em;
     font-feature-settings: 'cv11', 'ss01', 'ss03';
   }
   /* Status simplified to just a small dot — "Online" label removed */
@@ -476,37 +469,37 @@
     width: 8px;
     height: 8px;
     border-radius: 50%;
-    background: #34D399;
-    box-shadow: 0 0 0 2px rgba(52, 211, 153, 0.25);
+    background: #10B981;
+    box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.18);
     animation: status-pulse 2.4s ease-in-out infinite;
   }
   @keyframes status-pulse {
-    0%, 100% { box-shadow: 0 0 0 2px rgba(52, 211, 153, 0.25); }
-    50%      { box-shadow: 0 0 0 5px rgba(52, 211, 153, 0.10); }
+    0%, 100% { box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.18); }
+    50%      { box-shadow: 0 0 0 5px rgba(16, 185, 129, 0.06); }
   }
 
   /* Safety banner — 911 messaging at top of chat */
   .safety-banner {
-    padding: 10px 16px;
-    background: linear-gradient(180deg, #FFF8E6 0%, #FFFAEC 100%);
-    border-bottom: 1px solid #F0E4C0;
+    padding: 9px 16px;
+    background: var(--surface-2);
+    border-bottom: 1px solid var(--rule);
     display: flex;
     align-items: flex-start;
     gap: 10px;
     font-size: 12px;
     line-height: 1.5;
     letter-spacing: -0.003em;
-    color: #5C4A1A;
+    color: var(--ink-2);
   }
   .safety-banner svg {
-    width: 16px;
-    height: 16px;
+    width: 15px;
+    height: 15px;
     flex-shrink: 0;
-    color: #B8861C;
+    color: #C2410C;
     margin-top: 1px;
   }
   .safety-banner strong {
-    color: #3A2E0A;
+    color: var(--ink);
     font-weight: 600;
   }
 
@@ -575,17 +568,20 @@
     letter-spacing: -0.005em;
     color: var(--ink);
   }
+  /* Cards stack full-width at every breakpoint — at the widget's
+     400px the 2×2 grid was cramping each card; list-rows give the
+     icon + title + description proper breathing room. */
   .capability-cards {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
     margin-top: 4px;
   }
   .cap-card {
     display: flex;
-    align-items: flex-start;
-    gap: 10px;
-    padding: 12px 14px;
+    align-items: center;
+    gap: 12px;
+    padding: 11px 14px;
     background: var(--surface);
     border: 1px solid var(--rule);
     border-radius: 12px;
@@ -593,6 +589,7 @@
     text-align: left;
     font-family: var(--font-body);
     transition: background 0.15s ease, border-color 0.15s ease, transform 0.12s ease;
+    width: 100%;
   }
   .cap-card:hover,
   .cap-card:focus-visible {
@@ -600,15 +597,14 @@
     border-color: var(--rule-2);
     outline: none;
   }
-  .cap-card:active { transform: scale(0.985); }
+  .cap-card:active { transform: scale(0.99); }
   .cap-icon {
     width: 18px;
     height: 18px;
     color: var(--mayo-blue);
     flex-shrink: 0;
-    margin-top: 1px;
   }
-  .cap-text { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+  .cap-text { display: flex; flex-direction: column; gap: 1px; min-width: 0; flex: 1; }
   .cap-title {
     font-size: 14px;
     font-weight: 600;
@@ -622,9 +618,14 @@
     line-height: 1.4;
     letter-spacing: -0.003em;
   }
-  @media (max-width: 640px) {
-    .capability-cards { grid-template-columns: 1fr; }
+  .cap-arrow {
+    width: 14px;
+    height: 14px;
+    color: var(--ink-3);
+    flex-shrink: 0;
+    transition: transform 0.15s ease, color 0.15s ease;
   }
+  .cap-card:hover .cap-arrow { color: var(--mayo-blue); transform: translateX(2px); }
 
   /* Inline citation chips ("mayoclinic.org +2") */
   .cite-chip {
@@ -2168,6 +2169,7 @@ When in doubt, direct the patient to call the appropriate appointment line rathe
           <div class="cap-title">${escapeHtml(c.title)}</div>
           <div class="cap-desc">${escapeHtml(c.desc)}</div>
         </div>
+        <svg class="cap-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 18 15 12 9 6"/></svg>
       `;
       card.addEventListener('click', () => ask(c.prompt));
       grid.appendChild(card);
