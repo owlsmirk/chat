@@ -1602,9 +1602,12 @@ When in doubt, direct the patient to call the appropriate appointment line rathe
     );
   }
 
+  let voiceCleanup = () => {};
+
   sendBtn.addEventListener('click', () => {
     const text = inputEl.value;
     if (!text.trim() || activeController) return;
+    voiceCleanup();
     inputEl.value = '';
     inputEl.style.height = 'auto';
     updateSendEnabled();
@@ -1651,6 +1654,16 @@ When in doubt, direct the patient to call the appropriate appointment line rathe
       micBtn.classList.toggle('listening', on);
       micBtn.setAttribute('aria-pressed', on ? 'true' : 'false');
       micBtn.setAttribute('aria-label', on ? 'Stop voice input' : 'Voice input');
+    };
+
+    /* Called by the send handler so any in-flight recognition can't
+       refill the textarea after the user has fired their message. */
+    voiceCleanup = () => {
+      baseText = '';
+      if (listening) {
+        try { recog.abort(); } catch (e) {}
+        setListening(false);
+      }
     };
 
     micBtn.addEventListener('click', () => {
