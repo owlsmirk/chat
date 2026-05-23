@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1240 980" font-family="Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" role="img" aria-label="System architecture diagram for the Mayo Clinic Scheduling Assistant">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1240 1000" font-family="Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" role="img" aria-label="System architecture diagram for the Mayo Clinic Scheduling Assistant">
   <title>Mayo Clinic Scheduling Assistant — System Architecture</title>
 
   <defs>
@@ -15,10 +15,6 @@
       <stop offset="0%" stop-color="#E8F1FB"/>
       <stop offset="100%" stop-color="#DAE7F5"/>
     </linearGradient>
-    <linearGradient id="chatHeader" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0%" stop-color="#002A52"/>
-      <stop offset="100%" stop-color="#0057B8"/>
-    </linearGradient>
     <filter id="cardShadow" x="-10%" y="-10%" width="120%" height="120%">
       <feGaussianBlur in="SourceAlpha" stdDeviation="3"/>
       <feOffset dx="0" dy="2" result="offsetblur"/>
@@ -29,16 +25,19 @@
       <path d="M0 0 L10 5 L0 10 Z" fill="#0057B8"/>
     </marker>
     <marker id="arrowReturn" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
-      <path d="M0 0 L10 5 L0 10 Z" fill="#34D399"/>
+      <path d="M0 0 L10 5 L0 10 Z" fill="#10AA6F"/>
+    </marker>
+    <marker id="arrowKb" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M0 0 L10 5 L0 10 Z" fill="#7A8696"/>
     </marker>
   </defs>
 
   <!-- Page background -->
-  <rect width="1240" height="980" fill="#FFFFFF"/>
+  <rect width="1240" height="1000" fill="#FFFFFF"/>
 
   <!-- Title block -->
   <text x="40" y="50" font-size="26" font-weight="700" fill="#080808" letter-spacing="-0.5">Mayo Clinic Scheduling Assistant</text>
-  <text x="40" y="76" font-size="12" font-weight="600" fill="#5C6470" letter-spacing="2">REFERENCE ARCHITECTURE</text>
+  <text x="40" y="76" font-size="12" font-weight="600" fill="#5C6470" letter-spacing="2">REFERENCE ARCHITECTURE · v2</text>
   <text x="1200" y="76" font-size="11" font-weight="500" fill="#9CA3AF" letter-spacing="0.5" text-anchor="end">CLIENT · EDGE · MODEL</text>
   <line x1="40" y1="92" x2="1200" y2="92" stroke="#E5E9EE" stroke-width="1"/>
 
@@ -48,7 +47,7 @@
   <g id="layer-browser">
     <rect x="40" y="118" width="1160" height="340" rx="14" fill="url(#bgBrowser)" stroke="#D5DCE3" stroke-width="1"/>
     <text x="64" y="146" font-size="11" font-weight="700" fill="#0057B8" letter-spacing="2">USER'S BROWSER</text>
-    <text x="64" y="162" font-size="11" font-weight="500" fill="#5C6470">Single-page widget served from Vercel (index.html, ~1900 LOC)</text>
+    <text x="64" y="162" font-size="11" font-weight="500" fill="#5C6470">Single-page widget served from Vercel (index.html). No KB. No prompt assembly. Smaller payload.</text>
 
     <!-- Mayo page card -->
     <g id="page-card" transform="translate(64,184)">
@@ -93,51 +92,65 @@
       <text x="492" y="318" text-anchor="middle" font-size="10" font-weight="600" fill="white">show me on the page</text>
     </g>
 
-    <!-- Chat widget card -->
+    <!-- Chat widget card — NEW LIGHT HEADER + CAPABILITY CARDS -->
     <g id="widget-card" transform="translate(380,184)">
       <rect width="300" height="240" rx="10" fill="white" stroke="#D5DCE3" filter="url(#cardShadow)"/>
 
-      <!-- header -->
-      <path d="M0 10 Q0 0 10 0 H290 Q300 0 300 10 V46 H0 Z" fill="url(#chatHeader)"/>
-      <circle cx="20" cy="22" r="11" fill="rgba(255,255,255,0.05)"/>
-      <text x="20" y="27" text-anchor="middle" font-size="14" font-weight="400" fill="white">×</text>
-      <rect x="36" y="14" width="24" height="16" rx="8" fill="none" stroke="rgba(255,255,255,0.4)"/>
-      <text x="48" y="25" text-anchor="middle" font-size="8" font-weight="600" fill="white" letter-spacing="1">EN</text>
-      <text x="150" y="27" text-anchor="middle" font-size="11" font-weight="500" fill="white" letter-spacing="-0.2">Mayo Assistant</text>
-      <circle cx="262" cy="22" r="3.5" fill="#34D399"/>
-      <circle cx="284" cy="18" r="1.4" fill="white"/>
-      <circle cx="284" cy="23" r="1.4" fill="white"/>
-      <circle cx="284" cy="28" r="1.4" fill="white"/>
+      <!-- 2px Mayo-blue top strip -->
+      <rect x="0" y="0" width="300" height="2" fill="#0057B8"/>
+      <!-- light header -->
+      <rect x="0" y="2" width="300" height="44" fill="white"/>
+      <line x1="0" y1="46" x2="300" y2="46" stroke="#E8E5DD"/>
+      <!-- close (ghost) -->
+      <circle cx="20" cy="24" r="11" fill="transparent"/>
+      <text x="20" y="29" text-anchor="middle" font-size="14" font-weight="400" fill="#5C6470">×</text>
+      <!-- lang pill (outlined dark) -->
+      <rect x="36" y="16" width="24" height="16" rx="8" fill="white" stroke="#DDD9CF"/>
+      <text x="48" y="27" text-anchor="middle" font-size="8" font-weight="600" fill="#2D3540" letter-spacing="1">EN</text>
+      <!-- title -->
+      <text x="150" y="29" text-anchor="middle" font-size="11" font-weight="600" fill="#080808" letter-spacing="-0.2">Mayo Assistant</text>
+      <!-- status dot only -->
+      <circle cx="262" cy="24" r="3.5" fill="#10B981"/>
+      <!-- kebab -->
+      <circle cx="284" cy="20" r="1.4" fill="#5C6470"/>
+      <circle cx="284" cy="25" r="1.4" fill="#5C6470"/>
+      <circle cx="284" cy="30" r="1.4" fill="#5C6470"/>
 
-      <!-- safety banner -->
-      <rect x="0" y="46" width="300" height="24" fill="#FFF8E6"/>
-      <text x="12" y="61" font-size="9" font-weight="600" fill="#5C4A1A">⚠ For medical emergencies, call 911.</text>
+      <!-- safety banner (lighter) -->
+      <rect x="0" y="47" width="300" height="22" fill="#FAFAF7"/>
+      <text x="12" y="61" font-size="9" font-weight="600" fill="#1A1F26">⚠ For medical emergencies, call 911.</text>
 
-      <!-- bot message -->
-      <text x="14" y="92" font-size="10" fill="#080808">Hi, I'm the Mayo Assistant. I can</text>
-      <text x="14" y="105" font-size="10" fill="#080808">help with appointments, insurance...</text>
+      <!-- greeting intro -->
+      <text x="14" y="86" font-size="9" fill="#080808">Hi, I'm the Mayo Assistant.</text>
+      <text x="14" y="98" font-size="9" fill="#080808">How can I help?</text>
 
-      <!-- user message -->
-      <rect x="100" y="116" width="186" height="22" rx="10" fill="#EFEAE0"/>
-      <text x="194" y="130" text-anchor="middle" font-size="10" fill="#080808">How do I make an appointment?</text>
-
-      <!-- bot reply (streaming) -->
-      <text x="14" y="156" font-size="10" fill="#080808">Most patients can request an</text>
-      <text x="14" y="168" font-size="10" fill="#080808">appointment online…</text>
-      <rect x="14" y="174" width="92" height="14" rx="7" fill="#F3F4F6"/>
-      <text x="20" y="184" font-size="7" font-weight="500" fill="#5C6470">↗ mayoclinic.org +2</text>
-
-      <!-- CTAs -->
-      <rect x="14" y="196" width="130" height="18" rx="9" fill="#0057B8"/>
-      <text x="79" y="208" text-anchor="middle" font-size="8" font-weight="500" fill="white">📞 Call Rochester</text>
-      <rect x="148" y="196" width="138" height="18" rx="9" fill="#E1F0FF" stroke="#0057B8"/>
-      <text x="217" y="208" text-anchor="middle" font-size="8" font-weight="500" fill="#002443">👁 Show me on this page</text>
+      <!-- capability cards (list rows) -->
+      <g transform="translate(14,108)">
+        <rect width="272" height="28" rx="6" fill="white" stroke="#E8E5DD"/>
+        <rect x="10" y="8" width="12" height="12" rx="2" fill="none" stroke="#0057B8" stroke-width="1.5"/>
+        <text x="30" y="16" font-size="8.5" font-weight="600" fill="#080808">Appointments</text>
+        <text x="30" y="25" font-size="7.5" fill="#5C6470">Request, prepare, or change a visit</text>
+        <text x="260" y="20" text-anchor="middle" font-size="9" fill="#8A929C">›</text>
+      </g>
+      <g transform="translate(14,140)">
+        <rect width="272" height="28" rx="6" fill="white" stroke="#E8E5DD"/>
+        <path d="M22 116 v 4 M24 117 h-4" stroke="#0057B8" stroke-width="1.2" fill="none" transform="translate(0,-110)"/>
+        <text x="30" y="16" font-size="8.5" font-weight="600" fill="#080808">Billing &amp; Insurance</text>
+        <text x="30" y="25" font-size="7.5" fill="#5C6470">Coverage, estimates, financial help</text>
+        <text x="260" y="20" text-anchor="middle" font-size="9" fill="#8A929C">›</text>
+      </g>
+      <g transform="translate(14,172)">
+        <rect width="272" height="28" rx="6" fill="white" stroke="#E8E5DD"/>
+        <text x="30" y="16" font-size="8.5" font-weight="600" fill="#080808">Locations &amp; Visits</text>
+        <text x="30" y="25" font-size="7.5" fill="#5C6470">Campuses, travel, what to bring</text>
+        <text x="260" y="20" text-anchor="middle" font-size="9" fill="#8A929C">›</text>
+      </g>
 
       <!-- composer -->
-      <rect x="0" y="220" width="300" height="20" fill="white"/>
-      <rect x="14" y="222" width="272" height="16" rx="8" fill="#F3F4F6"/>
-      <text x="20" y="233" font-size="8" fill="#9CA3AF">Type your question…</text>
-      <circle cx="278" cy="230" r="6" fill="#0057B8"/>
+      <rect x="0" y="218" width="300" height="22" fill="white"/>
+      <rect x="14" y="220" width="272" height="16" rx="8" fill="#F3F1ED"/>
+      <text x="20" y="231" font-size="8" fill="#8A929C">Type your question…</text>
+      <circle cx="278" cy="228" r="6" fill="#0057B8"/>
     </g>
 
     <!-- Client modules column (right) -->
@@ -147,43 +160,41 @@
       <g transform="translate(0,16)">
         <rect width="232" height="44" rx="6" fill="white" stroke="#D5DCE3"/>
         <rect x="0" y="0" width="3" height="44" fill="#0057B8" rx="2"/>
-        <text x="14" y="20" font-size="11" font-weight="600" fill="#080808">Knowledge Base</text>
-        <text x="14" y="35" font-size="9" fill="#5C6470">18 paraphrased Mayo entries</text>
+        <text x="14" y="20" font-size="11" font-weight="600" fill="#080808">Localization · EN / ES</text>
+        <text x="14" y="35" font-size="9" fill="#5C6470">Chrome, cards, follow-ups, voice</text>
       </g>
       <g transform="translate(0,68)">
-        <rect width="232" height="44" rx="6" fill="white" stroke="#D5DCE3"/>
-        <rect x="0" y="0" width="3" height="44" fill="#0057B8" rx="2"/>
-        <text x="14" y="20" font-size="11" font-weight="600" fill="#080808">Localization · EN / ES</text>
-        <text x="14" y="35" font-size="9" fill="#5C6470">Chrome, chips, system rule, voice</text>
-      </g>
-      <g transform="translate(0,120)">
-        <rect width="232" height="44" rx="6" fill="white" stroke="#D5DCE3"/>
-        <rect x="0" y="0" width="3" height="44" fill="#0057B8" rx="2"/>
-        <text x="14" y="20" font-size="11" font-weight="600" fill="#080808">Voice input</text>
-        <text x="14" y="35" font-size="9" fill="#5C6470">Web Speech API · interim streaming</text>
-      </g>
-      <g transform="translate(0,172)">
-        <rect width="232" height="44" rx="6" fill="white" stroke="#D5DCE3"/>
-        <rect x="0" y="0" width="3" height="44" fill="#34D399" rx="2"/>
-        <text x="14" y="20" font-size="11" font-weight="600" fill="#080808">Show-me page highlighter</text>
-        <text x="14" y="35" font-size="9" fill="#5C6470">Scrolls + pulses 4 page targets</text>
-      </g>
-    </g>
-
-    <g id="modules2" transform="translate(964,184)">
-      <text x="0" y="0" font-size="11" font-weight="700" fill="#0057B8" letter-spacing="2" opacity="0">.</text>
-
-      <g transform="translate(0,16)">
         <rect width="232" height="44" rx="6" fill="white" stroke="#D5DCE3"/>
         <rect x="0" y="0" width="3" height="44" fill="#0057B8" rx="2"/>
         <text x="14" y="20" font-size="11" font-weight="600" fill="#080808">Streaming renderer</text>
         <text x="14" y="35" font-size="9" fill="#5C6470">SSE chunks → markdown + caret</text>
       </g>
-      <g transform="translate(0,68)">
+      <g transform="translate(0,120)">
         <rect width="232" height="44" rx="6" fill="white" stroke="#D5DCE3"/>
         <rect x="0" y="0" width="3" height="44" fill="#0057B8" rx="2"/>
         <text x="14" y="20" font-size="11" font-weight="600" fill="#080808">Token parser</text>
         <text x="14" y="35" font-size="9" fill="#5C6470">&lt;&lt;CITATIONS&gt;&gt; · &lt;&lt;ACTION&gt;&gt;</text>
+      </g>
+      <g transform="translate(0,172)">
+        <rect width="232" height="44" rx="6" fill="white" stroke="#D5DCE3"/>
+        <rect x="0" y="0" width="3" height="44" fill="#0057B8" rx="2"/>
+        <text x="14" y="20" font-size="11" font-weight="600" fill="#080808">Voice input</text>
+        <text x="14" y="35" font-size="9" fill="#5C6470">Web Speech API · EN-US / ES-US</text>
+      </g>
+    </g>
+
+    <g id="modules2" transform="translate(964,184)">
+      <g transform="translate(0,16)">
+        <rect width="232" height="44" rx="6" fill="white" stroke="#D5DCE3"/>
+        <rect x="0" y="0" width="3" height="44" fill="#34D399" rx="2"/>
+        <text x="14" y="20" font-size="11" font-weight="600" fill="#080808">Show-me highlighter</text>
+        <text x="14" y="35" font-size="9" fill="#5C6470">Scrolls + pulses 4 page targets</text>
+      </g>
+      <g transform="translate(0,68)">
+        <rect width="232" height="44" rx="6" fill="white" stroke="#D5DCE3"/>
+        <rect x="0" y="0" width="3" height="44" fill="#0057B8" rx="2"/>
+        <text x="14" y="20" font-size="11" font-weight="600" fill="#080808">Capability cards</text>
+        <text x="14" y="35" font-size="9" fill="#5C6470">4 list rows, dismissed on send</text>
       </g>
       <g transform="translate(0,120)">
         <rect width="232" height="44" rx="6" fill="white" stroke="#D5DCE3"/>
@@ -210,116 +221,134 @@
   <!-- arrow request -->
   <path d="M530 478 V 520" stroke="#0057B8" stroke-width="2.5" fill="none" marker-end="url(#arrow)"/>
   <text x="540" y="500" font-size="11" font-weight="600" fill="#0057B8">POST /api/chat</text>
-  <text x="540" y="514" font-size="10" fill="#5C6470">{ system, messages }</text>
+  <text x="540" y="514" font-size="10" fill="#5C6470">{ lang, messages }</text>
 
   <!-- arrow response -->
-  <path d="M720 520 V 478" stroke="#34D399" stroke-width="2.5" fill="none" marker-end="url(#arrowReturn)"/>
+  <path d="M720 520 V 478" stroke="#10AA6F" stroke-width="2.5" fill="none" marker-end="url(#arrowReturn)"/>
   <text x="730" y="500" font-size="11" font-weight="600" fill="#10AA6F">SSE stream</text>
   <text x="730" y="514" font-size="10" fill="#5C6470">text deltas + control tokens</text>
 
   <!-- ════════════════════════════════════════════════════════
-       LAYER 2 — VERCEL SERVERLESS
+       LAYER 2 — VERCEL SERVERLESS (now owns the prompt + KB)
        ════════════════════════════════════════════════════════ -->
   <g id="layer-edge">
-    <rect x="40" y="528" width="1160" height="170" rx="14" fill="url(#bgEdge)" stroke="#D5DCE3" stroke-width="1"/>
+    <rect x="40" y="528" width="1160" height="220" rx="14" fill="url(#bgEdge)" stroke="#D5DCE3" stroke-width="1"/>
     <text x="64" y="556" font-size="11" font-weight="700" fill="#0057B8" letter-spacing="2">VERCEL SERVERLESS</text>
-    <text x="64" y="572" font-size="11" font-weight="500" fill="#5C6470">api/chat.js · Node 18+ · zero dependencies · ~120 LOC</text>
+    <text x="64" y="572" font-size="11" font-weight="500" fill="#5C6470">api/chat.js · Node 18+ · zero dependencies · builds the system prompt server-side</text>
     <text x="1176" y="572" text-anchor="end" font-size="10" font-weight="600" fill="#9CA3AF" letter-spacing="1">EDGE</text>
 
     <g transform="translate(64,594)">
-      <rect width="270" height="86" rx="8" fill="white" stroke="#D5DCE3"/>
+      <rect width="210" height="86" rx="8" fill="white" stroke="#D5DCE3"/>
       <text x="14" y="22" font-size="11" font-weight="700" fill="#0057B8" letter-spacing="1">01 · CORS</text>
       <text x="14" y="42" font-size="11" font-weight="500" fill="#080808">Origin whitelist</text>
-      <text x="14" y="58" font-size="9" fill="#5C6470">From ALLOWED_ORIGINS env</text>
-      <text x="14" y="72" font-size="9" fill="#5C6470">"*" by default · comma list in prod</text>
+      <text x="14" y="58" font-size="9" fill="#5C6470">From ALLOWED_ORIGINS</text>
+      <text x="14" y="72" font-size="9" fill="#5C6470">"*" default · csv in prod</text>
     </g>
 
-    <g transform="translate(348,594)">
-      <rect width="270" height="86" rx="8" fill="white" stroke="#D5DCE3"/>
+    <g transform="translate(288,594)">
+      <rect width="210" height="86" rx="8" fill="white" stroke="#D5DCE3"/>
       <text x="14" y="22" font-size="11" font-weight="700" fill="#0057B8" letter-spacing="1">02 · RATE LIMIT</text>
-      <text x="14" y="42" font-size="11" font-weight="500" fill="#080808">20 requests / minute / IP</text>
+      <text x="14" y="42" font-size="11" font-weight="500" fill="#080808">20 req / min / IP</text>
       <text x="14" y="58" font-size="9" fill="#5C6470">In-memory bucket per warm</text>
-      <text x="14" y="72" font-size="9" fill="#5C6470">container · swap Upstash in prod</text>
+      <text x="14" y="72" font-size="9" fill="#5C6470">container · Upstash in prod</text>
     </g>
 
-    <g transform="translate(632,594)">
-      <rect width="270" height="86" rx="8" fill="white" stroke="#D5DCE3"/>
+    <g transform="translate(512,594)">
+      <rect width="210" height="86" rx="8" fill="white" stroke="#D5DCE3"/>
       <text x="14" y="22" font-size="11" font-weight="700" fill="#0057B8" letter-spacing="1">03 · VALIDATE</text>
       <text x="14" y="42" font-size="11" font-weight="500" fill="#080808">Shape &amp; size guards</text>
-      <text x="14" y="58" font-size="9" fill="#5C6470">≤ 50 turns · ≤ 4000 chars / msg</text>
+      <text x="14" y="58" font-size="9" fill="#5C6470">≤ 50 turns · ≤ 4000 ch / msg</text>
       <text x="14" y="72" font-size="9" fill="#5C6470">roles ∈ { user, assistant }</text>
     </g>
 
-    <g transform="translate(916,594)">
-      <rect width="270" height="86" rx="8" fill="white" stroke="#D5DCE3"/>
-      <text x="14" y="22" font-size="11" font-weight="700" fill="#0057B8" letter-spacing="1">04 · STREAM PROXY</text>
-      <text x="14" y="42" font-size="11" font-weight="500" fill="#080808">SSE passthrough</text>
-      <text x="14" y="58" font-size="9" fill="#5C6470">Server-side ANTHROPIC_API_KEY</text>
-      <text x="14" y="72" font-size="9" fill="#5C6470">Forwards Cache-Control: no-store</text>
+    <g transform="translate(736,594)">
+      <rect width="210" height="86" rx="8" fill="white" stroke="#D5DCE3"/>
+      <text x="14" y="22" font-size="11" font-weight="700" fill="#0057B8" letter-spacing="1">04 · BUILD PROMPT</text>
+      <text x="14" y="42" font-size="11" font-weight="500" fill="#080808">rules + KB + lang rule</text>
+      <text x="14" y="58" font-size="9" fill="#5C6470">Reads kb.json (cached)</text>
+      <text x="14" y="72" font-size="9" fill="#5C6470">Adds ES rule when lang=es</text>
     </g>
+
+    <g transform="translate(960,594)">
+      <rect width="226" height="86" rx="8" fill="white" stroke="#D5DCE3"/>
+      <text x="14" y="22" font-size="11" font-weight="700" fill="#0057B8" letter-spacing="1">05 · STREAM PROXY</text>
+      <text x="14" y="42" font-size="11" font-weight="500" fill="#080808">SSE passthrough</text>
+      <text x="14" y="58" font-size="9" fill="#5C6470">x-api-key server-side</text>
+      <text x="14" y="72" font-size="9" fill="#5C6470">Cache-Control: no-store</text>
+    </g>
+
+    <!-- kb.json data source -->
+    <g transform="translate(64,696)">
+      <rect width="464" height="40" rx="8" fill="white" stroke="#D5DCE3" stroke-dasharray="4 3"/>
+      <g transform="translate(14,20)">
+        <path d="M0 -8 L8 -8 L12 -4 L12 8 L0 8 Z" fill="#7A8696" opacity="0.85"/>
+        <path d="M8 -8 L8 -4 L12 -4" fill="none" stroke="white" stroke-width="1"/>
+      </g>
+      <text x="36" y="18" font-size="11" font-weight="700" fill="#080808">kb.json</text>
+      <text x="36" y="32" font-size="10" fill="#5C6470">18 paraphrased Mayo entries · loaded once per warm container · edit + redeploy to update</text>
+    </g>
+    <path d="M296 696 V 680" stroke="#7A8696" stroke-width="1.2" stroke-dasharray="3 3" fill="none" marker-end="url(#arrowKb)"/>
+    <text x="306" y="690" font-size="9" fill="#7A8696">read</text>
   </g>
 
   <!-- ════════════════════════════════════════════════════════
        NETWORK BOUNDARY 2
        ════════════════════════════════════════════════════════ -->
-  <line x1="40" y1="718" x2="540" y2="718" stroke="#D5DCE3" stroke-width="1" stroke-dasharray="3 4"/>
-  <text x="620" y="721" text-anchor="middle" font-size="10" font-weight="600" fill="#9CA3AF" letter-spacing="1">HTTPS · x-api-key · ANTHROPIC-VERSION</text>
-  <line x1="700" y1="718" x2="1200" y2="718" stroke="#D5DCE3" stroke-width="1" stroke-dasharray="3 4"/>
+  <line x1="40" y1="768" x2="540" y2="768" stroke="#D5DCE3" stroke-width="1" stroke-dasharray="3 4"/>
+  <text x="620" y="771" text-anchor="middle" font-size="10" font-weight="600" fill="#9CA3AF" letter-spacing="1">HTTPS · x-api-key · ANTHROPIC-VERSION</text>
+  <line x1="700" y1="768" x2="1200" y2="768" stroke="#D5DCE3" stroke-width="1" stroke-dasharray="3 4"/>
 
-  <path d="M530 718 V 760" stroke="#0057B8" stroke-width="2.5" fill="none" marker-end="url(#arrow)"/>
-  <text x="540" y="740" font-size="11" font-weight="600" fill="#0057B8">POST /v1/messages</text>
-  <text x="540" y="754" font-size="10" fill="#5C6470">stream=true</text>
+  <path d="M530 768 V 810" stroke="#0057B8" stroke-width="2.5" fill="none" marker-end="url(#arrow)"/>
+  <text x="540" y="790" font-size="11" font-weight="600" fill="#0057B8">POST /v1/messages</text>
+  <text x="540" y="804" font-size="10" fill="#5C6470">system + messages · stream=true</text>
 
-  <path d="M720 760 V 718" stroke="#34D399" stroke-width="2.5" fill="none" marker-end="url(#arrowReturn)"/>
-  <text x="730" y="740" font-size="11" font-weight="600" fill="#10AA6F">SSE</text>
-  <text x="730" y="754" font-size="10" fill="#5C6470">content_block_delta events</text>
+  <path d="M720 810 V 768" stroke="#10AA6F" stroke-width="2.5" fill="none" marker-end="url(#arrowReturn)"/>
+  <text x="730" y="790" font-size="11" font-weight="600" fill="#10AA6F">SSE</text>
+  <text x="730" y="804" font-size="10" fill="#5C6470">content_block_delta events</text>
 
   <!-- ════════════════════════════════════════════════════════
        LAYER 3 — ANTHROPIC
        ════════════════════════════════════════════════════════ -->
   <g id="layer-model">
-    <rect x="40" y="768" width="1160" height="170" rx="14" fill="url(#bgModel)" stroke="#D5DCE3" stroke-width="1"/>
-    <text x="64" y="796" font-size="11" font-weight="700" fill="#002443" letter-spacing="2">ANTHROPIC API</text>
-    <text x="64" y="812" font-size="11" font-weight="500" fill="#3A4654">Claude Sonnet 4.5 · claude-sonnet-4-5-20250929 · anthropic-version: 2023-06-01</text>
-    <text x="1176" y="812" text-anchor="end" font-size="10" font-weight="600" fill="#7A8696" letter-spacing="1">MODEL</text>
+    <rect x="40" y="818" width="1160" height="146" rx="14" fill="url(#bgModel)" stroke="#D5DCE3" stroke-width="1"/>
+    <text x="64" y="846" font-size="11" font-weight="700" fill="#002443" letter-spacing="2">ANTHROPIC API</text>
+    <text x="64" y="862" font-size="11" font-weight="500" fill="#3A4654">Claude Sonnet 4.6 · anthropic-version: 2023-06-01</text>
+    <text x="1176" y="862" text-anchor="end" font-size="10" font-weight="600" fill="#7A8696" letter-spacing="1">MODEL</text>
 
-    <g transform="translate(64,832)">
-      <rect width="380" height="90" rx="8" fill="white" stroke="#C9D4E2"/>
-      <text x="14" y="22" font-size="11" font-weight="700" fill="#002443" letter-spacing="1">SYSTEM PROMPT</text>
-      <text x="14" y="42" font-size="10" fill="#3A4654">▸ Core rules (no medical advice, no booking, US-only)</text>
-      <text x="14" y="56" font-size="10" fill="#3A4654">▸ Knowledge base inlined (18 entries · ~3.5 KB)</text>
-      <text x="14" y="70" font-size="10" fill="#3A4654">▸ Citation + action protocol</text>
-      <text x="14" y="84" font-size="10" fill="#3A4654">▸ Language rule appended when ES is active</text>
+    <g transform="translate(64,876)">
+      <rect width="364" height="76" rx="8" fill="white" stroke="#C9D4E2"/>
+      <text x="14" y="22" font-size="11" font-weight="700" fill="#002443" letter-spacing="1">SYSTEM PROMPT (server-assembled)</text>
+      <text x="14" y="40" font-size="10" fill="#3A4654">▸ Base rules (no medical advice, no booking)</text>
+      <text x="14" y="54" font-size="10" fill="#3A4654">▸ kb.json inlined as [kb-XXX] blocks</text>
+      <text x="14" y="68" font-size="10" fill="#3A4654">▸ Spanish rule appended when lang=es</text>
     </g>
 
-    <g transform="translate(458,832)">
-      <rect width="380" height="90" rx="8" fill="white" stroke="#C9D4E2"/>
+    <g transform="translate(442,876)">
+      <rect width="364" height="76" rx="8" fill="white" stroke="#C9D4E2"/>
       <text x="14" y="22" font-size="11" font-weight="700" fill="#002443" letter-spacing="1">RESPONSE SHAPE</text>
-      <text x="14" y="42" font-size="10" font-family="ui-monospace, SFMono-Regular, monospace" fill="#3A4654">markdown text…</text>
-      <text x="14" y="56" font-size="10" font-family="ui-monospace, SFMono-Regular, monospace" fill="#3A4654">&lt;&lt;CITATIONS&gt;&gt;[{ id, title, url }]&lt;&lt;END&gt;&gt;</text>
-      <text x="14" y="70" font-size="10" font-family="ui-monospace, SFMono-Regular, monospace" fill="#3A4654">&lt;&lt;ACTION&gt;&gt;{ type, label, value }&lt;&lt;END&gt;&gt;</text>
-      <text x="14" y="84" font-size="9" fill="#7A8696">type ∈ { phone · link · show }</text>
+      <text x="14" y="40" font-size="10" font-family="ui-monospace, SFMono-Regular, monospace" fill="#3A4654">markdown text…</text>
+      <text x="14" y="54" font-size="10" font-family="ui-monospace, SFMono-Regular, monospace" fill="#3A4654">&lt;&lt;CITATIONS&gt;&gt;[{ id, title, url }]&lt;&lt;END&gt;&gt;</text>
+      <text x="14" y="68" font-size="10" font-family="ui-monospace, SFMono-Regular, monospace" fill="#3A4654">&lt;&lt;ACTION&gt;&gt;{ phone | link | show }&lt;&lt;END&gt;&gt;</text>
     </g>
 
-    <g transform="translate(852,832)">
-      <rect width="334" height="90" rx="8" fill="white" stroke="#C9D4E2"/>
+    <g transform="translate(820,876)">
+      <rect width="366" height="76" rx="8" fill="white" stroke="#C9D4E2"/>
       <text x="14" y="22" font-size="11" font-weight="700" fill="#002443" letter-spacing="1">GUARDRAILS</text>
-      <text x="14" y="42" font-size="10" fill="#3A4654">▸ Emergencies → "call 911 right now"</text>
-      <text x="14" y="56" font-size="10" fill="#3A4654">▸ International / UK → handoff</text>
-      <text x="14" y="70" font-size="10" fill="#3A4654">▸ KB-only (no facts invented)</text>
-      <text x="14" y="84" font-size="10" fill="#3A4654">▸ No PHI, no booking, no diagnosis</text>
+      <text x="14" y="40" font-size="10" fill="#3A4654">▸ Emergencies → call 911 right now</text>
+      <text x="14" y="54" font-size="10" fill="#3A4654">▸ International / UK → handoff</text>
+      <text x="14" y="68" font-size="10" fill="#3A4654">▸ KB-only · no PHI · no booking · no diagnosis</text>
     </g>
   </g>
 
   <!-- footer / legend -->
-  <line x1="40" y1="954" x2="1200" y2="954" stroke="#E5E9EE"/>
-  <g transform="translate(40,966)">
+  <line x1="40" y1="982" x2="1200" y2="982" stroke="#E5E9EE"/>
+  <g transform="translate(40,994)">
     <rect x="0" y="-8" width="14" height="3" fill="#0057B8"/>
     <text x="20" y="-4" font-size="10" font-weight="500" fill="#5C6470">request flow</text>
-    <rect x="120" y="-8" width="14" height="3" fill="#34D399"/>
+    <rect x="120" y="-8" width="14" height="3" fill="#10AA6F"/>
     <text x="140" y="-4" font-size="10" font-weight="500" fill="#5C6470">stream / return</text>
     <line x1="260" y1="-7" x2="280" y2="-7" stroke="#9CA3AF" stroke-dasharray="3 3"/>
     <text x="286" y="-4" font-size="10" font-weight="500" fill="#5C6470">network boundary</text>
-    <text x="1160" y="-4" text-anchor="end" font-size="10" fill="#9CA3AF">v1 · 2025</text>
+    <text x="1160" y="-4" text-anchor="end" font-size="10" fill="#9CA3AF">v2 · KB externalized · 2026</text>
   </g>
 </svg>
