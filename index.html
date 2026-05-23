@@ -808,17 +808,36 @@
     margin-top: 10px;
   }
 
-  /* Mobile responsiveness */
+  /* Mobile — full-screen takeover */
   @media (max-width: 640px) {
     .chat-widget {
-      bottom: 0;
+      top: 0;
       right: 0;
+      bottom: 0;
       left: 0;
       width: 100%;
       height: 100vh;
       height: 100dvh;
       border-radius: 0;
+      transform: translateY(100%);
+      transform-origin: bottom center;
+      transition: transform 0.36s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.2s ease;
+      box-shadow: none;
     }
+    .chat-widget.open { transform: translateY(0); }
+    /* Scrim is unnecessary when the chat covers the whole screen */
+    .chat-scrim, .chat-scrim.open {
+      background: transparent;
+      backdrop-filter: none;
+      -webkit-backdrop-filter: none;
+      pointer-events: none;
+    }
+    /* iOS safe-area handling */
+    .widget-header { padding-top: max(18px, env(safe-area-inset-top)); }
+    .composer-wrap { padding-bottom: max(16px, env(safe-area-inset-bottom)); }
+    /* Prevent page scroll bleed-through when widget is open */
+    body.widget-open { overflow: hidden; }
+
     .fab { bottom: 16px; right: 16px; }
     .page-nav { padding: 12px 16px; gap: 16px; }
     .nav-links { display: none; }
@@ -1207,6 +1226,7 @@ When in doubt, direct the patient to call the appropriate appointment line rathe
   function openWidget() {
     widget.classList.add('open');
     scrim.classList.add('open');
+    document.body.classList.add('widget-open');
     fab.style.display = 'none';
     document.querySelector('.fab-label').style.display = 'none';
     setTimeout(() => inputEl.focus(), 300);
@@ -1218,6 +1238,7 @@ When in doubt, direct the patient to call the appropriate appointment line rathe
   function closeWidget() {
     widget.classList.remove('open');
     scrim.classList.remove('open');
+    document.body.classList.remove('widget-open');
     fab.style.display = 'grid';
     document.querySelector('.fab-label').style.display = '';
   }
