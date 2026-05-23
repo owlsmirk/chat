@@ -1269,84 +1269,9 @@
   //  KNOWLEDGE BASE — paraphrased from public mayoclinic.org, verified May 2026
   //  Scope: U.S. patients only.
   // ────────────────────────────────────────────────────────────────
-  const KNOWLEDGE_BASE = [
-    { id: "kb-001", url: "https://www.mayoclinic.org/appointments",
-      title: "Requesting an appointment — overview",
-      content: `Mayo Clinic offers three intake paths: new patients submit information online and choose a follow-up time; returning patients request through their patient account; referring physicians have a separate path. Appointments can also be requested by phone during local business hours. The online form lets patients request a callback rather than wait on hold. Emergencies should be directed to 911 rather than the appointment line.`
-    },
-    { id: "kb-002", url: "https://www.mayoclinic.org/appointments",
-      title: "U.S. appointment phone numbers and hours",
-      content: `Mayo Clinic in Minnesota (Rochester) Central Appointment Office: 507-538-3270, 7 a.m. to 6 p.m. Central time, Monday-Friday. Minnesota Children's: 855-629-6543, same hours. Mayo Clinic in Arizona (Phoenix/Scottsdale) Central Appointment Office: 480-301-8484, 8 a.m. to 5 p.m. Mountain time, Monday-Friday. Mayo Clinic in Florida (Jacksonville) Central Appointment Office: 904-953-0853, 8 a.m. to 5 p.m. Eastern time, Monday-Friday. Mayo Clinic Health System locations (Iowa, Minnesota, Wisconsin) are listed at mayoclinichealthsystem.org/request-appointment/phone.`
-    },
-    { id: "kb-003", url: "https://www.mayoclinic.org/appointments/faq",
-      title: "How the appointment request process works",
-      content: `An appointment coordinator is assigned to build a care team and issue a full visit itinerary. A specific provider cannot be guaranteed. Wait times vary by medical need and specialty. After an itinerary is issued, the coordinating provider reviews medical history, orders necessary tests, and presents results and recommendations at the end of the visit.`
-    },
-    { id: "kb-004", url: "https://www.mayoclinic.org/appointments/faq",
-      title: "Referrals",
-      content: `Mayo Clinic generally does not require a doctor's referral. However, the patient's insurance plan may require one. Patients should check with their insurance company; if a referral is needed, Mayo can help. Physicians who refer patients have a separate intake path.`
-    },
-    { id: "kb-005", url: "https://www.mayoclinic.org/appointments/faq",
-      title: "Conditions and specialties treated",
-      content: `Mayo Clinic is consistently ranked among the top U.S. hospitals and is regularly recognized in Cancer, Cardiology and Heart Surgery, Diabetes and Endocrinology, Gastroenterology, Geriatrics, Gynecology, Neurology and Neurosurgery, Orthopedics, Pulmonology, and Urology.`
-    },
-    { id: "kb-006", url: "https://www.mayoclinic.org/locations",
-      title: "Mayo Clinic locations",
-      content: `Three U.S. campuses: Mayo Clinic in Arizona (Phoenix/Scottsdale), Mayo Clinic in Florida (Jacksonville), Mayo Clinic in Minnesota (Rochester). The Mayo Clinic Health System is a regional network serving communities in southern Minnesota, western Wisconsin, and northern Iowa.`
-    },
-    { id: "kb-007", url: "https://www.mayoclinic.org/patient-visitor-guide/travel-services",
-      title: "Patient Travel Services",
-      content: `Mayo Clinic offers Patient Travel Services to help patients plan their trip — hotel accommodations, transportation, and special accommodations based on health needs. Packing checklists and campus maps are available in advance.`
-    },
-    { id: "kb-008", url: "https://www.mayoclinic.org/billing-insurance",
-      title: "Billing and insurance overview",
-      content: `Mayo Clinic's billing area covers: paying bills online, preparing before arrival, accepted insurance plans, insurance and self-pay options, understanding bills, insurer approvals, price estimates and per-campus transparency, charitable care, copay assistance, and the federal No Surprises Act. Patient Account Services handles questions.`
-    },
-    { id: "kb-009", url: "https://www.mayoclinic.org/billing-insurance/before-arrival",
-      title: "Before arriving — what to address",
-      content: `Before a Mayo Clinic visit, patients should: complete the patient and financial checklist; obtain insurance pre-authorizations; sign the Mayo Clinic Authorizations and Service Terms form (required for all patients or guardians prior to care); complete registration; and arrange any required pre-service deposits.`
-    },
-    { id: "kb-010", url: "https://www.mayoclinic.org/billing-insurance/insurance/accepted-insurance",
-      title: "Insurance types accepted",
-      content: `Mayo Clinic has arrangements with several types of insurers: contracted plans, Medicare, Medicaid, TRICARE, HMOs, out-of-network noncontracted plans, and other types like disability, motor vehicle, prescription card, and workers' compensation. Patients should verify their specific plan with the campus they plan to visit.`
-    },
-    { id: "kb-011", url: "https://www.mayoclinic.org/billing-insurance/insurance/insurance-approvals",
-      title: "Insurance approvals — pre-certification and prior authorizations",
-      content: `Many plans require pre-certification before care. Investigating coverage can take up to six weeks. Services that may require pre-certification: outpatient and inpatient hospital services, observation, invasive procedures, CT, MRI, PET scans, colonoscopies. Patients are responsible for knowing plan requirements. If prior authorization isn't obtained, the patient may owe more — possibly all — of the cost. A pre-service deposit may be required.`
-    },
-    { id: "kb-012", url: "https://www.mayoclinic.org/billing-insurance/insurance/uninsured-patients",
-      title: "Uninsured (self-pay) or underinsured patients",
-      content: `"Underinsured" can mean a high deductible, high out-of-pocket maximum, limited-benefit plan, or out-of-network plan. With out-of-network insurance, patients are responsible for the difference between Mayo Clinic's rates and what insurance pays. Mayo Clinic offers an Uninsured Discount Policy: discounted prices on medically necessary care for qualified uninsured U.S. residents (not applied to cosmetic or non-medically-necessary elective care). Eligibility requires applying for Medicaid or other available assistance first.`
-    },
-    { id: "kb-013", url: "https://www.mayoclinic.org/billing-insurance/before-arrival/pre-service-deposits",
-      title: "Pre-service deposits",
-      content: `Pre-service deposits are required for: elective cosmetic surgery, noncontracted (out-of-network or reference-based payer) plans, plans requiring referral, health ministry reimbursement plans, and services denied by insurance. Amounts are based on estimates. Refunds are issued if deposits exceed actual charges. Financial Counseling can prepare estimates — call 1-507-284-2421 or 1-833-479-5483.`
-    },
-    { id: "kb-014", url: "https://www.mayoclinic.org/billing-insurance/financial-assistance",
-      title: "Charitable care and financial assistance",
-      content: `Mayo Clinic offers financial assistance for patients unable to pay for medically necessary care. Financial assistance documents are published separately for Arizona, Florida, and Minnesota campuses. A Copay and Grant Assistance program helps with out-of-pocket drug costs.`
-    },
-    { id: "kb-015", url: "https://www.mayoclinic.org/billing-insurance/price-estimates",
-      title: "Price estimates and transparency",
-      content: `Mayo Clinic offers an online Cost Estimator at estimator.mayoclinic.org for estimating service costs. Each campus also publishes price transparency pages (Arizona, Florida, Minnesota). CMS chargemaster pricing including COVID-19 test pricing is available. Personalized estimates reflecting a patient's insurance can be requested in advance.`
-    },
-    { id: "kb-016", url: "https://www.mayoclinic.org/billing-insurance/no-surprises-act",
-      title: "No Surprises Act",
-      content: `Mayo Clinic complies with the federal No Surprises Act, which provides consumer protections against surprise medical billing.`
-    },
-    { id: "kb-017", url: "https://www.mayoclinic.org/billing-insurance/contact-us",
-      title: "Billing and insurance contact",
-      content: `Billing and insurance questions go to Mayo Clinic Patient Account Services. A glossary of billing and insurance terms, topic-based FAQs, and a page on understanding the Mayo Clinic bill are also available.`
-    },
-    { id: "kb-018", url: "https://onlineservices.mayoclinic.org/content/staticpatient/showpage/patientonline",
-      title: "Patient Online Services and the Mayo Clinic app",
-      content: `Patient Online Services is Mayo Clinic's secure portal. Existing patients view test results, message their care team, request or view appointments, pay bills, and access medical records. Available on the web and through the Mayo Clinic app (iOS and Android). New patients typically create an account after their first appointment is scheduled.`
-    }
-  ];
+  // The knowledge base and system prompt now live server-side in
+  // kb.json and api/chat.js. The client only sends { lang, messages }.
 
-  // ────────────────────────────────────────────────────────────────
-  //  System prompt
-  // ────────────────────────────────────────────────────────────────
   // ────────────────────────────────────────────────────────────────
   //  Localization (English / Spanish)
   // ────────────────────────────────────────────────────────────────
@@ -1379,8 +1304,7 @@
         { icon: 'receipt',  title: "Billing & Insurance", desc: "Coverage, estimates, financial help",   prompt: "Does Mayo Clinic accept my insurance?" },
         { icon: 'map',      title: "Locations & Visits",  desc: "Campuses, travel, what to bring",       prompt: "Where are Mayo Clinic's campuses?" },
         { icon: 'user',     title: "Patient Portal",      desc: "Sign in, records, messages",            prompt: "How do I access Patient Online Services?" }
-      ],
-      systemLangRule: ""
+      ]
     },
     es: {
       label: "ES",
@@ -1410,8 +1334,7 @@
         { icon: 'receipt',  title: "Seguro y facturación",  desc: "Cobertura, estimados, ayuda financiera",   prompt: "¿Mayo Clinic acepta mi seguro?" },
         { icon: 'map',      title: "Ubicaciones y visitas", desc: "Sedes, viaje, qué llevar",                 prompt: "¿Dónde están las sedes de Mayo Clinic?" },
         { icon: 'user',     title: "Portal de pacientes",   desc: "Iniciar sesión, registros, mensajes",      prompt: "¿Cómo accedo a Servicios en Línea para Pacientes?" }
-      ],
-      systemLangRule: "\n\n10. LANGUAGE: Respond in Spanish (formal 'usted' form, Latin American Spanish). Keep medical and billing terminology accurate. Phone numbers, URLs, proper nouns, and the JSON control tokens (<<CITATIONS>>, <<ACTION>>, <<END>>) stay as-is. Translate CTA labels to Spanish (e.g. \"Call Rochester\" → \"Llamar a Rochester\", \"Request appointment online\" → \"Solicitar cita en línea\")."
+      ]
     }
   };
 
@@ -1423,61 +1346,9 @@
     return 'en';
   })();
 
-  function buildSystemPrompt() {
-    return BASE_SYSTEM_PROMPT + (L10N[currentLang]?.systemLangRule || '');
-  }
-
-  const BASE_SYSTEM_PROMPT = `You are a virtual assistant for Mayo Clinic patients, helping with appointment scheduling, preparation, locations, insurance, billing, and referrals. You are NOT a clinician and have NO access to patient records.
-
-CORE RULES — these are absolute:
-
-1. SCOPE — U.S. PATIENTS ONLY. This assistant handles U.S. patient inquiries for the Arizona, Florida, and Minnesota campuses, plus the Mayo Clinic Health System (Iowa, Minnesota, Wisconsin). You DO NOT handle:
-   - International patient inquiries (travel from outside the U.S.)
-   - Mayo Clinic Healthcare London / UK inquiries
-   When a patient mentions international travel, a non-U.S. address or country, the UK / London / Mayo Clinic Healthcare London, currency outside USD, or interpreter services for traveling internationally — DO NOT answer from the knowledge base. Respond warmly that a specialized assistant handles those inquiries:
-     - International (non-UK): "Our international patient services team has a dedicated assistant. Visit mayoclinic.org/international or email intl.isit@mayo.edu."
-     - UK / London: "Mayo Clinic Healthcare in London is supported by a separate team. Please visit mayoclinic.org/uk for help with appointments there."
-   Keep the handoff brief and friendly; do not attempt to answer.
-
-2. GROUND EVERY ANSWER IN THE PROVIDED KNOWLEDGE BASE. Never invent phone numbers, addresses, hours, policies, or procedures. If the knowledge base doesn't cover something, say so plainly.
-
-3. NO MEDICAL ADVICE. Do not diagnose, suggest treatments, evaluate symptoms, recommend medications, or interpret test results. For clinical questions:
-   - Brief acknowledgment
-   - State that you can't provide medical guidance
-   - Direction to call their care team or 911 for emergencies
-
-4. EMERGENCY ROUTING. Any mention of chest pain, stroke symptoms, severe bleeding, suicidal thoughts, difficulty breathing → "If this may be an emergency, please call 911 right now."
-
-5. NO BOOKING ACTIONS. You cannot schedule, cancel, or change appointments. Provide phone numbers and request-form links instead.
-
-6. NO PHI. Don't ask for medical history, conditions, or medications. If shared unprompted, don't analyze — refocus on the logistical question.
-
-7. CITATIONS. End every substantive answer with a JSON block on its own line at the very end:
-   <<CITATIONS>>[{"id":"kb-XXX","title":"...","url":"..."}]<<END>>
-   Only cite entries you actually used.
-
-8. TONE. Warm, professional, concise. No marketing language. No emoji. Short paragraphs. Use bold sparingly for key facts only. Avoid bullet lists unless genuinely enumerating distinct items.
-
-9. CTAs. When appropriate, end with one or two:
-   <<ACTION>>{"type":"phone","label":"Call Rochester","value":"507-538-3270"}<<END>>
-   <<ACTION>>{"type":"link","label":"Request appointment online","value":"https://www.mayoclinic.org/appointments"}<<END>>
-   <<ACTION>>{"type":"show","label":"Show me on this page","value":"page-new-patients-card"}<<END>>
-
-   The "show" type points the user at a specific element on the CURRENT page they're viewing — the host scrolls the element into view and pulses a highlight around it. Use it whenever your answer tells the user to click something that exists on this page right now. Prefer "show" over "link" when both reference the same destination.
-
-   Valid "show" target IDs on this page (use exactly these strings as the value):
-   - "page-request-appointment-button" — the blue "Request appointment" button in the top navigation
-   - "page-new-patients-card" — the "New patients" card with "Request online" link
-   - "page-returning-patients-card" — the "Returning patients" card with "Sign in" link
-   - "page-referring-physicians-card" — the "Referring physicians" card with "Provider portal" link
-
-   Only emit a "show" action when one of the above targets clearly matches what you're telling the user to do. Do not invent target IDs.
-
-KNOWLEDGE BASE (use only these facts):
-
-${KNOWLEDGE_BASE.map(e => `[${e.id}] ${e.title}\nURL: ${e.url}\n${e.content}`).join('\n\n---\n\n')}
-
-When in doubt, direct the patient to call the appropriate appointment line rather than guess.`;
+  /* System prompt assembly + knowledge base now live server-side in
+     api/chat.js + kb.json. The client only sends the language hint
+     and the conversation history. */
 
   // ────────────────────────────────────────────────────────────────
   //  Contextual follow-up chips
@@ -2049,7 +1920,7 @@ When in doubt, direct the patient to call the appropriate appointment line rathe
       const response = await fetch("/api/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json", "Accept": "text/event-stream" },
-        body: JSON.stringify({ system: buildSystemPrompt(), messages: history }),
+        body: JSON.stringify({ lang: currentLang, messages: history }),
         signal: activeController.signal
       });
 
