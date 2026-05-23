@@ -4,7 +4,7 @@
 // with the server-side API key, returns { text, usage } to the browser.
 
 const ANTHROPIC_VERSION = '2023-06-01';
-const DEFAULT_MODEL = 'claude-sonnet-4-5-20250929';
+const DEFAULT_MODEL = 'claude-sonnet-4-6';
 
 // In-memory rate limit (per warm container).
 // For real production, swap for Upstash Redis or similar.

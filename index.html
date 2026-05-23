@@ -2046,7 +2046,8 @@ When in doubt, direct the patient to call the appropriate appointment line rathe
       if (!response.ok) {
         const errBody = await response.json().catch(() => ({}));
         console.error('Proxy error', response.status, errBody);
-        throw new Error(errBody.error || `Server returned ${response.status}`);
+        const detail = errBody.detail ? ` — ${typeof errBody.detail === 'string' ? errBody.detail.slice(0, 200) : JSON.stringify(errBody.detail).slice(0, 200)}` : '';
+        throw new Error((errBody.error || `Server returned ${response.status}`) + detail);
       }
 
       const reader = response.body.getReader();
