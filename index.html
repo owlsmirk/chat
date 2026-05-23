@@ -566,6 +566,66 @@
   }
   .msg.bot .msg-body li { margin-bottom: 3px; }
 
+  /* Capability cards — replace the starter chip strip with a 2×2 grid
+     of category entries shown alongside the greeting. */
+  .greeting-msg .greeting-intro {
+    margin: 0 0 12px;
+    font-size: 15px;
+    line-height: 1.5;
+    letter-spacing: -0.005em;
+    color: var(--ink);
+  }
+  .capability-cards {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    margin-top: 4px;
+  }
+  .cap-card {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 12px 14px;
+    background: var(--surface);
+    border: 1px solid var(--rule);
+    border-radius: 12px;
+    cursor: pointer;
+    text-align: left;
+    font-family: var(--font-body);
+    transition: background 0.15s ease, border-color 0.15s ease, transform 0.12s ease;
+  }
+  .cap-card:hover,
+  .cap-card:focus-visible {
+    background: var(--surface-3);
+    border-color: var(--rule-2);
+    outline: none;
+  }
+  .cap-card:active { transform: scale(0.985); }
+  .cap-icon {
+    width: 18px;
+    height: 18px;
+    color: var(--mayo-blue);
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+  .cap-text { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+  .cap-title {
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: -0.005em;
+    color: var(--ink);
+    line-height: 1.25;
+  }
+  .cap-desc {
+    font-size: 12.5px;
+    color: var(--ink-2);
+    line-height: 1.4;
+    letter-spacing: -0.003em;
+  }
+  @media (max-width: 640px) {
+    .capability-cards { grid-template-columns: 1fr; }
+  }
+
   /* Inline citation chips ("mayoclinic.org +2") */
   .cite-chip {
     display: inline-flex;
@@ -1160,11 +1220,6 @@
     </button>
   </div>
 
-  <div class="suggestions" id="suggestions">
-    <!-- Starter chips rendered from L10N in script below -->
-
-  </div>
-
   <div class="composer-wrap">
     <div class="composer">
       <textarea
@@ -1306,15 +1361,13 @@
       disclaimer: "AI can make mistakes. Please verify important information before acting on it.",
       safetyStrong: "For medical emergencies, call 911.",
       safetyRest: "This assistant can't provide medical advice or access your records.",
-      greeting: "Hi, I'm the Mayo Assistant. I can help you find appointment information, understand insurance and billing, locate a campus, or prepare for a visit. What can I help you with?",
+      greeting: "Hi, I'm the Mayo Assistant. How can I help?",
       speechLang: "en-US",
-      starterChips: [
-        { q: "How do I request an appointment at Mayo Clinic?", label: "Make an appointment" },
-        { q: "Do I need a referral to be seen?", label: "Do I need a referral?" },
-        { q: "Does Mayo Clinic accept my insurance?", label: "Insurance & billing" },
-        { q: "How do I get a cost estimate for a procedure?", label: "Cost estimates" },
-        { q: "What financial assistance is available?", label: "Financial assistance" },
-        { q: "Where are Mayo Clinic's campuses?", label: "Locations" }
+      cards: [
+        { icon: 'calendar', title: "Appointments",        desc: "Request, prepare, or change a visit",   prompt: "How do I request an appointment?" },
+        { icon: 'receipt',  title: "Billing & Insurance", desc: "Coverage, estimates, financial help",   prompt: "Does Mayo Clinic accept my insurance?" },
+        { icon: 'map',      title: "Locations & Visits",  desc: "Campuses, travel, what to bring",       prompt: "Where are Mayo Clinic's campuses?" },
+        { icon: 'user',     title: "Patient Portal",      desc: "Sign in, records, messages",            prompt: "How do I access Patient Online Services?" }
       ],
       systemLangRule: ""
     },
@@ -1339,15 +1392,13 @@
       disclaimer: "La IA puede cometer errores. Por favor verifique información importante antes de actuar.",
       safetyStrong: "Para emergencias médicas, llame al 911.",
       safetyRest: "Este asistente no puede dar consejo médico ni acceder a sus registros.",
-      greeting: "Hola, soy el Asistente Mayo. Puedo ayudarle con información sobre citas, seguros y facturación, ubicaciones de sedes, o cómo prepararse para una visita. ¿En qué puedo ayudarle?",
+      greeting: "Hola, soy el Asistente Mayo. ¿En qué puedo ayudarle?",
       speechLang: "es-US",
-      starterChips: [
-        { q: "¿Cómo solicito una cita en Mayo Clinic?", label: "Solicitar una cita" },
-        { q: "¿Necesito una referencia para ser atendido?", label: "¿Necesito referencia?" },
-        { q: "¿Mayo Clinic acepta mi seguro?", label: "Seguro y facturación" },
-        { q: "¿Cómo obtengo un estimado de costos?", label: "Estimados de costos" },
-        { q: "¿Qué asistencia financiera está disponible?", label: "Asistencia financiera" },
-        { q: "¿Dónde están las sedes de Mayo Clinic?", label: "Ubicaciones" }
+      cards: [
+        { icon: 'calendar', title: "Citas",                 desc: "Solicitar, preparar o cambiar una visita", prompt: "¿Cómo solicito una cita?" },
+        { icon: 'receipt',  title: "Seguro y facturación",  desc: "Cobertura, estimados, ayuda financiera",   prompt: "¿Mayo Clinic acepta mi seguro?" },
+        { icon: 'map',      title: "Ubicaciones y visitas", desc: "Sedes, viaje, qué llevar",                 prompt: "¿Dónde están las sedes de Mayo Clinic?" },
+        { icon: 'user',     title: "Portal de pacientes",   desc: "Iniciar sesión, registros, mensajes",      prompt: "¿Cómo accedo a Servicios en Línea para Pacientes?" }
       ],
       systemLangRule: "\n\n10. LANGUAGE: Respond in Spanish (formal 'usted' form, Latin American Spanish). Keep medical and billing terminology accurate. Phone numbers, URLs, proper nouns, and the JSON control tokens (<<CITATIONS>>, <<ACTION>>, <<END>>) stay as-is. Translate CTA labels to Spanish (e.g. \"Call Rochester\" → \"Llamar a Rochester\", \"Request appointment online\" → \"Solicitar cita en línea\")."
     }
@@ -1563,7 +1614,6 @@ When in doubt, direct the patient to call the appropriate appointment line rathe
   const sendBtn = document.getElementById('sendBtn');
   const stopBtn = document.getElementById('stopBtn');
   const scrollPill = document.getElementById('scrollPill');
-  const suggestionsEl = document.getElementById('suggestions');
 
   const history = [];
   let widgetOpened = false;
@@ -1970,7 +2020,7 @@ When in doubt, direct the patient to call the appropriate appointment line rathe
 
   async function ask(userText) {
     if (!userText.trim() || activeController) return;
-    suggestionsEl.style.display = 'none';
+    clearGreetingCards();
     clearPriorFollowups();
 
     addUserMessage(userText);
@@ -2083,19 +2133,57 @@ When in doubt, direct the patient to call the appropriate appointment line rathe
     }
   }
 
+  /* Heroicons-style 18px stroke icons used by the capability cards. */
+  const CARD_ICONS = {
+    calendar: '<rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>',
+    receipt:  '<path d="M4 2v20l3-2 3 2 3-2 3 2 3-2V2H4z"/><line x1="8" y1="9" x2="16" y2="9"/><line x1="8" y1="13" x2="14" y2="13"/>',
+    map:      '<path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/>',
+    user:     '<path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>'
+  };
+
   function greet() {
-    addBotMessage(L10N[currentLang].greeting, [], [], { feedback: false });
+    const t = L10N[currentLang];
+    const wrap = document.createElement('div');
+    wrap.className = 'msg bot greeting-msg';
+    wrap.id = 'greetingMsg';
+
+    const body = document.createElement('div');
+    body.className = 'msg-body';
+
+    const intro = document.createElement('p');
+    intro.className = 'greeting-intro';
+    intro.textContent = t.greeting;
+    body.appendChild(intro);
+
+    const grid = document.createElement('div');
+    grid.className = 'capability-cards';
+    t.cards.forEach(c => {
+      const card = document.createElement('button');
+      card.type = 'button';
+      card.className = 'cap-card';
+      card.dataset.prompt = c.prompt;
+      card.innerHTML = `
+        <svg class="cap-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${CARD_ICONS[c.icon] || ''}</svg>
+        <div class="cap-text">
+          <div class="cap-title">${escapeHtml(c.title)}</div>
+          <div class="cap-desc">${escapeHtml(c.desc)}</div>
+        </div>
+      `;
+      card.addEventListener('click', () => ask(c.prompt));
+      grid.appendChild(card);
+    });
+    body.appendChild(grid);
+
+    wrap.appendChild(body);
+    messagesEl.appendChild(wrap);
+    scrollToBottom();
   }
 
-  function renderStarterChips() {
-    suggestionsEl.innerHTML = '';
-    L10N[currentLang].starterChips.forEach(c => {
-      const b = document.createElement('button');
-      b.className = 'chip';
-      b.dataset.q = c.q;
-      b.textContent = c.label;
-      suggestionsEl.appendChild(b);
-    });
+  /* Cards live inside the greeting bot message. Remove them as soon
+     as a real conversation starts. */
+  function clearGreetingCards() {
+    const cards = document.querySelector('#greetingMsg .capability-cards');
+    if (cards) cards.remove();
   }
 
   /* Update every locale-aware piece of UI chrome. Existing messages
@@ -2123,8 +2211,6 @@ When in doubt, direct the patient to call the appropriate appointment line rathe
       micBtn.setAttribute('title', t.voiceLabel);
     }
     if (typeof voiceSetLang === 'function') voiceSetLang(t.speechLang);
-
-    renderStarterChips();
 
     /* If the user is still on the greeting (no exchange yet), re-render
        it in the new language. Once a real conversation has started we
@@ -2160,11 +2246,6 @@ When in doubt, direct the patient to call the appropriate appointment line rathe
     inputEl.style.height = 'auto';
     inputEl.style.height = Math.min(inputEl.scrollHeight, 100) + 'px';
     updateSendEnabled();
-  });
-  suggestionsEl.addEventListener('click', (e) => {
-    if (e.target.classList.contains('chip')) {
-      ask(e.target.dataset.q);
-    }
   });
 
   // ────────────────────────────────────────────────────────────────
