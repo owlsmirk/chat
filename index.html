@@ -713,21 +713,21 @@
 
   /* CTAs — stacked pill buttons */
   .cta-stack {
-    margin-top: 12px;
+    margin-top: 10px;
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: 6px;
   }
   .cta {
     display: flex;
     align-items: center;
-    gap: 10px;
-    padding: 13px 18px;
+    gap: 8px;
+    padding: 9px 14px;
     border-radius: 999px;
     border: 1px solid var(--rule-2);
     background: var(--surface);
     color: var(--ink);
-    font-size: 14px;
+    font-size: 12.5px;
     font-weight: 500;
     text-decoration: none;
     transition: all 0.15s;
@@ -741,7 +741,7 @@
     margin-left: auto;
     color: var(--ink-3);
   }
-  .cta svg { width: 16px; height: 16px; }
+  .cta svg { width: 14px; height: 14px; }
   .cta.primary {
     background: var(--mayo-blue);
     color: white;
@@ -783,12 +783,13 @@
   }
   .chip:active { transform: translateY(0); }
 
-  /* Contextual follow-up chips, attached under a bot reply */
+  /* Contextual follow-up chips, attached under a bot reply.
+     Compact pills so they don't push the response out of view. */
   .followups {
-    margin-top: 14px;
+    margin-top: 10px;
     display: flex;
     flex-wrap: wrap;
-    gap: 6px;
+    gap: 4px;
     transition: opacity 0.2s ease, transform 0.2s ease;
   }
   .followups.fade-out {
@@ -800,26 +801,26 @@
     background: var(--surface);
     border: 1px solid var(--rule-2);
     color: var(--mayo-blue-deep);
-    padding: 8px 13px;
+    padding: 4px 10px;
     border-radius: 999px;
-    font-size: 13px;
+    font-size: 11.5px;
     font-weight: 500;
-    letter-spacing: -0.005em;
+    letter-spacing: -0.003em;
     cursor: pointer;
     font-family: inherit;
     display: inline-flex;
     align-items: center;
-    gap: 6px;
+    gap: 5px;
     white-space: nowrap;
     max-width: 100%;
-    line-height: 1.2;
+    line-height: 1.25;
     transition: background 0.15s, border-color 0.15s, transform 0.12s, color 0.15s;
     animation: chip-pop 0.32s cubic-bezier(0.16, 1, 0.3, 1) both;
   }
   .followup-chip::before {
     content: "";
-    width: 12px;
-    height: 12px;
+    width: 10px;
+    height: 10px;
     background: var(--mayo-blue);
     -webkit-mask: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'><path d='M7 17 L17 7 M9 7 H17 V15'/></svg>") center/contain no-repeat;
             mask: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'><path d='M7 17 L17 7 M9 7 H17 V15'/></svg>") center/contain no-repeat;
