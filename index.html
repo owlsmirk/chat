@@ -1764,6 +1764,14 @@ When in doubt, direct the patient to call the appropriate appointment line rathe
     if (typeof voiceSetLang === 'function') voiceSetLang(t.speechLang);
 
     renderStarterChips();
+
+    /* If the user is still on the greeting (no exchange yet), re-render
+       it in the new language. Once a real conversation has started we
+       leave prior messages alone. */
+    if (widgetOpened && history.length === 0) {
+      messagesEl.innerHTML = '';
+      greet();
+    }
   }
 
   let voiceCleanup = () => {};
