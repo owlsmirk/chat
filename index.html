@@ -448,30 +448,16 @@
   }
   .lang-toggle:active { transform: scale(0.94); }
 
-  /* Centered brand block — three-shield emblem alongside the title */
-  .widget-brand {
+  .widget-title {
     position: absolute;
     left: 50%;
     transform: translateX(-50%);
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-  }
-  .widget-brand-mark {
-    width: 22px;
-    height: 16px;
-    color: #080808;
-    flex-shrink: 0;
-  }
-  .widget-brand-mark svg { width: 100%; height: 100%; display: block; }
-  .widget-title {
     font-family: var(--font-body);
     font-size: 15px;
     font-weight: 600;
     color: var(--ink);
     letter-spacing: -0.015em;
     font-feature-settings: 'cv11', 'ss01', 'ss03';
-    white-space: nowrap;
   }
   /* Status simplified to just a small dot — "Online" label removed */
   .widget-status {
@@ -1185,15 +1171,15 @@
   <span data-i18n="backToChat">Back to chat</span>
 </button>
 
-<button class="fab" id="fab" aria-label="Open Mayo Scheduling Assistant">
+<button class="fab" id="fab" aria-label="Open Mayo Assistant">
   <span class="fab-pulse"></span>
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
     <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
   </svg>
 </button>
-<div class="fab-label">Ask Mayo Scheduling Assistant</div>
+<div class="fab-label">Ask Mayo Assistant</div>
 
-<div class="chat-widget" id="widget" role="dialog" aria-label="Mayo Scheduling Assistant">
+<div class="chat-widget" id="widget" role="dialog" aria-label="Mayo Assistant">
   <header class="widget-header">
     <button class="widget-close" id="closeBtn" aria-label="Close chat">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
@@ -1204,16 +1190,7 @@
     <button class="lang-toggle" id="langBtn" aria-label="Switch language">
       <span id="langCurrent">EN</span>
     </button>
-    <div class="widget-brand" aria-label="Mayo Scheduling Assistant">
-      <span class="widget-brand-mark" aria-hidden="true">
-        <svg viewBox="0 0 100 80" stroke="currentColor" stroke-width="6" stroke-linejoin="round">
-          <path fill="white" d="M5 4 L37 4 L37 36 A16 16 0 0 1 5 36 Z"/>
-          <path fill="white" d="M63 4 L95 4 L95 36 A16 16 0 0 1 63 36 Z"/>
-          <path fill="white" d="M34 22 L66 22 L66 54 A16 16 0 0 1 34 54 Z"/>
-        </svg>
-      </span>
-      <span class="widget-title" data-i18n="title">Mayo Scheduling Assistant</span>
-    </div>
+    <span class="widget-title" data-i18n="title">Mayo Assistant</span>
     <span class="widget-status"><span class="status-dot"></span><span data-i18n="status">Online</span></span>
     <button class="widget-menu-btn" id="menuBtn" aria-label="Conversation options" aria-haspopup="true" aria-expanded="false">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
@@ -1301,7 +1278,7 @@
   const L10N = {
     en: {
       label: "EN",
-      title: "Mayo Scheduling Assistant",
+      title: "Mayo Assistant",
       status: "Online",
       placeholder: "Type your question…",
       voiceLabel: "Voice input",
@@ -1313,15 +1290,15 @@
       toastCopied: "Transcript copied",
       toastDownloaded: "Transcript downloaded",
       toastEmpty: "No conversation yet",
-      transcriptTitle: "Mayo Scheduling Assistant — conversation transcript",
+      transcriptTitle: "Mayo Assistant — conversation transcript",
       transcriptYou: "You",
-      transcriptBot: "Mayo Scheduling Assistant",
+      transcriptBot: "Mayo Assistant",
       transcriptDisclaimer: "AI can make mistakes — verify important information before acting on it.",
-      emailSubject: "Mayo Scheduling Assistant conversation",
+      emailSubject: "Mayo Assistant conversation",
       disclaimer: "AI can make mistakes. Please verify important information before acting on it.",
       safetyStrong: "For medical emergencies, call 911.",
       safetyRest: "This assistant can't provide medical advice or access your records.",
-      greeting: "Hi, I'm the Mayo Scheduling Assistant. How can I help?",
+      greeting: "Hi, I'm the Mayo Assistant. How can I help?",
       speechLang: "en-US",
       cards: [
         { icon: 'calendar', title: "Appointments",        desc: "Request, prepare, or change a visit",   prompt: "How do I request an appointment?" },
@@ -1332,7 +1309,7 @@
     },
     es: {
       label: "ES",
-      title: "Asistente de Citas Mayo",
+      title: "Asistente Mayo",
       status: "En línea",
       placeholder: "Escriba su pregunta…",
       voiceLabel: "Entrada de voz",
@@ -1344,15 +1321,15 @@
       toastCopied: "Transcripción copiada",
       toastDownloaded: "Transcripción descargada",
       toastEmpty: "Aún no hay conversación",
-      transcriptTitle: "Asistente de Citas Mayo — transcripción de la conversación",
+      transcriptTitle: "Asistente Mayo — transcripción de la conversación",
       transcriptYou: "Usted",
-      transcriptBot: "Asistente de Citas Mayo",
+      transcriptBot: "Asistente Mayo",
       transcriptDisclaimer: "La IA puede cometer errores — verifique información importante antes de actuar.",
-      emailSubject: "Conversación con el Asistente de Citas Mayo",
+      emailSubject: "Conversación con el Asistente Mayo",
       disclaimer: "La IA puede cometer errores. Por favor verifique información importante antes de actuar.",
       safetyStrong: "Para emergencias médicas, llame al 911.",
       safetyRest: "Este asistente no puede dar consejo médico ni acceder a sus registros.",
-      greeting: "Hola, soy el Asistente de Citas Mayo. ¿En qué puedo ayudarle?",
+      greeting: "Hola, soy el Asistente Mayo. ¿En qué puedo ayudarle?",
       speechLang: "es-US",
       cards: [
         { icon: 'calendar', title: "Citas",                 desc: "Solicitar, preparar o cambiar una visita", prompt: "¿Cómo solicito una cita?" },
