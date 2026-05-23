@@ -848,6 +848,64 @@
     margin-top: 10px;
   }
 
+  /* "Show me on the page" — spotlight ring around the highlighted element */
+  .page-highlight {
+    position: relative;
+    z-index: 5;
+    animation: spotlight 1.6s ease-out 2;
+    border-radius: 8px;
+  }
+  @keyframes spotlight {
+    0%   { box-shadow: 0 0 0 0 rgba(0, 87, 184, 0.55), 0 0 0 0 rgba(0, 87, 184, 0.30); }
+    40%  { box-shadow: 0 0 0 6px rgba(0, 87, 184, 0.55), 0 0 0 16px rgba(0, 87, 184, 0.18); }
+    100% { box-shadow: 0 0 0 0 rgba(0, 87, 184, 0), 0 0 0 28px rgba(0, 87, 184, 0); }
+  }
+
+  /* CTA variant for the show-me-on-page action */
+  .cta.show-me {
+    background: var(--mayo-blue-light);
+    color: var(--mayo-blue-deep);
+    border-color: var(--mayo-blue);
+  }
+  .cta.show-me:hover {
+    background: #D6E6FB;
+    border-color: var(--mayo-blue-deep);
+  }
+  .cta.show-me .cta-icon { color: var(--mayo-blue); }
+
+  /* "Back to chat" floating pill, shown after the chat dismisses
+     itself to reveal a highlighted page target */
+  .back-to-chat {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translate(-50%, 80px);
+    background: var(--mayo-blue);
+    color: white;
+    padding: 12px 22px;
+    border-radius: 999px;
+    font-family: var(--font-body);
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: -0.005em;
+    box-shadow: 0 10px 30px rgba(0, 36, 67, 0.28), 0 4px 10px rgba(0, 36, 67, 0.16);
+    cursor: pointer;
+    border: none;
+    z-index: 250;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    opacity: 0;
+    pointer-events: none;
+    transition: transform 0.28s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.2s ease;
+  }
+  .back-to-chat.show {
+    transform: translate(-50%, 0);
+    opacity: 1;
+    pointer-events: auto;
+  }
+  .back-to-chat svg { width: 16px; height: 16px; }
+
   /* Mobile — full-screen takeover */
   @media (max-width: 640px) {
     .chat-widget {
@@ -912,7 +970,7 @@
       <span>For Medical Professionals</span>
       <span>Research</span>
     </div>
-    <div class="nav-cta">Request appointment</div>
+    <div class="nav-cta" id="page-request-appointment-button">Request appointment</div>
   </nav>
 
   <section class="hero">
@@ -925,17 +983,17 @@
   </section>
 
   <section class="content-grid">
-    <div class="card">
+    <div class="card" id="page-new-patients-card">
       <h3>New patients</h3>
       <p>Share your information and pick a follow-up time that works for you.</p>
       <span class="card-link">Request online</span>
     </div>
-    <div class="card">
+    <div class="card" id="page-returning-patients-card">
       <h3>Returning patients</h3>
       <p>Sign in to your patient account to schedule with your care team.</p>
       <span class="card-link">Sign in</span>
     </div>
-    <div class="card">
+    <div class="card" id="page-referring-physicians-card">
       <h3>Referring physicians</h3>
       <p>Refer a patient or request a consultation with a Mayo specialist.</p>
       <span class="card-link">Provider portal</span>
@@ -947,6 +1005,13 @@
      FAB + WIDGET
      ═══════════════════════════════════════════════════════════════ -->
 <div class="chat-scrim" id="scrim"></div>
+
+<button class="back-to-chat" id="backToChatBtn" aria-label="Return to chat">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+  </svg>
+  <span data-i18n="backToChat">Back to chat</span>
+</button>
 
 <button class="fab" id="fab" aria-label="Open Mayo Assistant">
   <span class="fab-pulse"></span>
@@ -1122,6 +1187,8 @@
       placeholder: "Type your question…",
       voiceLabel: "Voice input",
       sourcesTitle: "Sources",
+      backToChat: "Back to chat",
+      showMeLabel: "Show me on this page",
       disclaimer: "AI can make mistakes. Please verify important information before acting on it.",
       safetyStrong: "For medical emergencies, call 911.",
       safetyRest: "This assistant can't provide medical advice or access your records.",
@@ -1144,6 +1211,8 @@
       placeholder: "Escriba su pregunta…",
       voiceLabel: "Entrada de voz",
       sourcesTitle: "Fuentes",
+      backToChat: "Volver al chat",
+      showMeLabel: "Mostrar en la página",
       disclaimer: "La IA puede cometer errores. Por favor verifique información importante antes de actuar.",
       safetyStrong: "Para emergencias médicas, llame al 911.",
       safetyRest: "Este asistente no puede dar consejo médico ni acceder a sus registros.",
@@ -1207,6 +1276,17 @@ CORE RULES — these are absolute:
 9. CTAs. When appropriate, end with one or two:
    <<ACTION>>{"type":"phone","label":"Call Rochester","value":"507-538-3270"}<<END>>
    <<ACTION>>{"type":"link","label":"Request appointment online","value":"https://www.mayoclinic.org/appointments"}<<END>>
+   <<ACTION>>{"type":"show","label":"Show me on this page","value":"page-new-patients-card"}<<END>>
+
+   The "show" type points the user at a specific element on the CURRENT page they're viewing — the host scrolls the element into view and pulses a highlight around it. Use it whenever your answer tells the user to click something that exists on this page right now. Prefer "show" over "link" when both reference the same destination.
+
+   Valid "show" target IDs on this page (use exactly these strings as the value):
+   - "page-request-appointment-button" — the blue "Request appointment" button in the top navigation
+   - "page-new-patients-card" — the "New patients" card with "Request online" link
+   - "page-returning-patients-card" — the "Returning patients" card with "Sign in" link
+   - "page-referring-physicians-card" — the "Referring physicians" card with "Provider portal" link
+
+   Only emit a "show" action when one of the above targets clearly matches what you're telling the user to do. Do not invent target IDs.
 
 KNOWLEDGE BASE (use only these facts):
 
@@ -1387,8 +1467,59 @@ When in doubt, direct the patient to call the appropriate appointment line rathe
     document.querySelector('.fab-label').style.display = '';
   }
 
+  // ────────────────────────────────────────────────────────────────
+  //  Show me on the page — scroll target into view and pulse it.
+  //  On mobile the widget covers everything, so dismiss it first and
+  //  surface a "Back to chat" pill the user can tap to come back.
+  // ────────────────────────────────────────────────────────────────
+  const backToChatBtn = document.getElementById('backToChatBtn');
+  let lastHighlighted = null;
+  let highlightTimer = null;
+
+  function showPageTarget(targetId) {
+    const el = document.getElementById(targetId);
+    if (!el) {
+      console.warn('show: unknown target', targetId);
+      return;
+    }
+    const isMobile = window.matchMedia('(max-width: 640px)').matches;
+    const wasOpen = widget.classList.contains('open');
+
+    const doHighlight = () => {
+      el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      if (lastHighlighted) lastHighlighted.classList.remove('page-highlight');
+      clearTimeout(highlightTimer);
+      // Restart the animation by reflow-toggling the class
+      el.classList.remove('page-highlight');
+      void el.offsetWidth;
+      el.classList.add('page-highlight');
+      lastHighlighted = el;
+      highlightTimer = setTimeout(() => {
+        el.classList.remove('page-highlight');
+        if (lastHighlighted === el) lastHighlighted = null;
+      }, 3400);
+    };
+
+    if (isMobile && wasOpen) {
+      closeWidget();
+      // Wait for the slide-down to clear before we scroll the page
+      setTimeout(doHighlight, 360);
+      backToChatBtn.classList.add('show');
+    } else {
+      doHighlight();
+    }
+  }
+
+  backToChatBtn.addEventListener('click', () => {
+    backToChatBtn.classList.remove('show');
+    openWidget();
+  });
+
   fab.addEventListener('click', openWidget);
-  closeBtn.addEventListener('click', closeWidget);
+  closeBtn.addEventListener('click', () => {
+    backToChatBtn.classList.remove('show');
+    closeWidget();
+  });
   scrim.addEventListener('click', closeWidget);
   document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape' && widget.classList.contains('open')) closeWidget();
@@ -1460,23 +1591,39 @@ When in doubt, direct the patient to call the appropriate appointment line rathe
       const stack = document.createElement('div');
       stack.className = 'cta-stack';
       actions.forEach((a, i) => {
-        const el = document.createElement('a');
-        el.className = 'cta' + (i === 0 ? ' primary' : '');
-        if (a.type === 'phone') {
-          el.href = `tel:${a.value.replace(/[^0-9+]/g, '')}`;
+        let el;
+        if (a.type === 'show') {
+          // Render as a button — clicking scrolls the page target into
+          // view and pulses a highlight. On mobile we dismiss the chat
+          // first so the user can actually see the page.
+          el = document.createElement('button');
+          el.type = 'button';
+          el.className = 'cta show-me' + (i === 0 ? ' primary' : '');
           el.innerHTML = `
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
-            <span>${escapeHtml(a.label)}</span>
-            <span class="cta-arrow">${escapeHtml(a.value)}</span>
-          `;
-        } else {
-          el.href = a.value;
-          el.target = '_blank';
-          el.rel = 'noopener';
-          el.innerHTML = `
-            <span>${escapeHtml(a.label)}</span>
+            <svg class="cta-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+            <span>${escapeHtml(a.label || L10N[currentLang].showMeLabel)}</span>
             <svg class="cta-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
           `;
+          el.addEventListener('click', () => showPageTarget(a.value));
+        } else {
+          el = document.createElement('a');
+          el.className = 'cta' + (i === 0 ? ' primary' : '');
+          if (a.type === 'phone') {
+            el.href = `tel:${a.value.replace(/[^0-9+]/g, '')}`;
+            el.innerHTML = `
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+              <span>${escapeHtml(a.label)}</span>
+              <span class="cta-arrow">${escapeHtml(a.value)}</span>
+            `;
+          } else {
+            el.href = a.value;
+            el.target = '_blank';
+            el.rel = 'noopener';
+            el.innerHTML = `
+              <span>${escapeHtml(a.label)}</span>
+              <svg class="cta-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+            `;
+          }
         }
         stack.appendChild(el);
       });
