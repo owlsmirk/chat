@@ -344,6 +344,29 @@
   .widget-close:active { transform: scale(0.96); }
   .widget-close svg { width: 16px; height: 16px; }
 
+  /* Language toggle pill — sits in the header next to close */
+  .lang-toggle {
+    margin-left: 6px;
+    background: rgba(255, 255, 255, 0.14);
+    border: 1px solid rgba(255, 255, 255, 0.28);
+    color: white;
+    font-family: var(--font-body);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    padding: 0 10px;
+    height: 26px;
+    border-radius: 999px;
+    cursor: pointer;
+    transition: background 0.15s, transform 0.12s, border-color 0.15s;
+    font-feature-settings: 'tnum';
+  }
+  .lang-toggle:hover {
+    background: rgba(255, 255, 255, 0.24);
+    border-color: rgba(255, 255, 255, 0.4);
+  }
+  .lang-toggle:active { transform: scale(0.94); }
+
   .widget-title {
     position: absolute;
     left: 50%;
@@ -941,8 +964,11 @@
         <line x1="6" y1="6" x2="18" y2="18"/>
       </svg>
     </button>
-    <span class="widget-title">Mayo Assistant</span>
-    <span class="widget-status"><span class="status-dot"></span>Online</span>
+    <button class="lang-toggle" id="langBtn" aria-label="Switch language">
+      <span id="langCurrent">EN</span>
+    </button>
+    <span class="widget-title" data-i18n="title">Mayo Assistant</span>
+    <span class="widget-status"><span class="status-dot"></span><span data-i18n="status">Online</span></span>
   </header>
 
   <div class="safety-banner">
@@ -951,7 +977,7 @@
       <line x1="12" y1="9" x2="12" y2="13"/>
       <line x1="12" y1="17" x2="12.01" y2="17"/>
     </svg>
-    <span><strong>For medical emergencies, call 911.</strong> This assistant can't provide medical advice or access your records.</span>
+    <span><strong data-i18n="safetyStrong">For medical emergencies, call 911.</strong> <span data-i18n="safetyRest">This assistant can't provide medical advice or access your records.</span></span>
   </div>
 
   <div class="messages-wrap">
@@ -965,12 +991,8 @@
   </div>
 
   <div class="suggestions" id="suggestions">
-    <button class="chip" data-q="How do I request an appointment at Mayo Clinic?">Make an appointment</button>
-    <button class="chip" data-q="Do I need a referral to be seen?">Do I need a referral?</button>
-    <button class="chip" data-q="Does Mayo Clinic accept my insurance?">Insurance &amp; billing</button>
-    <button class="chip" data-q="How do I get a cost estimate for a procedure?">Cost estimates</button>
-    <button class="chip" data-q="What financial assistance is available?">Financial assistance</button>
-    <button class="chip" data-q="Where are Mayo Clinic's campuses?">Locations</button>
+    <!-- Starter chips rendered from L10N in script below -->
+
   </div>
 
   <div class="composer-wrap">
@@ -1000,7 +1022,7 @@
         </svg>
       </button>
     </div>
-    <div class="disclaimer-line">
+    <div class="disclaimer-line" data-i18n="disclaimer">
       AI can make mistakes. Please verify important information before acting on it.
     </div>
   </div>
@@ -1089,7 +1111,69 @@
   // ────────────────────────────────────────────────────────────────
   //  System prompt
   // ────────────────────────────────────────────────────────────────
-  const SYSTEM_PROMPT = `You are a virtual assistant for Mayo Clinic patients, helping with appointment scheduling, preparation, locations, insurance, billing, and referrals. You are NOT a clinician and have NO access to patient records.
+  // ────────────────────────────────────────────────────────────────
+  //  Localization (English / Spanish)
+  // ────────────────────────────────────────────────────────────────
+  const L10N = {
+    en: {
+      label: "EN",
+      title: "Mayo Assistant",
+      status: "Online",
+      placeholder: "Type your question…",
+      voiceLabel: "Voice input",
+      sourcesTitle: "Sources",
+      disclaimer: "AI can make mistakes. Please verify important information before acting on it.",
+      safetyStrong: "For medical emergencies, call 911.",
+      safetyRest: "This assistant can't provide medical advice or access your records.",
+      greeting: "Hi, I'm the Mayo Assistant. I can help you find appointment information, understand insurance and billing, locate a campus, or prepare for a visit. What can I help you with?",
+      speechLang: "en-US",
+      starterChips: [
+        { q: "How do I request an appointment at Mayo Clinic?", label: "Make an appointment" },
+        { q: "Do I need a referral to be seen?", label: "Do I need a referral?" },
+        { q: "Does Mayo Clinic accept my insurance?", label: "Insurance & billing" },
+        { q: "How do I get a cost estimate for a procedure?", label: "Cost estimates" },
+        { q: "What financial assistance is available?", label: "Financial assistance" },
+        { q: "Where are Mayo Clinic's campuses?", label: "Locations" }
+      ],
+      systemLangRule: ""
+    },
+    es: {
+      label: "ES",
+      title: "Asistente Mayo",
+      status: "En línea",
+      placeholder: "Escriba su pregunta…",
+      voiceLabel: "Entrada de voz",
+      sourcesTitle: "Fuentes",
+      disclaimer: "La IA puede cometer errores. Por favor verifique información importante antes de actuar.",
+      safetyStrong: "Para emergencias médicas, llame al 911.",
+      safetyRest: "Este asistente no puede dar consejo médico ni acceder a sus registros.",
+      greeting: "Hola, soy el Asistente Mayo. Puedo ayudarle con información sobre citas, seguros y facturación, ubicaciones de sedes, o cómo prepararse para una visita. ¿En qué puedo ayudarle?",
+      speechLang: "es-US",
+      starterChips: [
+        { q: "¿Cómo solicito una cita en Mayo Clinic?", label: "Solicitar una cita" },
+        { q: "¿Necesito una referencia para ser atendido?", label: "¿Necesito referencia?" },
+        { q: "¿Mayo Clinic acepta mi seguro?", label: "Seguro y facturación" },
+        { q: "¿Cómo obtengo un estimado de costos?", label: "Estimados de costos" },
+        { q: "¿Qué asistencia financiera está disponible?", label: "Asistencia financiera" },
+        { q: "¿Dónde están las sedes de Mayo Clinic?", label: "Ubicaciones" }
+      ],
+      systemLangRule: "\n\n10. LANGUAGE: Respond in Spanish (formal 'usted' form, Latin American Spanish). Keep medical and billing terminology accurate. Phone numbers, URLs, proper nouns, and the JSON control tokens (<<CITATIONS>>, <<ACTION>>, <<END>>) stay as-is. Translate CTA labels to Spanish (e.g. \"Call Rochester\" → \"Llamar a Rochester\", \"Request appointment online\" → \"Solicitar cita en línea\")."
+    }
+  };
+
+  let currentLang = (() => {
+    try {
+      const saved = localStorage.getItem('mayo-lang');
+      if (saved === 'es' || saved === 'en') return saved;
+    } catch (e) {}
+    return 'en';
+  })();
+
+  function buildSystemPrompt() {
+    return BASE_SYSTEM_PROMPT + (L10N[currentLang]?.systemLangRule || '');
+  }
+
+  const BASE_SYSTEM_PROMPT = `You are a virtual assistant for Mayo Clinic patients, helping with appointment scheduling, preparation, locations, insurance, billing, and referrals. You are NOT a clinician and have NO access to patient records.
 
 CORE RULES — these are absolute:
 
@@ -1137,41 +1221,80 @@ When in doubt, direct the patient to call the appropriate appointment line rathe
   //  are filtered out.
   // ────────────────────────────────────────────────────────────────
   const FOLLOWUP_BY_KB = {
-    'kb-001': ["Do I need a referral?", "How long until I'm seen?", "Can I request a callback instead of waiting on hold?"],
-    'kb-002': ["What if I'm calling outside business hours?", "Which campus should I call?", "Where are Mayo's campuses?"],
-    'kb-003': ["Can I choose my doctor?", "What happens after my visit?", "How long does a typical visit take?"],
-    'kb-004': ["Does my insurance plan need a referral?", "How do I request an appointment?", "What if my doctor won't refer me?"],
-    'kb-005': ["Which campus treats my condition?", "How are wait times for specialty care?"],
-    'kb-006': ["What's the phone number for that campus?", "Are travel services available?", "Is the Mayo Clinic Health System the same as Mayo Clinic?"],
-    'kb-007': ["Where can I stay during my visit?", "Are there Mayo-recommended hotels?", "Do you help with special-needs travel?"],
-    'kb-008': ["How do I pay my bill online?", "What is the No Surprises Act?", "What financial assistance is available?"],
-    'kb-009': ["What is a pre-service deposit?", "What do I need to bring to my visit?", "What's the Authorizations and Service Terms form?"],
-    'kb-010': ["Does Mayo accept Medicare?", "What about out-of-network plans?", "Do I need pre-authorization?"],
-    'kb-011': ["How long does pre-authorization take?", "What if my insurance denies coverage?", "What is a pre-service deposit?"],
-    'kb-012': ["What is the Uninsured Discount Policy?", "How do I apply for Medicaid?", "Is financial assistance available?"],
-    'kb-013': ["How is the deposit amount calculated?", "Will I get a refund if I overpay?", "Who do I call about my deposit?"],
-    'kb-014': ["How do I apply for financial assistance?", "Is there help with prescription costs?", "Does this apply to all campuses?"],
-    'kb-015': ["How do I get a personalized estimate?", "Where do I find price transparency?", "Does the estimate include my insurance?"],
-    'kb-016': ["What does the No Surprises Act protect against?", "What if I got a surprise bill?"],
-    'kb-017': ["How do I contact Patient Account Services?", "Where's the billing glossary?", "How do I understand my Mayo Clinic bill?"],
-    'kb-018': ["How do I sign up for Patient Online Services?", "Can I message my care team?", "Where do I see my test results?"]
+    en: {
+      'kb-001': ["Do I need a referral?", "How long until I'm seen?", "Can I request a callback instead of waiting on hold?"],
+      'kb-002': ["What if I'm calling outside business hours?", "Which campus should I call?", "Where are Mayo's campuses?"],
+      'kb-003': ["Can I choose my doctor?", "What happens after my visit?", "How long does a typical visit take?"],
+      'kb-004': ["Does my insurance plan need a referral?", "How do I request an appointment?", "What if my doctor won't refer me?"],
+      'kb-005': ["Which campus treats my condition?", "How are wait times for specialty care?"],
+      'kb-006': ["What's the phone number for that campus?", "Are travel services available?", "Is the Mayo Clinic Health System the same as Mayo Clinic?"],
+      'kb-007': ["Where can I stay during my visit?", "Are there Mayo-recommended hotels?", "Do you help with special-needs travel?"],
+      'kb-008': ["How do I pay my bill online?", "What is the No Surprises Act?", "What financial assistance is available?"],
+      'kb-009': ["What is a pre-service deposit?", "What do I need to bring to my visit?", "What's the Authorizations and Service Terms form?"],
+      'kb-010': ["Does Mayo accept Medicare?", "What about out-of-network plans?", "Do I need pre-authorization?"],
+      'kb-011': ["How long does pre-authorization take?", "What if my insurance denies coverage?", "What is a pre-service deposit?"],
+      'kb-012': ["What is the Uninsured Discount Policy?", "How do I apply for Medicaid?", "Is financial assistance available?"],
+      'kb-013': ["How is the deposit amount calculated?", "Will I get a refund if I overpay?", "Who do I call about my deposit?"],
+      'kb-014': ["How do I apply for financial assistance?", "Is there help with prescription costs?", "Does this apply to all campuses?"],
+      'kb-015': ["How do I get a personalized estimate?", "Where do I find price transparency?", "Does the estimate include my insurance?"],
+      'kb-016': ["What does the No Surprises Act protect against?", "What if I got a surprise bill?"],
+      'kb-017': ["How do I contact Patient Account Services?", "Where's the billing glossary?", "How do I understand my Mayo Clinic bill?"],
+      'kb-018': ["How do I sign up for Patient Online Services?", "Can I message my care team?", "Where do I see my test results?"]
+    },
+    es: {
+      'kb-001': ["¿Necesito una referencia?", "¿Cuánto tiempo hasta ser atendido?", "¿Puedo pedir que me devuelvan la llamada?"],
+      'kb-002': ["¿Y si llamo fuera de horario?", "¿A qué sede debo llamar?", "¿Dónde están las sedes de Mayo?"],
+      'kb-003': ["¿Puedo elegir a mi médico?", "¿Qué sucede después de mi visita?", "¿Cuánto dura una visita típica?"],
+      'kb-004': ["¿Mi seguro requiere una referencia?", "¿Cómo solicito una cita?", "¿Y si mi médico no me refiere?"],
+      'kb-005': ["¿Qué sede trata mi condición?", "¿Cuál es la espera para atención especializada?"],
+      'kb-006': ["¿Cuál es el teléfono de esa sede?", "¿Hay servicios de viaje disponibles?", "¿Mayo Clinic Health System es lo mismo que Mayo Clinic?"],
+      'kb-007': ["¿Dónde puedo hospedarme durante mi visita?", "¿Hay hoteles recomendados por Mayo?", "¿Ayudan con viajes con necesidades especiales?"],
+      'kb-008': ["¿Cómo pago mi factura en línea?", "¿Qué es la Ley No Surprises?", "¿Qué asistencia financiera hay disponible?"],
+      'kb-009': ["¿Qué es un depósito previo al servicio?", "¿Qué debo traer a mi visita?", "¿Qué es el formulario de Autorizaciones y Términos de Servicio?"],
+      'kb-010': ["¿Mayo acepta Medicare?", "¿Y los planes fuera de red?", "¿Necesito autorización previa?"],
+      'kb-011': ["¿Cuánto tarda la autorización previa?", "¿Y si mi seguro niega cobertura?", "¿Qué es un depósito previo al servicio?"],
+      'kb-012': ["¿Qué es la Política de Descuento para No Asegurados?", "¿Cómo solicito Medicaid?", "¿Hay asistencia financiera disponible?"],
+      'kb-013': ["¿Cómo se calcula el depósito?", "¿Recibiré reembolso si pago de más?", "¿A quién llamo sobre mi depósito?"],
+      'kb-014': ["¿Cómo solicito asistencia financiera?", "¿Hay ayuda con costos de medicamentos?", "¿Aplica a todas las sedes?"],
+      'kb-015': ["¿Cómo obtengo un estimado personalizado?", "¿Dónde encuentro transparencia de precios?", "¿El estimado incluye mi seguro?"],
+      'kb-016': ["¿De qué protege la Ley No Surprises?", "¿Y si recibí una factura sorpresa?"],
+      'kb-017': ["¿Cómo contacto a Servicios de Cuentas?", "¿Dónde está el glosario de facturación?", "¿Cómo entiendo mi factura de Mayo Clinic?"],
+      'kb-018': ["¿Cómo me registro en Servicios en Línea para Pacientes?", "¿Puedo enviar mensajes a mi equipo de atención?", "¿Dónde veo mis resultados?"]
+    }
   };
 
   /* Keyword fallback when no citations matched */
-  const FOLLOWUP_BY_KEYWORD = [
-    { match: /\b(appointment|schedule|book)\b/i, items: ["Do I need a referral?", "What happens after I request?", "Where are Mayo's campuses?"] },
-    { match: /\b(insurance|coverage|plan|in.?network|out.?of.?network)\b/i, items: ["What if my insurance denies a claim?", "Do I need pre-authorization?", "What about pre-service deposits?"] },
-    { match: /\b(bill|cost|price|estimate|charge|payment)\b/i, items: ["What is the No Surprises Act?", "What financial assistance is available?", "How do I get a cost estimate?"] },
-    { match: /\b(campus|location|Rochester|Arizona|Florida|Jacksonville|Phoenix|Scottsdale|Minnesota)\b/i, items: ["What's the phone number for that campus?", "Are travel services available?"] },
-    { match: /\b(portal|app|account|records|test results)\b/i, items: ["How do I create an account?", "Can I message my care team?"] }
-  ];
+  const FOLLOWUP_BY_KEYWORD = {
+    en: [
+      { match: /\b(appointment|schedule|book)\b/i, items: ["Do I need a referral?", "What happens after I request?", "Where are Mayo's campuses?"] },
+      { match: /\b(insurance|coverage|plan|in.?network|out.?of.?network)\b/i, items: ["What if my insurance denies a claim?", "Do I need pre-authorization?", "What about pre-service deposits?"] },
+      { match: /\b(bill|cost|price|estimate|charge|payment)\b/i, items: ["What is the No Surprises Act?", "What financial assistance is available?", "How do I get a cost estimate?"] },
+      { match: /\b(campus|location|Rochester|Arizona|Florida|Jacksonville|Phoenix|Scottsdale|Minnesota)\b/i, items: ["What's the phone number for that campus?", "Are travel services available?"] },
+      { match: /\b(portal|app|account|records|test results)\b/i, items: ["How do I create an account?", "Can I message my care team?"] }
+    ],
+    es: [
+      { match: /\b(cita|agendar|programar|solicito)\b/i, items: ["¿Necesito una referencia?", "¿Qué sucede después de solicitarla?", "¿Dónde están las sedes de Mayo?"] },
+      { match: /\b(seguro|cobertura|plan|dentro de red|fuera de red)\b/i, items: ["¿Y si mi seguro niega un reclamo?", "¿Necesito autorización previa?", "¿Qué hay sobre depósitos previos?"] },
+      { match: /\b(factura|costo|precio|estimado|cargo|pago)\b/i, items: ["¿Qué es la Ley No Surprises?", "¿Qué asistencia financiera hay disponible?", "¿Cómo obtengo un estimado?"] },
+      { match: /\b(sede|ubicaci[oó]n|campus|Rochester|Arizona|Florida|Jacksonville|Phoenix|Scottsdale|Minnesota)\b/i, items: ["¿Cuál es el teléfono de esa sede?", "¿Hay servicios de viaje disponibles?"] },
+      { match: /\b(portal|aplicaci[oó]n|cuenta|registros|resultados)\b/i, items: ["¿Cómo creo una cuenta?", "¿Puedo enviar mensajes a mi equipo de atención?"] }
+    ]
+  };
 
-  const FOLLOWUP_FALLBACK = [
-    "How do I make an appointment?",
-    "Does Mayo Clinic accept my insurance?",
-    "Where are Mayo's campuses?",
-    "What financial assistance is available?"
-  ];
+  const FOLLOWUP_FALLBACK = {
+    en: [
+      "How do I make an appointment?",
+      "Does Mayo Clinic accept my insurance?",
+      "Where are Mayo's campuses?",
+      "What financial assistance is available?"
+    ],
+    es: [
+      "¿Cómo solicito una cita?",
+      "¿Mayo Clinic acepta mi seguro?",
+      "¿Dónde están las sedes de Mayo?",
+      "¿Qué asistencia financiera hay disponible?"
+    ]
+  };
 
   function pickFollowups(replyText, citations) {
     const asked = new Set(history.filter(h => h.role === 'user').map(h => h.content.toLowerCase().trim()));
@@ -1184,15 +1307,19 @@ When in doubt, direct the patient to call the appropriate appointment line rathe
       out.push(q);
     };
 
+    const kbMap = FOLLOWUP_BY_KB[currentLang] || FOLLOWUP_BY_KB.en;
+    const kwList = FOLLOWUP_BY_KEYWORD[currentLang] || FOLLOWUP_BY_KEYWORD.en;
+    const fallback = FOLLOWUP_FALLBACK[currentLang] || FOLLOWUP_FALLBACK.en;
+
     for (const c of (citations || [])) {
-      for (const q of (FOLLOWUP_BY_KB[c.id] || [])) push(q);
+      for (const q of (kbMap[c.id] || [])) push(q);
     }
     if (out.length < 3) {
-      for (const t of FOLLOWUP_BY_KEYWORD) {
+      for (const t of kwList) {
         if (t.match.test(replyText)) t.items.forEach(push);
       }
     }
-    if (out.length < 3) FOLLOWUP_FALLBACK.forEach(push);
+    if (out.length < 3) fallback.forEach(push);
     return out.slice(0, 4);
   }
 
@@ -1500,7 +1627,7 @@ When in doubt, direct the patient to call the appropriate appointment line rathe
       const response = await fetch("/api/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json", "Accept": "text/event-stream" },
-        body: JSON.stringify({ system: SYSTEM_PROMPT, messages: history }),
+        body: JSON.stringify({ system: buildSystemPrompt(), messages: history }),
         signal: activeController.signal
       });
 
@@ -1596,13 +1723,51 @@ When in doubt, direct the patient to call the appropriate appointment line rathe
   }
 
   function greet() {
-    addBotMessage(
-      "Hi, I'm the Mayo Assistant. I can help you find appointment information, understand insurance and billing, locate a campus, or prepare for a visit. What can I help you with?",
-      [], [], { feedback: false }
+    addBotMessage(L10N[currentLang].greeting, [], [], { feedback: false });
+  }
+
+  function renderStarterChips() {
+    suggestionsEl.innerHTML = '';
+    L10N[currentLang].starterChips.forEach(c => {
+      const b = document.createElement('button');
+      b.className = 'chip';
+      b.dataset.q = c.q;
+      b.textContent = c.label;
+      suggestionsEl.appendChild(b);
+    });
+  }
+
+  /* Update every locale-aware piece of UI chrome. Existing messages
+     stay in the language they were rendered in. */
+  function applyLang(lang) {
+    if (!L10N[lang]) return;
+    currentLang = lang;
+    try { localStorage.setItem('mayo-lang', lang); } catch (e) {}
+
+    const t = L10N[lang];
+    document.documentElement.lang = lang;
+    document.querySelectorAll('[data-i18n]').forEach(el => {
+      const k = el.getAttribute('data-i18n');
+      if (t[k] != null) el.textContent = t[k];
+    });
+    inputEl.placeholder = t.placeholder;
+    inputEl.setAttribute('aria-label', t.placeholder);
+    document.getElementById('langCurrent').textContent = t.label;
+    document.getElementById('langBtn').setAttribute(
+      'aria-label',
+      lang === 'en' ? 'Cambiar a español' : 'Switch to English'
     );
+    if (typeof micBtn !== 'undefined' && micBtn) {
+      micBtn.setAttribute('aria-label', t.voiceLabel);
+      micBtn.setAttribute('title', t.voiceLabel);
+    }
+    if (typeof voiceSetLang === 'function') voiceSetLang(t.speechLang);
+
+    renderStarterChips();
   }
 
   let voiceCleanup = () => {};
+  let voiceSetLang = () => {};
 
   sendBtn.addEventListener('click', () => {
     const text = inputEl.value;
@@ -1643,9 +1808,10 @@ When in doubt, direct the patient to call the appropriate appointment line rathe
     micBtn.style.display = 'none';
   } else {
     const recog = new SR();
-    recog.lang = 'en-US';
+    recog.lang = (L10N[currentLang] && L10N[currentLang].speechLang) || 'en-US';
     recog.interimResults = true;
     recog.continuous = false;
+    voiceSetLang = (l) => { try { recog.lang = l; } catch (e) {} };
     let listening = false;
     let baseText = '';
 
@@ -1702,4 +1868,16 @@ When in doubt, direct the patient to call the appropriate appointment line rathe
       updateSendEnabled();
     });
   }
+
+  // ────────────────────────────────────────────────────────────────
+  //  Language toggle — flip EN ↔ ES
+  // ────────────────────────────────────────────────────────────────
+  const langBtn = document.getElementById('langBtn');
+  langBtn.addEventListener('click', () => {
+    applyLang(currentLang === 'en' ? 'es' : 'en');
+  });
+
+  /* Initial paint: render starter chips + sync all chrome to the
+     restored language (defaults to EN). */
+  applyLang(currentLang);
 </script>
