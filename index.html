@@ -344,6 +344,88 @@
   .widget-close:active { transform: scale(0.96); }
   .widget-close svg { width: 16px; height: 16px; }
 
+  /* Conversation options — kebab menu in the header */
+  .widget-menu-btn {
+    margin-left: 10px;
+    background: transparent;
+    border: none;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    cursor: pointer;
+    display: grid;
+    place-items: center;
+    color: rgba(255, 255, 255, 0.85);
+    transition: background 0.15s, color 0.15s, transform 0.12s;
+  }
+  .widget-menu-btn:hover { background: rgba(255, 255, 255, 0.18); color: white; }
+  .widget-menu-btn:active { transform: scale(0.94); }
+  .widget-menu-btn svg { width: 18px; height: 18px; }
+
+  .widget-menu {
+    position: absolute;
+    top: 56px;
+    right: 12px;
+    background: var(--surface);
+    border: 1px solid var(--rule);
+    border-radius: 12px;
+    box-shadow: 0 12px 32px rgba(0, 36, 67, 0.18), 0 4px 10px rgba(0, 36, 67, 0.08);
+    padding: 6px;
+    min-width: 200px;
+    z-index: 310;
+    animation: menu-open 0.18s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  @keyframes menu-open {
+    from { opacity: 0; transform: translateY(-4px) scale(0.98); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+  }
+  .widget-menu button {
+    width: 100%;
+    background: transparent;
+    border: none;
+    text-align: left;
+    padding: 9px 12px;
+    border-radius: 8px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-family: var(--font-body);
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--ink);
+    letter-spacing: -0.005em;
+    transition: background 0.12s;
+  }
+  .widget-menu button:hover { background: var(--surface-3); }
+  .widget-menu button svg { width: 16px; height: 16px; color: var(--ink-2); flex-shrink: 0; }
+  .widget-menu button:disabled { color: var(--ink-3); cursor: not-allowed; }
+  .widget-menu button:disabled svg { color: var(--ink-4); }
+
+  /* Toast — bottom of widget, briefly slides up */
+  .widget-toast {
+    position: absolute;
+    bottom: 88px;
+    left: 50%;
+    transform: translate(-50%, 12px);
+    background: var(--ink);
+    color: white;
+    font-family: var(--font-body);
+    font-size: 13px;
+    font-weight: 500;
+    padding: 9px 16px;
+    border-radius: 999px;
+    box-shadow: 0 8px 22px rgba(0, 0, 0, 0.25);
+    opacity: 0;
+    pointer-events: none;
+    z-index: 305;
+    transition: transform 0.22s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.18s ease;
+  }
+  .widget-toast.show {
+    opacity: 1;
+    transform: translate(-50%, 0);
+  }
+
   /* Language toggle pill — sits in the header next to close */
   .lang-toggle {
     margin-left: 6px;
@@ -1034,7 +1116,25 @@
     </button>
     <span class="widget-title" data-i18n="title">Mayo Assistant</span>
     <span class="widget-status"><span class="status-dot"></span><span data-i18n="status">Online</span></span>
+    <button class="widget-menu-btn" id="menuBtn" aria-label="Conversation options" aria-haspopup="true" aria-expanded="false">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="5" r="1.2"/>
+        <circle cx="12" cy="12" r="1.2"/>
+        <circle cx="12" cy="19" r="1.2"/>
+      </svg>
+    </button>
+    <div class="widget-menu" id="widgetMenu" role="menu" hidden>
+      <button type="button" data-action="copy" role="menuitem">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+        <span data-i18n="menuCopy">Copy transcript</span>
+      </button>
+      <button type="button" data-action="email" role="menuitem">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+        <span data-i18n="menuEmail">Email transcript</span>
+      </button>
+    </div>
   </header>
+  <div class="widget-toast" id="widgetToast" role="status" aria-live="polite"></div>
 
   <div class="safety-banner">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -1189,6 +1289,15 @@
       sourcesTitle: "Sources",
       backToChat: "Back to chat",
       showMeLabel: "Show me on this page",
+      menuCopy: "Copy transcript",
+      menuEmail: "Email transcript",
+      toastCopied: "Transcript copied",
+      toastEmpty: "No conversation yet",
+      transcriptTitle: "Mayo Assistant — conversation transcript",
+      transcriptYou: "You",
+      transcriptBot: "Mayo Assistant",
+      transcriptDisclaimer: "AI can make mistakes — verify important information before acting on it.",
+      emailSubject: "Mayo Assistant conversation",
       disclaimer: "AI can make mistakes. Please verify important information before acting on it.",
       safetyStrong: "For medical emergencies, call 911.",
       safetyRest: "This assistant can't provide medical advice or access your records.",
@@ -1213,6 +1322,15 @@
       sourcesTitle: "Fuentes",
       backToChat: "Volver al chat",
       showMeLabel: "Mostrar en la página",
+      menuCopy: "Copiar transcripción",
+      menuEmail: "Enviar por correo",
+      toastCopied: "Transcripción copiada",
+      toastEmpty: "Aún no hay conversación",
+      transcriptTitle: "Asistente Mayo — transcripción de la conversación",
+      transcriptYou: "Usted",
+      transcriptBot: "Asistente Mayo",
+      transcriptDisclaimer: "La IA puede cometer errores — verifique información importante antes de actuar.",
+      emailSubject: "Conversación con el Asistente Mayo",
       disclaimer: "La IA puede cometer errores. Por favor verifique información importante antes de actuar.",
       safetyStrong: "Para emergencias médicas, llame al 911.",
       safetyRest: "Este asistente no puede dar consejo médico ni acceder a sus registros.",
@@ -1513,6 +1631,97 @@ When in doubt, direct the patient to call the appropriate appointment line rathe
   backToChatBtn.addEventListener('click', () => {
     backToChatBtn.classList.remove('show');
     openWidget();
+  });
+
+  // ────────────────────────────────────────────────────────────────
+  //  Conversation options menu — copy / email transcript
+  // ────────────────────────────────────────────────────────────────
+  const menuBtn = document.getElementById('menuBtn');
+  const widgetMenu = document.getElementById('widgetMenu');
+  const widgetToast = document.getElementById('widgetToast');
+  let toastTimer = null;
+
+  function toast(msg) {
+    widgetToast.textContent = msg;
+    widgetToast.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => widgetToast.classList.remove('show'), 2200);
+  }
+
+  function setMenuOpen(open) {
+    widgetMenu.hidden = !open;
+    menuBtn.setAttribute('aria-expanded', open ? 'true' : 'false');
+  }
+
+  function buildTranscript() {
+    const t = L10N[currentLang];
+    const lines = [];
+    lines.push(t.transcriptTitle);
+    lines.push(new Date().toLocaleString(currentLang === 'es' ? 'es-US' : 'en-US'));
+    lines.push('');
+    /* Include the greeting if it was shown */
+    if (widgetOpened) {
+      lines.push(`${t.transcriptBot}:`);
+      lines.push(L10N[currentLang].greeting);
+      lines.push('');
+    }
+    for (const m of history) {
+      lines.push(`${m.role === 'user' ? t.transcriptYou : t.transcriptBot}:`);
+      lines.push(m.content);
+      lines.push('');
+    }
+    lines.push('---');
+    lines.push(t.transcriptDisclaimer);
+    return lines.join('\n');
+  }
+
+  async function copyTranscript() {
+    if (history.length === 0) { toast(L10N[currentLang].toastEmpty); return; }
+    const text = buildTranscript();
+    try {
+      await navigator.clipboard.writeText(text);
+    } catch (e) {
+      /* Fallback for older browsers / non-secure contexts */
+      const ta = document.createElement('textarea');
+      ta.value = text;
+      ta.style.position = 'fixed';
+      ta.style.opacity = '0';
+      document.body.appendChild(ta);
+      ta.select();
+      try { document.execCommand('copy'); } catch (e2) {}
+      document.body.removeChild(ta);
+    }
+    toast(L10N[currentLang].toastCopied);
+  }
+
+  function emailTranscript() {
+    if (history.length === 0) { toast(L10N[currentLang].toastEmpty); return; }
+    const t = L10N[currentLang];
+    const subject = encodeURIComponent(t.emailSubject);
+    /* mailto bodies have practical length limits (~1800 chars in
+       Outlook/Gmail). Truncate gracefully so the link still opens. */
+    let body = buildTranscript();
+    if (body.length > 1800) body = body.slice(0, 1780) + '\n\n…';
+    window.location.href = `mailto:?subject=${subject}&body=${encodeURIComponent(body)}`;
+  }
+
+  menuBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    setMenuOpen(widgetMenu.hidden);
+  });
+  widgetMenu.addEventListener('click', (e) => {
+    const btn = e.target.closest('button[data-action]');
+    if (!btn) return;
+    setMenuOpen(false);
+    if (btn.dataset.action === 'copy') copyTranscript();
+    else if (btn.dataset.action === 'email') emailTranscript();
+  });
+  document.addEventListener('click', (e) => {
+    if (widgetMenu.hidden) return;
+    if (!widgetMenu.contains(e.target) && e.target !== menuBtn) setMenuOpen(false);
+  });
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && !widgetMenu.hidden) setMenuOpen(false);
   });
 
   fab.addEventListener('click', openWidget);
