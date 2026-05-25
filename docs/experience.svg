@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1400 900" font-family="Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" role="img" aria-label="Mayo Scheduling Assistant — patient experience for stakeholders">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1400 1140" font-family="Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" role="img" aria-label="Mayo Scheduling Assistant — patient experience for stakeholders">
   <title>Mayo Scheduling Assistant — Patient Experience</title>
 
   <defs>
@@ -18,7 +18,7 @@
     </marker>
   </defs>
 
-  <rect width="1400" height="900" fill="#FFFFFF"/>
+  <rect width="1400" height="1140" fill="#FFFFFF"/>
 
   <!-- Title -->
   <text x="40" y="56" font-size="32" font-weight="700" fill="#080808" letter-spacing="-0.6">Mayo Scheduling Assistant</text>
@@ -117,6 +117,13 @@
       <text x="40" y="14" text-anchor="middle" fill="#0057B8">Voice in</text>
     </g>
     <path d="M120 482 L 332 480" stroke="#5C6470" stroke-width="1.2" fill="none" marker-end="url(#tagArr)"/>
+
+    <!-- 911 safety tag pointing at the warning banner -->
+    <g transform="translate(20,210)" font-size="11" font-weight="600">
+      <rect width="100" height="22" rx="11" fill="white" stroke="#0057B8"/>
+      <text x="50" y="14" text-anchor="middle" fill="#0057B8">911 routed</text>
+    </g>
+    <path d="M120 220 L 158 200" stroke="#5C6470" stroke-width="1.2" fill="none" marker-end="url(#tagArr)"/>
   </g>
 
   <!-- ─── MOCKUP 2 · GROUNDED REPLY ─── -->
@@ -202,6 +209,13 @@
       <text x="70" y="14" text-anchor="middle" fill="#0057B8">Smart follow-ups</text>
     </g>
     <path d="M845 432 L 815 418" stroke="#5C6470" stroke-width="1.2" fill="none" marker-end="url(#tagArr)"/>
+
+    <!-- Copy / email transcript tag pointing at the kebab -->
+    <g transform="translate(845,140)">
+      <rect width="160" height="22" rx="11" fill="white" stroke="#0057B8"/>
+      <text x="80" y="14" text-anchor="middle" fill="#0057B8">Copy or email transcript</text>
+    </g>
+    <path d="M845 154 L 814 162" stroke="#5C6470" stroke-width="1.2" fill="none" marker-end="url(#tagArr)"/>
   </g>
 
   <!-- ─── MOCKUP 3 · SHOW ME ON THE PAGE ─── -->
@@ -284,34 +298,86 @@
   </g>
 
   <!-- ════════════════════════════════════════════════════════
-       THREE PILLARS — PLAIN-LANGUAGE VALUE
+       BY THE NUMBERS — concrete stats strip
        ════════════════════════════════════════════════════════ -->
   <line x1="40" y1="676" x2="1360" y2="676" stroke="#E5E9EE"/>
+  <text x="40" y="702" font-size="11" font-weight="700" fill="#0057B8" letter-spacing="2">BY THE NUMBERS</text>
 
-  <g transform="translate(40,712)">
-    <rect width="420" height="156" rx="14" fill="#FAFBFC" stroke="#E5E9EE"/>
-    <text x="22" y="36" font-size="13" font-weight="700" fill="#0057B8" letter-spacing="2">TRUST</text>
-    <text x="22" y="68" font-size="22" font-weight="600" fill="#080808" letter-spacing="-0.4">Every answer is cited.</text>
-    <text x="22" y="98" font-size="13" fill="#5C6470">Grounded in 18 paraphrased entries from</text>
-    <text x="22" y="116" font-size="13" fill="#5C6470">mayoclinic.org. The assistant refuses to</text>
-    <text x="22" y="134" font-size="13" fill="#5C6470">guess phone numbers, hours, or policies.</text>
+  <g transform="translate(40,720)">
+    <rect width="1320" height="92" rx="14" fill="#FAFBFC" stroke="#E5E9EE"/>
+    <!-- 5 cells, each 260 wide + 4 dividers -->
+    <g transform="translate(0,16)" font-family="Inter">
+      <text x="130" y="38" text-anchor="middle" font-size="38" font-weight="700" fill="#0057B8" letter-spacing="-1">18</text>
+      <text x="130" y="60" text-anchor="middle" font-size="12" font-weight="600" fill="#080808">KB entries</text>
+      <text x="130" y="74" text-anchor="middle" font-size="10" fill="#5C6470">paraphrased from mayoclinic.org</text>
+    </g>
+    <line x1="262" y1="22" x2="262" y2="78" stroke="#E5E9EE"/>
+    <g transform="translate(264,16)" font-family="Inter">
+      <text x="130" y="38" text-anchor="middle" font-size="38" font-weight="700" fill="#0057B8" letter-spacing="-1">2</text>
+      <text x="130" y="60" text-anchor="middle" font-size="12" font-weight="600" fill="#080808">Languages</text>
+      <text x="130" y="74" text-anchor="middle" font-size="10" fill="#5C6470">English + Spanish, toggled at runtime</text>
+    </g>
+    <line x1="526" y1="22" x2="526" y2="78" stroke="#E5E9EE"/>
+    <g transform="translate(528,16)" font-family="Inter">
+      <text x="130" y="38" text-anchor="middle" font-size="38" font-weight="700" fill="#0057B8" letter-spacing="-1">3</text>
+      <text x="130" y="60" text-anchor="middle" font-size="12" font-weight="600" fill="#080808">U.S. campuses</text>
+      <text x="130" y="74" text-anchor="middle" font-size="10" fill="#5C6470">Rochester · Phoenix · Jacksonville</text>
+    </g>
+    <line x1="790" y1="22" x2="790" y2="78" stroke="#E5E9EE"/>
+    <g transform="translate(792,16)" font-family="Inter">
+      <text x="130" y="38" text-anchor="middle" font-size="38" font-weight="700" fill="#0057B8" letter-spacing="-1">4</text>
+      <text x="130" y="60" text-anchor="middle" font-size="12" font-weight="600" fill="#080808">Page targets</text>
+      <text x="130" y="74" text-anchor="middle" font-size="10" fill="#5C6470">Show-me highlights on the page</text>
+    </g>
+    <line x1="1054" y1="22" x2="1054" y2="78" stroke="#E5E9EE"/>
+    <g transform="translate(1056,16)" font-family="Inter">
+      <text x="130" y="38" text-anchor="middle" font-size="38" font-weight="700" fill="#0057B8" letter-spacing="-1">100%</text>
+      <text x="130" y="60" text-anchor="middle" font-size="12" font-weight="600" fill="#080808">Cited answers</text>
+      <text x="130" y="74" text-anchor="middle" font-size="10" fill="#5C6470">Every claim links to a KB source</text>
+    </g>
   </g>
 
-  <g transform="translate(490,712)">
-    <rect width="420" height="156" rx="14" fill="#FAFBFC" stroke="#E5E9EE"/>
-    <text x="22" y="36" font-size="13" font-weight="700" fill="#0057B8" letter-spacing="2">REACH</text>
-    <text x="22" y="68" font-size="22" font-weight="600" fill="#080808" letter-spacing="-0.4">English + Spanish, voice or type.</text>
-    <text x="22" y="98" font-size="13" fill="#5C6470">A pill in the header flips the entire</text>
-    <text x="22" y="116" font-size="13" fill="#5C6470">experience between languages. Voice</text>
-    <text x="22" y="134" font-size="13" fill="#5C6470">input works in both. Mobile-ready.</text>
+  <!-- ════════════════════════════════════════════════════════
+       THREE PILLARS — BULLET POINTS, NOT PARAGRAPHS
+       ════════════════════════════════════════════════════════ -->
+  <text x="40" y="852" font-size="11" font-weight="700" fill="#0057B8" letter-spacing="2">VALUE</text>
+
+  <g transform="translate(40,868)">
+    <rect width="420" height="232" rx="14" fill="#FAFBFC" stroke="#E5E9EE"/>
+    <text x="22" y="34" font-size="12" font-weight="700" fill="#0057B8" letter-spacing="2">TRUST</text>
+    <text x="22" y="64" font-size="20" font-weight="600" fill="#080808" letter-spacing="-0.4">Every answer is cited.</text>
+    <g font-size="13" fill="#3A4654">
+      <text x="22" y="106"><tspan fill="#0057B8" font-weight="700">›</tspan>  Grounded in 18 mayoclinic.org entries</text>
+      <text x="22" y="130"><tspan fill="#0057B8" font-weight="700">›</tspan>  Refuses to invent numbers or policies</text>
+      <text x="22" y="154"><tspan fill="#0057B8" font-weight="700">›</tspan>  No medical advice · no PHI handling</text>
+      <text x="22" y="178"><tspan fill="#0057B8" font-weight="700">›</tspan>  911 emergency routing built in</text>
+      <text x="22" y="202"><tspan fill="#0057B8" font-weight="700">›</tspan>  Out-of-scope: international, UK handoff</text>
+    </g>
   </g>
 
-  <g transform="translate(940,712)">
-    <rect width="420" height="156" rx="14" fill="#FAFBFC" stroke="#E5E9EE"/>
-    <text x="22" y="36" font-size="13" font-weight="700" fill="#0057B8" letter-spacing="2">ACTION</text>
-    <text x="22" y="68" font-size="22" font-weight="600" fill="#080808" letter-spacing="-0.4">From answer to next step.</text>
-    <text x="22" y="98" font-size="13" fill="#5C6470">Tap to call a campus, navigate to a Mayo</text>
-    <text x="22" y="116" font-size="13" fill="#5C6470">page, or have the assistant highlight the</text>
-    <text x="22" y="134" font-size="13" fill="#5C6470">right card on the page in front of you.</text>
+  <g transform="translate(490,868)">
+    <rect width="420" height="232" rx="14" fill="#FAFBFC" stroke="#E5E9EE"/>
+    <text x="22" y="34" font-size="12" font-weight="700" fill="#0057B8" letter-spacing="2">REACH</text>
+    <text x="22" y="64" font-size="20" font-weight="600" fill="#080808" letter-spacing="-0.4">Multilingual, multimodal.</text>
+    <g font-size="13" fill="#3A4654">
+      <text x="22" y="106"><tspan fill="#0057B8" font-weight="700">›</tspan>  English + Spanish (toggle in header)</text>
+      <text x="22" y="130"><tspan fill="#0057B8" font-weight="700">›</tspan>  Voice input via Web Speech (EN + ES)</text>
+      <text x="22" y="154"><tspan fill="#0057B8" font-weight="700">›</tspan>  Full-screen mobile takeover</text>
+      <text x="22" y="178"><tspan fill="#0057B8" font-weight="700">›</tspan>  Capability cards for low-friction entry</text>
+      <text x="22" y="202"><tspan fill="#0057B8" font-weight="700">›</tspan>  Streaming reply — no wait-then-dump</text>
+    </g>
+  </g>
+
+  <g transform="translate(940,868)">
+    <rect width="420" height="232" rx="14" fill="#FAFBFC" stroke="#E5E9EE"/>
+    <text x="22" y="34" font-size="12" font-weight="700" fill="#0057B8" letter-spacing="2">ACTION</text>
+    <text x="22" y="64" font-size="20" font-weight="600" fill="#080808" letter-spacing="-0.4">From answer to next step.</text>
+    <g font-size="13" fill="#3A4654">
+      <text x="22" y="106"><tspan fill="#0057B8" font-weight="700">›</tspan>  Tap to call (Rochester · Phoenix · FL)</text>
+      <text x="22" y="130"><tspan fill="#0057B8" font-weight="700">›</tspan>  External links to mayoclinic.org pages</text>
+      <text x="22" y="154"><tspan fill="#0057B8" font-weight="700">›</tspan>  "Show me" pulses the right card</text>
+      <text x="22" y="178"><tspan fill="#0057B8" font-weight="700">›</tspan>  Contextual follow-up chips</text>
+      <text x="22" y="202"><tspan fill="#0057B8" font-weight="700">›</tspan>  Copy or email the full transcript</text>
+    </g>
   </g>
 </svg>
