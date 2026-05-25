@@ -11,14 +11,19 @@ thin Vercel proxy that owns the system prompt.
 
 ![System architecture](docs/architecture.svg)
 
+**Request workflow — one chat turn, end-to-end:**
+
+![Request workflow](docs/workflow.svg)
+
 **For product / stakeholder audiences:**
 
 ![Patient experience](docs/experience.svg)
 
-One artifact per audience. The technical view shows dataflow,
-contracts, gates, and key engineering choices. The product view
-shows what patients actually see and the three value pillars
-(trust, reach, action).
+Three artifacts, three audiences. The **architecture** view shows
+where things run and how they connect. The **workflow** view walks
+through a single request as it crosses the three lifelines. The
+**experience** view shows what patients actually see and the three
+value pillars (trust, reach, action).
 
 ## Quick reference
 
@@ -320,5 +325,6 @@ would be required before real-patient deployment:
 ├── ARCHITECTURE.md         # this document
 └── docs/
     ├── architecture.svg    # technical view — dataflow + contracts
+    ├── workflow.svg        # sequence view — one chat turn end-to-end
     └── experience.svg      # product view — patient experience
 ```
