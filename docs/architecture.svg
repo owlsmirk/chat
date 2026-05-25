@@ -154,18 +154,18 @@
 
   <g transform="translate(40,710)">
     <text x="0" y="0" font-size="12" font-weight="600" fill="#080808">Stateless edge</text>
-    <text x="0" y="16" font-size="11" fill="#5C6470">In-memory rate-limit per warm container · swap Upstash for prod</text>
+    <text x="0" y="16" font-size="11" fill="#5C6470">Per-IP rate limit · Upstash-ready</text>
   </g>
-  <g transform="translate(360,710)">
+  <g transform="translate(370,710)">
     <text x="0" y="0" font-size="12" font-weight="600" fill="#080808">KB hot-reload</text>
-    <text x="0" y="16" font-size="11" fill="#5C6470">Edit kb.json, redeploy — no frontend rebuild, no cache</text>
+    <text x="0" y="16" font-size="11" fill="#5C6470">Edit kb.json · redeploy · done</text>
   </g>
-  <g transform="translate(680,710)">
+  <g transform="translate(700,710)">
     <text x="0" y="0" font-size="12" font-weight="600" fill="#080808">Server-built prompt</text>
-    <text x="0" y="16" font-size="11" fill="#5C6470">Clients can't read or override the rules and KB</text>
+    <text x="0" y="16" font-size="11" fill="#5C6470">Rules + KB never reach the client</text>
   </g>
-  <g transform="translate(1000,710)">
+  <g transform="translate(1030,710)">
     <text x="0" y="0" font-size="12" font-weight="600" fill="#080808">SSE passthrough</text>
-    <text x="0" y="16" font-size="11" fill="#5C6470">No buffering · Cache-Control: no-store on every response</text>
+    <text x="0" y="16" font-size="11" fill="#5C6470">No buffering · Cache-Control: no-store</text>
   </g>
 </svg>
