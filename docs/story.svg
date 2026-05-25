@@ -1,0 +1,492 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 1080" font-family="Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" role="img" aria-label="Mayo Clinic Scheduling Assistant — user journey and architecture poster">
+  <title>Mayo Clinic Scheduling Assistant — In Action</title>
+
+  <defs>
+    <linearGradient id="chatHeaderGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#FFFFFF"/>
+      <stop offset="100%" stop-color="#FAFBFC"/>
+    </linearGradient>
+    <linearGradient id="bgEdge2" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#F7F9FC"/>
+      <stop offset="100%" stop-color="#EEF3FA"/>
+    </linearGradient>
+    <linearGradient id="bgModel2" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#E8F1FB"/>
+      <stop offset="100%" stop-color="#DAE7F5"/>
+    </linearGradient>
+    <filter id="panelShadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feGaussianBlur in="SourceAlpha" stdDeviation="3"/>
+      <feOffset dx="0" dy="2" result="o"/>
+      <feComponentTransfer><feFuncA type="linear" slope="0.10"/></feComponentTransfer>
+      <feMerge><feMergeNode/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <marker id="flowArr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M0 0 L10 5 L0 10 Z" fill="#0057B8"/>
+    </marker>
+  </defs>
+
+  <rect width="1600" height="1080" fill="#FFFFFF"/>
+
+  <!-- ════════════════════════════════════════════════════════
+       HEADER
+       ════════════════════════════════════════════════════════ -->
+  <text x="40" y="54" font-size="30" font-weight="700" fill="#080808" letter-spacing="-0.6">Mayo Clinic Scheduling Assistant — In Action</text>
+  <text x="40" y="82" font-size="14" font-weight="500" fill="#5C6470">From a tap to a tailored, grounded answer · architecture in three layers</text>
+  <text x="1560" y="82" text-anchor="end" font-size="11" font-weight="600" fill="#9CA3AF" letter-spacing="1.5">USER JOURNEY · ARCHITECTURE · CAPABILITIES</text>
+  <line x1="40" y1="98" x2="1560" y2="98" stroke="#E5E9EE"/>
+
+  <text x="40" y="128" font-size="11" font-weight="700" fill="#0057B8" letter-spacing="2">USER JOURNEY</text>
+
+  <!-- ════════════════════════════════════════════════════════
+       USER JOURNEY — 4 PANELS
+       Each panel: 350 wide × 380 tall, centered with mini-widget
+       and a caption box at the bottom.
+       Positions: x = 40, 420, 800, 1180
+       ════════════════════════════════════════════════════════ -->
+
+  <!-- ─── PANEL 1 · COLD START ─────────────────────────────── -->
+  <g transform="translate(40,148)">
+    <rect width="350" height="380" rx="14" fill="#FFFFFF" stroke="#D5DCE3" filter="url(#panelShadow)"/>
+    <!-- Step badge -->
+    <circle cx="26" cy="26" r="13" fill="#0057B8"/>
+    <text x="26" y="31" text-anchor="middle" font-size="13" font-weight="700" fill="white">1</text>
+    <text x="48" y="22" font-size="13" font-weight="700" fill="#080808">Open + orient</text>
+    <text x="48" y="38" font-size="11" font-weight="500" fill="#5C6470">Capability cards as entry points</text>
+
+    <!-- Mini widget container -->
+    <g transform="translate(20,56)">
+      <rect width="310" height="288" rx="10" fill="#FFFFFF" stroke="#D5DCE3"/>
+      <!-- 2px brand strip -->
+      <rect x="0" y="0" width="310" height="2" fill="#0057B8"/>
+      <!-- header -->
+      <rect x="0" y="2" width="310" height="32" fill="url(#chatHeaderGrad)"/>
+      <line x1="0" y1="34" x2="310" y2="34" stroke="#E8E5DD"/>
+      <text x="18" y="22" font-size="11" font-weight="400" fill="#5C6470">×</text>
+      <rect x="32" y="11" width="20" height="14" rx="7" fill="white" stroke="#DDD9CF"/>
+      <text x="42" y="21" text-anchor="middle" font-size="7.5" font-weight="600" fill="#2D3540" letter-spacing="0.6">EN</text>
+      <text x="155" y="22" text-anchor="middle" font-size="10.5" font-weight="600" fill="#080808" letter-spacing="-0.2">Mayo Assistant</text>
+      <circle cx="270" cy="18" r="3" fill="#10B981"/>
+      <circle cx="290" cy="14" r="1.2" fill="#5C6470"/>
+      <circle cx="290" cy="18" r="1.2" fill="#5C6470"/>
+      <circle cx="290" cy="22" r="1.2" fill="#5C6470"/>
+      <!-- safety banner -->
+      <rect x="0" y="35" width="310" height="20" fill="#FAFAF7"/>
+      <text x="12" y="49" font-size="8" font-weight="600" fill="#1A1F26">⚠</text>
+      <text x="22" y="49" font-size="8.5" fill="#5C6470">For medical emergencies, call 911.</text>
+      <!-- intro -->
+      <text x="14" y="76" font-size="10" fill="#080808">Hi, I'm the Mayo Assistant.</text>
+      <text x="14" y="89" font-size="10" fill="#080808">How can I help?</text>
+      <!-- capability cards -->
+      <g transform="translate(14,102)">
+        <rect width="282" height="36" rx="8" fill="white" stroke="#E8E5DD"/>
+        <rect x="10" y="11" width="14" height="14" rx="2" fill="none" stroke="#0057B8" stroke-width="1.5"/>
+        <line x1="14" y1="9" x2="14" y2="13" stroke="#0057B8" stroke-width="1.5" stroke-linecap="round"/>
+        <line x1="20" y1="9" x2="20" y2="13" stroke="#0057B8" stroke-width="1.5" stroke-linecap="round"/>
+        <text x="34" y="19" font-size="10" font-weight="600" fill="#080808">Appointments</text>
+        <text x="34" y="30" font-size="8.5" fill="#5C6470">Request, prepare, or change a visit</text>
+        <text x="270" y="22" text-anchor="middle" font-size="11" fill="#8A929C">›</text>
+      </g>
+      <g transform="translate(14,142)">
+        <rect width="282" height="36" rx="8" fill="white" stroke="#E8E5DD"/>
+        <path d="M8 11 L8 25 L11 23 L14 25 L17 23 L20 25 L22 23 L22 11 Z" fill="none" stroke="#0057B8" stroke-width="1.4"/>
+        <text x="34" y="19" font-size="10" font-weight="600" fill="#080808">Billing &amp; Insurance</text>
+        <text x="34" y="30" font-size="8.5" fill="#5C6470">Coverage, estimates, financial help</text>
+        <text x="270" y="22" text-anchor="middle" font-size="11" fill="#8A929C">›</text>
+      </g>
+      <g transform="translate(14,182)">
+        <rect width="282" height="36" rx="8" fill="white" stroke="#E8E5DD"/>
+        <path d="M15 8 C 9 8 8 14 8 16 C 8 22 15 28 15 28 C 15 28 22 22 22 16 C 22 14 21 8 15 8 Z" fill="none" stroke="#0057B8" stroke-width="1.4"/>
+        <circle cx="15" cy="16" r="2.5" fill="none" stroke="#0057B8" stroke-width="1.4"/>
+        <text x="34" y="19" font-size="10" font-weight="600" fill="#080808">Locations &amp; Visits</text>
+        <text x="34" y="30" font-size="8.5" fill="#5C6470">Campuses, travel, what to bring</text>
+        <text x="270" y="22" text-anchor="middle" font-size="11" fill="#8A929C">›</text>
+      </g>
+      <g transform="translate(14,222)">
+        <rect width="282" height="36" rx="8" fill="white" stroke="#E8E5DD"/>
+        <circle cx="15" cy="14" r="4" fill="none" stroke="#0057B8" stroke-width="1.4"/>
+        <path d="M7 26 C 7 22 11 20 15 20 C 19 20 23 22 23 26" fill="none" stroke="#0057B8" stroke-width="1.4"/>
+        <text x="34" y="19" font-size="10" font-weight="600" fill="#080808">Patient Portal</text>
+        <text x="34" y="30" font-size="8.5" fill="#5C6470">Sign in, records, messages</text>
+        <text x="270" y="22" text-anchor="middle" font-size="11" fill="#8A929C">›</text>
+      </g>
+      <!-- composer -->
+      <rect x="14" y="266" width="282" height="16" rx="8" fill="#F3F1ED"/>
+      <text x="22" y="277" font-size="8.5" fill="#8A929C">Type your question…</text>
+      <circle cx="288" cy="274" r="5" fill="#0057B8"/>
+    </g>
+  </g>
+
+  <!-- ─── PANEL 2 · MULTIMODAL ASK (Spanish + voice) ───────── -->
+  <g transform="translate(420,148)">
+    <rect width="350" height="380" rx="14" fill="#FFFFFF" stroke="#D5DCE3" filter="url(#panelShadow)"/>
+    <circle cx="26" cy="26" r="13" fill="#0057B8"/>
+    <text x="26" y="31" text-anchor="middle" font-size="13" font-weight="700" fill="white">2</text>
+    <text x="48" y="22" font-size="13" font-weight="700" fill="#080808">Ask — voice + Spanish</text>
+    <text x="48" y="38" font-size="11" font-weight="500" fill="#5C6470">Multimodal, multilingual entry</text>
+
+    <g transform="translate(20,56)">
+      <rect width="310" height="288" rx="10" fill="#FFFFFF" stroke="#D5DCE3"/>
+      <rect x="0" y="0" width="310" height="2" fill="#0057B8"/>
+      <rect x="0" y="2" width="310" height="32" fill="url(#chatHeaderGrad)"/>
+      <line x1="0" y1="34" x2="310" y2="34" stroke="#E8E5DD"/>
+      <text x="18" y="22" font-size="11" font-weight="400" fill="#5C6470">×</text>
+      <rect x="32" y="11" width="20" height="14" rx="7" fill="#0057B8" stroke="#0057B8"/>
+      <text x="42" y="21" text-anchor="middle" font-size="7.5" font-weight="700" fill="white" letter-spacing="0.6">ES</text>
+      <text x="155" y="22" text-anchor="middle" font-size="10.5" font-weight="600" fill="#080808" letter-spacing="-0.2">Asistente Mayo</text>
+      <circle cx="270" cy="18" r="3" fill="#10B981"/>
+      <circle cx="290" cy="14" r="1.2" fill="#5C6470"/>
+      <circle cx="290" cy="18" r="1.2" fill="#5C6470"/>
+      <circle cx="290" cy="22" r="1.2" fill="#5C6470"/>
+      <!-- user message in Spanish, right-aligned -->
+      <rect x="80" y="58" width="216" height="40" rx="12" fill="#EFEAE0"/>
+      <text x="92" y="76" font-size="10" fill="#1A1F26">¿Cuál es el número para</text>
+      <text x="92" y="89" font-size="10" fill="#1A1F26">solicitar una cita?</text>
+      <!-- bot bubble streaming -->
+      <rect x="14" y="110" width="246" height="58" rx="12" fill="#E1F0FF"/>
+      <text x="26" y="128" font-size="10" fill="#1A1F26">Mayo Clinic tiene tres sedes</text>
+      <text x="26" y="141" font-size="10" fill="#1A1F26">principales en EE. UU. con</text>
+      <text x="26" y="154" font-size="10" fill="#1A1F26">números de citas dedicados<tspan fill="#0057B8" font-weight="600">▌</tspan></text>
+      <!-- thinking dots -->
+      <g transform="translate(14,182)">
+        <circle cx="6" cy="8" r="2.5" fill="#0057B8" opacity="0.4"/>
+        <circle cx="16" cy="8" r="2.5" fill="#0057B8" opacity="0.7"/>
+        <circle cx="26" cy="8" r="2.5" fill="#0057B8" opacity="0.9"/>
+      </g>
+      <text x="46" y="190" font-size="8.5" font-style="italic" fill="#5C6470">streaming via SSE…</text>
+
+      <!-- composer with mic recording -->
+      <rect x="14" y="212" width="282" height="40" rx="20" fill="white" stroke="#0057B8" stroke-width="1.5"/>
+      <text x="28" y="237" font-size="9.5" fill="#5C6470">"…solicitar una cita"</text>
+      <!-- mic with pulse -->
+      <circle cx="262" cy="232" r="13" fill="#0057B8"/>
+      <circle cx="262" cy="232" r="17" fill="none" stroke="#0057B8" stroke-width="1.5" opacity="0.35"/>
+      <circle cx="262" cy="232" r="22" fill="none" stroke="#0057B8" stroke-width="1" opacity="0.18"/>
+      <path d="M258 226 v6 a4 4 0 0 0 8 0 v-6 a4 4 0 0 0 -8 0 z" fill="white"/>
+      <path d="M255 233 v2 a7 7 0 0 0 14 0 v-2" stroke="white" stroke-width="1.4" fill="none"/>
+      <line x1="262" y1="240" x2="262" y2="244" stroke="white" stroke-width="1.4"/>
+      <!-- send button (disabled while listening) -->
+      <circle cx="290" cy="232" r="6" fill="#B8BDC4"/>
+      <text x="14" y="270" font-size="8.5" font-style="italic" fill="#5C6470">Web Speech API · es-US locale · live transcription</text>
+    </g>
+  </g>
+
+  <!-- ─── PANEL 3 · GROUNDED REPLY (CITATIONS + CTAs) ──────── -->
+  <g transform="translate(800,148)">
+    <rect width="350" height="380" rx="14" fill="#FFFFFF" stroke="#D5DCE3" filter="url(#panelShadow)"/>
+    <circle cx="26" cy="26" r="13" fill="#0057B8"/>
+    <text x="26" y="31" text-anchor="middle" font-size="13" font-weight="700" fill="white">3</text>
+    <text x="48" y="22" font-size="13" font-weight="700" fill="#080808">Grounded answer + CTAs</text>
+    <text x="48" y="38" font-size="11" font-weight="500" fill="#5C6470">Cited, all three campuses</text>
+
+    <g transform="translate(20,56)">
+      <rect width="310" height="288" rx="10" fill="#FFFFFF" stroke="#D5DCE3"/>
+      <rect x="0" y="0" width="310" height="2" fill="#0057B8"/>
+      <rect x="0" y="2" width="310" height="32" fill="url(#chatHeaderGrad)"/>
+      <line x1="0" y1="34" x2="310" y2="34" stroke="#E8E5DD"/>
+      <text x="18" y="22" font-size="11" font-weight="400" fill="#5C6470">×</text>
+      <rect x="32" y="11" width="20" height="14" rx="7" fill="white" stroke="#DDD9CF"/>
+      <text x="42" y="21" text-anchor="middle" font-size="7.5" font-weight="600" fill="#2D3540" letter-spacing="0.6">EN</text>
+      <text x="155" y="22" text-anchor="middle" font-size="10.5" font-weight="600" fill="#080808" letter-spacing="-0.2">Mayo Assistant</text>
+      <circle cx="270" cy="18" r="3" fill="#10B981"/>
+      <circle cx="290" cy="14" r="1.2" fill="#5C6470"/>
+      <circle cx="290" cy="18" r="1.2" fill="#5C6470"/>
+      <circle cx="290" cy="22" r="1.2" fill="#5C6470"/>
+
+      <!-- bot bubble with text + citation -->
+      <rect x="14" y="44" width="282" height="74" rx="12" fill="#E1F0FF"/>
+      <text x="26" y="62" font-size="10" fill="#1A1F26">Mayo Clinic has three U.S. campuses</text>
+      <text x="26" y="75" font-size="10" fill="#1A1F26">with dedicated appointment lines.</text>
+      <text x="26" y="91" font-size="10" fill="#1A1F26">Which one are you visiting?</text>
+      <!-- citation chip -->
+      <rect x="26" y="98" width="100" height="14" rx="7" fill="#F3F1ED"/>
+      <text x="33" y="108" font-size="8" fill="#5C6470">↗ mayoclinic.org +2</text>
+
+      <!-- 3 phone CTAs -->
+      <g transform="translate(14,128)">
+        <rect width="282" height="22" rx="11" fill="#0057B8"/>
+        <text x="16" y="15" font-size="9" fill="white">📞</text>
+        <text x="32" y="15" font-size="9" font-weight="500" fill="white">Call Rochester</text>
+        <text x="270" y="15" text-anchor="end" font-size="9" fill="rgba(255,255,255,0.85)">507-538-3270</text>
+      </g>
+      <g transform="translate(14,154)">
+        <rect width="282" height="22" rx="11" fill="white" stroke="#DDD9CF"/>
+        <text x="16" y="15" font-size="9" fill="#0057B8">📞</text>
+        <text x="32" y="15" font-size="9" font-weight="500" fill="#080808">Call Phoenix</text>
+        <text x="270" y="15" text-anchor="end" font-size="9" fill="#8A929C">480-301-8484</text>
+      </g>
+      <g transform="translate(14,180)">
+        <rect width="282" height="22" rx="11" fill="white" stroke="#DDD9CF"/>
+        <text x="16" y="15" font-size="9" fill="#0057B8">📞</text>
+        <text x="32" y="15" font-size="9" font-weight="500" fill="#080808">Call Jacksonville</text>
+        <text x="270" y="15" text-anchor="end" font-size="9" fill="#8A929C">904-953-0853</text>
+      </g>
+
+      <!-- follow-up chips -->
+      <g transform="translate(14,212)">
+        <rect width="86" height="18" rx="9" fill="white" stroke="#DDD9CF"/>
+        <text x="10" y="12" font-size="8" fill="#0057B8">↗</text>
+        <text x="22" y="12" font-size="8.5" font-weight="500" fill="#002443">Phoenix campus</text>
+      </g>
+      <g transform="translate(106,212)">
+        <rect width="78" height="18" rx="9" fill="white" stroke="#DDD9CF"/>
+        <text x="8" y="12" font-size="8" fill="#0057B8">↗</text>
+        <text x="20" y="12" font-size="8.5" font-weight="500" fill="#002443">Wait times</text>
+      </g>
+      <g transform="translate(190,212)">
+        <rect width="92" height="18" rx="9" fill="white" stroke="#DDD9CF"/>
+        <text x="10" y="12" font-size="8" fill="#0057B8">↗</text>
+        <text x="22" y="12" font-size="8.5" font-weight="500" fill="#002443">After I request</text>
+      </g>
+
+      <!-- composer -->
+      <rect x="14" y="244" width="282" height="32" rx="16" fill="#F3F1ED"/>
+      <text x="22" y="263" font-size="9" fill="#8A929C">Type your question…</text>
+      <circle cx="288" cy="260" r="6" fill="#0057B8"/>
+
+      <text x="14" y="282" font-size="7.5" font-style="italic" fill="#8A929C">KB-only · cites every assertion · 3 phone CTAs</text>
+    </g>
+  </g>
+
+  <!-- ─── PANEL 4 · SHOW ME ON THE PAGE ────────────────────── -->
+  <g transform="translate(1180,148)">
+    <rect width="380" height="380" rx="14" fill="#FFFFFF" stroke="#D5DCE3" filter="url(#panelShadow)"/>
+    <circle cx="26" cy="26" r="13" fill="#10B981"/>
+    <text x="26" y="31" text-anchor="middle" font-size="13" font-weight="700" fill="white">4</text>
+    <text x="48" y="22" font-size="13" font-weight="700" fill="#080808">Show me on the page</text>
+    <text x="48" y="38" font-size="11" font-weight="500" fill="#5C6470">The page reacts — not a link out</text>
+
+    <!-- Mock Mayo page -->
+    <g transform="translate(20,56)">
+      <rect width="340" height="288" rx="10" fill="#FAFAF7" stroke="#D5DCE3"/>
+      <!-- nav -->
+      <rect x="0" y="0" width="340" height="34" fill="#FFFFFF"/>
+      <line x1="0" y1="34" x2="340" y2="34" stroke="#E8E5DD"/>
+      <text x="14" y="14" font-size="8" font-weight="900" fill="#080808">MAYO</text>
+      <text x="14" y="22" font-size="8" font-weight="900" fill="#080808">CLINIC</text>
+      <text x="64" y="22" font-size="8.5" fill="#5C6470">Care · Library · Professionals</text>
+      <rect x="240" y="8" width="90" height="18" rx="3" fill="#0057B8"/>
+      <text x="285" y="20" text-anchor="middle" font-size="8" font-weight="500" fill="white">Request appointment</text>
+      <!-- hero -->
+      <text x="14" y="58" font-size="14" font-weight="500" fill="#080808" font-family="Source Serif 4, Georgia, serif">Start your appointment</text>
+      <text x="14" y="76" font-size="14" font-weight="500" fill="#080808" font-family="Source Serif 4, Georgia, serif">request.</text>
+      <text x="14" y="92" font-size="8.5" fill="#5C6470">Most patients can request online or by phone.</text>
+      <!-- 3 cards, middle one highlighted -->
+      <g transform="translate(14,108)">
+        <rect width="100" height="78" rx="4" fill="white" stroke="#E8E5DD"/>
+        <text x="8" y="18" font-size="9" font-weight="600" fill="#080808">New patients</text>
+        <text x="8" y="32" font-size="7.5" fill="#5C6470">Share your information</text>
+        <text x="8" y="42" font-size="7.5" fill="#5C6470">and pick a time.</text>
+        <text x="8" y="68" font-size="8" font-weight="500" fill="#0057B8">Request online →</text>
+      </g>
+      <!-- Highlighted middle card -->
+      <g transform="translate(120,108)">
+        <!-- pulse rings -->
+        <rect x="-6" y="-6" width="112" height="90" rx="8" fill="none" stroke="#0057B8" stroke-width="2" opacity="0.55"/>
+        <rect x="-12" y="-12" width="124" height="102" rx="10" fill="none" stroke="#0057B8" stroke-width="1.5" opacity="0.25"/>
+        <rect width="100" height="78" rx="4" fill="white" stroke="#0057B8" stroke-width="1.5"/>
+        <text x="8" y="18" font-size="9" font-weight="600" fill="#080808">Returning patients</text>
+        <text x="8" y="32" font-size="7.5" fill="#5C6470">Sign in to your patient</text>
+        <text x="8" y="42" font-size="7.5" fill="#5C6470">account to schedule.</text>
+        <text x="8" y="68" font-size="8" font-weight="500" fill="#0057B8">Sign in →</text>
+      </g>
+      <g transform="translate(226,108)">
+        <rect width="100" height="78" rx="4" fill="white" stroke="#E8E5DD"/>
+        <text x="8" y="18" font-size="9" font-weight="600" fill="#080808">Referring physicians</text>
+        <text x="8" y="32" font-size="7.5" fill="#5C6470">Refer a patient or request</text>
+        <text x="8" y="42" font-size="7.5" fill="#5C6470">a consultation.</text>
+        <text x="8" y="68" font-size="8" font-weight="500" fill="#0057B8">Provider portal →</text>
+      </g>
+
+      <!-- Back to chat pill -->
+      <g transform="translate(120,232)">
+        <rect width="100" height="28" rx="14" fill="#0057B8"/>
+        <path d="M14 14 q 0 -1 -1 -1 h-3 l-2 2 v-8 q0 -1 1 -1 h10 q1 0 1 1 v6 q 0 1 -1 1 z" fill="none" stroke="white" stroke-width="1.4"/>
+        <text x="56" y="18" text-anchor="middle" font-size="9.5" font-weight="600" fill="white">Back to chat</text>
+      </g>
+      <text x="170" y="276" text-anchor="middle" font-size="7.5" font-style="italic" fill="#8A929C">Widget dismissed · element pulses · return in place</text>
+    </g>
+  </g>
+
+  <!-- ════════════════════════════════════════════════════════
+       CONNECTOR — "handled by"
+       Under each panel, show which layers are involved
+       ════════════════════════════════════════════════════════ -->
+  <g transform="translate(0,548)">
+    <!-- Panel 1: Browser only -->
+    <g transform="translate(160,0)">
+      <text x="0" y="0" font-size="9" font-weight="600" fill="#5C6470" letter-spacing="0.5">HANDLED BY</text>
+      <g transform="translate(0,8)">
+        <rect width="50" height="14" rx="3" fill="#0057B8"/>
+        <text x="25" y="11" text-anchor="middle" font-size="9" font-weight="600" fill="white">BROWSER</text>
+      </g>
+    </g>
+    <!-- Panel 2: Browser + Edge + Model -->
+    <g transform="translate(490,0)">
+      <text x="0" y="0" font-size="9" font-weight="600" fill="#5C6470" letter-spacing="0.5">HANDLED BY</text>
+      <g transform="translate(0,8)">
+        <rect width="50" height="14" rx="3" fill="#0057B8"/>
+        <text x="25" y="11" text-anchor="middle" font-size="9" font-weight="600" fill="white">BROWSER</text>
+        <rect x="56" y="0" width="36" height="14" rx="3" fill="#0057B8"/>
+        <text x="74" y="11" text-anchor="middle" font-size="9" font-weight="600" fill="white">EDGE</text>
+        <rect x="98" y="0" width="48" height="14" rx="3" fill="#002443"/>
+        <text x="122" y="11" text-anchor="middle" font-size="9" font-weight="600" fill="white">MODEL</text>
+      </g>
+    </g>
+    <!-- Panel 3: Browser + Edge + Model -->
+    <g transform="translate(870,0)">
+      <text x="0" y="0" font-size="9" font-weight="600" fill="#5C6470" letter-spacing="0.5">HANDLED BY</text>
+      <g transform="translate(0,8)">
+        <rect width="50" height="14" rx="3" fill="#0057B8"/>
+        <text x="25" y="11" text-anchor="middle" font-size="9" font-weight="600" fill="white">BROWSER</text>
+        <rect x="56" y="0" width="36" height="14" rx="3" fill="#0057B8"/>
+        <text x="74" y="11" text-anchor="middle" font-size="9" font-weight="600" fill="white">EDGE</text>
+        <rect x="98" y="0" width="48" height="14" rx="3" fill="#002443"/>
+        <text x="122" y="11" text-anchor="middle" font-size="9" font-weight="600" fill="white">MODEL</text>
+      </g>
+    </g>
+    <!-- Panel 4: Browser -->
+    <g transform="translate(1280,0)">
+      <text x="0" y="0" font-size="9" font-weight="600" fill="#5C6470" letter-spacing="0.5">HANDLED BY</text>
+      <g transform="translate(0,8)">
+        <rect width="50" height="14" rx="3" fill="#0057B8"/>
+        <text x="25" y="11" text-anchor="middle" font-size="9" font-weight="600" fill="white">BROWSER</text>
+      </g>
+    </g>
+  </g>
+
+  <!-- arrows between panels -->
+  <g stroke="#0057B8" stroke-width="1.5" fill="none">
+    <path d="M395 338 L 415 338" marker-end="url(#flowArr)"/>
+    <path d="M775 338 L 795 338" marker-end="url(#flowArr)"/>
+    <path d="M1155 338 L 1175 338" marker-end="url(#flowArr)"/>
+  </g>
+
+  <!-- ════════════════════════════════════════════════════════
+       ARCHITECTURE — 3 LAYERS
+       ════════════════════════════════════════════════════════ -->
+  <text x="40" y="608" font-size="11" font-weight="700" fill="#0057B8" letter-spacing="2">ARCHITECTURE</text>
+
+  <!-- BROWSER layer -->
+  <g transform="translate(40,624)">
+    <rect width="1520" height="70" rx="10" fill="#FFFFFF" stroke="#D5DCE3"/>
+    <rect x="0" y="0" width="6" height="70" fill="#0057B8" rx="3"/>
+    <text x="22" y="22" font-size="11" font-weight="700" fill="#080808" letter-spacing="0.5">CLIENT · USER'S BROWSER</text>
+    <text x="22" y="40" font-size="11" font-weight="500" fill="#5C6470">Single HTML file. No KB. No prompt assembly. Smaller payload.</text>
+    <g transform="translate(22,48)">
+      <rect width="100" height="16" rx="8" fill="#F7F9FC" stroke="#E5E9EE"/>
+      <text x="50" y="11" text-anchor="middle" font-size="9" font-weight="500" fill="#3A4654">Streaming UI</text>
+      <rect x="108" y="0" width="118" height="16" rx="8" fill="#F7F9FC" stroke="#E5E9EE"/>
+      <text x="167" y="11" text-anchor="middle" font-size="9" font-weight="500" fill="#3A4654">L10N · EN/ES</text>
+      <rect x="232" y="0" width="120" height="16" rx="8" fill="#F7F9FC" stroke="#E5E9EE"/>
+      <text x="292" y="11" text-anchor="middle" font-size="9" font-weight="500" fill="#3A4654">Voice (Web Speech)</text>
+      <rect x="358" y="0" width="120" height="16" rx="8" fill="#F7F9FC" stroke="#E5E9EE"/>
+      <text x="418" y="11" text-anchor="middle" font-size="9" font-weight="500" fill="#3A4654">Show-me highlighter</text>
+      <rect x="484" y="0" width="100" height="16" rx="8" fill="#F7F9FC" stroke="#E5E9EE"/>
+      <text x="534" y="11" text-anchor="middle" font-size="9" font-weight="500" fill="#3A4654">Capability cards</text>
+      <rect x="590" y="0" width="92" height="16" rx="8" fill="#F7F9FC" stroke="#E5E9EE"/>
+      <text x="636" y="11" text-anchor="middle" font-size="9" font-weight="500" fill="#3A4654">Token parser</text>
+      <rect x="688" y="0" width="92" height="16" rx="8" fill="#F7F9FC" stroke="#E5E9EE"/>
+      <text x="734" y="11" text-anchor="middle" font-size="9" font-weight="500" fill="#3A4654">Transcript</text>
+      <rect x="786" y="0" width="110" height="16" rx="8" fill="#F7F9FC" stroke="#E5E9EE"/>
+      <text x="841" y="11" text-anchor="middle" font-size="9" font-weight="500" fill="#3A4654">localStorage (lang)</text>
+    </g>
+  </g>
+
+  <!-- request arrow -->
+  <g>
+    <path d="M120 700 V 718" stroke="#0057B8" stroke-width="2" fill="none" marker-end="url(#flowArr)"/>
+    <text x="130" y="714" font-size="9" font-weight="600" fill="#0057B8">POST /api/chat · { lang, messages }</text>
+    <path d="M380 728 V 706" stroke="#10AA6F" stroke-width="2" fill="none" marker-end="url(#flowArr)" transform="translate(0,4)"/>
+    <text x="394" y="722" font-size="9" font-weight="600" fill="#10AA6F">SSE stream · text + control tokens</text>
+  </g>
+
+  <!-- EDGE layer -->
+  <g transform="translate(40,734)">
+    <rect width="1520" height="70" rx="10" fill="url(#bgEdge2)" stroke="#D5DCE3"/>
+    <rect x="0" y="0" width="6" height="70" fill="#0057B8" rx="3"/>
+    <text x="22" y="22" font-size="11" font-weight="700" fill="#080808" letter-spacing="0.5">EDGE · VERCEL SERVERLESS</text>
+    <text x="22" y="40" font-size="11" font-weight="500" fill="#5C6470">api/chat.js — gates, builds the system prompt server-side, streams SSE through. Owns kb.json.</text>
+    <g transform="translate(22,48)">
+      <rect width="80" height="16" rx="8" fill="white" stroke="#DDD9CF"/>
+      <text x="40" y="11" text-anchor="middle" font-size="9" font-weight="600" fill="#080808">CORS</text>
+      <rect x="88" y="0" width="116" height="16" rx="8" fill="white" stroke="#DDD9CF"/>
+      <text x="146" y="11" text-anchor="middle" font-size="9" font-weight="600" fill="#080808">Rate limit · 20/min/IP</text>
+      <rect x="210" y="0" width="80" height="16" rx="8" fill="white" stroke="#DDD9CF"/>
+      <text x="250" y="11" text-anchor="middle" font-size="9" font-weight="600" fill="#080808">Validate</text>
+      <rect x="296" y="0" width="170" height="16" rx="8" fill="white" stroke="#0057B8"/>
+      <text x="381" y="11" text-anchor="middle" font-size="9" font-weight="700" fill="#0057B8">Build prompt + read kb.json</text>
+      <rect x="472" y="0" width="120" height="16" rx="8" fill="white" stroke="#DDD9CF"/>
+      <text x="532" y="11" text-anchor="middle" font-size="9" font-weight="600" fill="#080808">Stream SSE proxy</text>
+    </g>
+    <!-- kb.json side note -->
+    <g transform="translate(1280,12)">
+      <rect width="222" height="48" rx="8" fill="white" stroke="#D5DCE3" stroke-dasharray="3 3"/>
+      <text x="12" y="18" font-size="10" font-weight="700" fill="#080808">kb.json</text>
+      <text x="12" y="32" font-size="9" fill="#5C6470">18 entries · loaded once per</text>
+      <text x="12" y="42" font-size="9" fill="#5C6470">warm container · edit + redeploy</text>
+    </g>
+  </g>
+
+  <!-- request arrow -->
+  <g>
+    <path d="M120 810 V 828" stroke="#0057B8" stroke-width="2" fill="none" marker-end="url(#flowArr)"/>
+    <text x="130" y="824" font-size="9" font-weight="600" fill="#0057B8">POST /v1/messages · stream=true</text>
+    <path d="M380 838 V 816" stroke="#10AA6F" stroke-width="2" fill="none" marker-end="url(#flowArr)" transform="translate(0,4)"/>
+    <text x="394" y="832" font-size="9" font-weight="600" fill="#10AA6F">content_block_delta events</text>
+  </g>
+
+  <!-- MODEL layer -->
+  <g transform="translate(40,844)">
+    <rect width="1520" height="70" rx="10" fill="url(#bgModel2)" stroke="#C9D4E2"/>
+    <rect x="0" y="0" width="6" height="70" fill="#002443" rx="3"/>
+    <text x="22" y="22" font-size="11" font-weight="700" fill="#002443" letter-spacing="0.5">MODEL · ANTHROPIC API</text>
+    <text x="22" y="40" font-size="11" font-weight="500" fill="#3A4654">Claude Sonnet 4.6 — system prompt assembled server-side, SSE stream out.</text>
+    <g transform="translate(22,48)">
+      <rect width="200" height="16" rx="8" fill="white" stroke="#C9D4E2"/>
+      <text x="100" y="11" text-anchor="middle" font-size="9" font-weight="600" fill="#002443">Rules + kb.json + lang rule</text>
+      <rect x="208" y="0" width="170" height="16" rx="8" fill="white" stroke="#C9D4E2"/>
+      <text x="293" y="11" text-anchor="middle" font-size="9" font-weight="600" fill="#002443">&lt;&lt;CITATIONS&gt;&gt;[...]</text>
+      <rect x="384" y="0" width="240" height="16" rx="8" fill="white" stroke="#C9D4E2"/>
+      <text x="504" y="11" text-anchor="middle" font-size="9" font-weight="600" fill="#002443">&lt;&lt;ACTION&gt;&gt; phone · link · show</text>
+      <rect x="630" y="0" width="180" height="16" rx="8" fill="white" stroke="#C9D4E2"/>
+      <text x="720" y="11" text-anchor="middle" font-size="9" font-weight="600" fill="#002443">Guardrails · KB-only · no PHI</text>
+    </g>
+  </g>
+
+  <!-- ════════════════════════════════════════════════════════
+       FOOTER — 3 PILLARS
+       ════════════════════════════════════════════════════════ -->
+  <line x1="40" y1="936" x2="1560" y2="936" stroke="#E5E9EE"/>
+
+  <g transform="translate(40,950)">
+    <text x="0" y="0" font-size="11" font-weight="700" fill="#0057B8" letter-spacing="2">NIMBLE</text>
+    <text x="0" y="22" font-size="13" font-weight="600" fill="#080808">Ship in ten minutes</text>
+    <text x="0" y="42" font-size="11" fill="#5C6470">Single HTML file, one serverless function,</text>
+    <text x="0" y="58" font-size="11" fill="#5C6470">zero npm dependencies. Drag four files into</text>
+    <text x="0" y="74" font-size="11" fill="#5C6470">Vercel and the demo is live.</text>
+    <text x="0" y="98" font-size="10" font-weight="600" fill="#0057B8" letter-spacing="0.5">EDIT KB.JSON · REDEPLOY · DONE</text>
+  </g>
+
+  <g transform="translate(560,950)">
+    <text x="0" y="0" font-size="11" font-weight="700" fill="#0057B8" letter-spacing="2">SCALABLE</text>
+    <text x="0" y="22" font-size="13" font-weight="600" fill="#080808">Stateless by design</text>
+    <text x="0" y="42" font-size="11" fill="#5C6470">Per-IP rate limit, no shared session state,</text>
+    <text x="0" y="58" font-size="11" fill="#5C6470">SSE passthrough. Horizontal by default —</text>
+    <text x="0" y="74" font-size="11" fill="#5C6470">swap an in-memory bucket for Upstash and go.</text>
+    <text x="0" y="98" font-size="10" font-weight="600" fill="#0057B8" letter-spacing="0.5">ANY EDGE PROVIDER · ANY SCALE</text>
+  </g>
+
+  <g transform="translate(1080,950)">
+    <text x="0" y="0" font-size="11" font-weight="700" fill="#0057B8" letter-spacing="2">GROUNDED</text>
+    <text x="0" y="22" font-size="13" font-weight="600" fill="#080808">Cited every time</text>
+    <text x="0" y="42" font-size="11" fill="#5C6470">KB lives as portable JSON, never ships to the</text>
+    <text x="0" y="58" font-size="11" fill="#5C6470">browser. Every assertion is paired with a</text>
+    <text x="0" y="74" font-size="11" fill="#5C6470">kb-ID. No PHI, no booking, citations enforced.</text>
+    <text x="0" y="98" font-size="10" font-weight="600" fill="#0057B8" letter-spacing="0.5">KB-ONLY · CITATIONS REQUIRED</text>
+  </g>
+
+  <line x1="40" y1="1060" x2="1560" y2="1060" stroke="#E5E9EE"/>
+  <text x="40" y="1074" font-size="10" font-weight="500" fill="#9CA3AF">Mayo Clinic Scheduling Assistant · Reference architecture · 2026</text>
+  <text x="1560" y="1074" text-anchor="end" font-size="10" font-weight="500" fill="#9CA3AF">v2 · KB externalized · server-built prompt · Claude Sonnet 4.6</text>
+</svg>

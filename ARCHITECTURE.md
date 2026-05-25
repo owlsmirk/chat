@@ -7,23 +7,28 @@ thin Vercel proxy that owns the system prompt.
 
 ## At a glance
 
+![Mayo Clinic Scheduling Assistant — user journey + architecture](docs/story.svg)
+
+One artifact tells the whole story: four user moments at the top
+(open + orient → ask in voice or Spanish → grounded answer with
+citations and three-campus CTAs → show me on the page), the
+three-layer architecture below, and the three pillars that make
+this nimble, scalable, and grounded.
+
+## Quick reference
+
 | | |
 |---|---|
 | **Surface** | One HTML file (`index.html`) — page + widget + client modules |
 | **Edge** | Vercel serverless function (`api/chat.js`) — owns the system prompt + KB |
 | **KB** | `kb.json` at the repo root — 18 paraphrased entries, server-loaded |
-| **Model** | Claude Sonnet 4.6 (`claude-sonnet-4-6`), streaming SSE |
+| **Model** | Claude Sonnet 4.6, streaming SSE |
 | **Hosting** | Vercel Hobby tier (free for stakeholder demos) |
 | **Languages** | English + Spanish, toggled at runtime |
 | **State** | In-conversation only; language preference in `localStorage` |
 | **Auth** | None (server-side API key is the only secret) |
 
-## System architecture
-
-![Architecture diagram](docs/architecture.svg)
-
-Three layers, each with a clear responsibility and a thin contract
-between them.
+## Components
 
 ### Client (the browser)
 
@@ -94,8 +99,6 @@ The system prompt assembled per request contains:
   while keeping control tokens, URLs, and phone numbers intact.
 
 ## Request lifecycle
-
-![Request flow](docs/request-flow.svg)
 
 One chat turn, end to end:
 
@@ -311,6 +314,5 @@ would be required before real-patient deployment:
 ├── README.md               # 10-minute deploy guide
 ├── ARCHITECTURE.md         # this document
 └── docs/
-    ├── architecture.svg    # layered system view
-    └── request-flow.svg    # one-turn sequence diagram
+    └── story.svg           # user journey + architecture + pillars
 ```
