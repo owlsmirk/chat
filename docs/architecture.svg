@@ -47,7 +47,7 @@
       <rect x="128" y="0" width="118" height="22" rx="11" fill="white" stroke="#D5DCE3"/>
       <text x="187" y="15" text-anchor="middle" font-size="10" font-weight="500" fill="#3A4654">L10N · EN / ES</text>
       <rect x="254" y="0" width="156" height="22" rx="11" fill="white" stroke="#D5DCE3"/>
-      <text x="332" y="15" text-anchor="middle" font-size="10" font-weight="500" fill="#3A4654">Voice · Web Speech API</text>
+      <text x="332" y="15" text-anchor="middle" font-size="10" font-weight="500" fill="#3A4654">Voice in · TTS read-aloud</text>
       <rect x="418" y="0" width="148" height="22" rx="11" fill="white" stroke="#D5DCE3"/>
       <text x="492" y="15" text-anchor="middle" font-size="10" font-weight="500" fill="#3A4654">Show-me highlighter</text>
       <rect x="574" y="0" width="148" height="22" rx="11" fill="white" stroke="#D5DCE3"/>

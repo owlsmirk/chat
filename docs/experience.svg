@@ -152,6 +152,12 @@
     <text x="26" y="144" font-size="10" fill="#1A1F26">appointment lines.</text>
     <rect x="26" y="152" width="100" height="14" rx="7" fill="#F3F1ED"/>
     <text x="34" y="162" font-size="8" fill="#5C6470">↗ mayoclinic.org +2</text>
+    <!-- Speaker (read-aloud) sits in the feedback row spot at the bubble's right edge -->
+    <g transform="translate(196,154)">
+      <circle cx="6" cy="6" r="8" fill="white" stroke="#DDD9CF"/>
+      <polygon points="3 5 5 7 1 7 1 5 3 5 7 3 7 9 3 7" fill="none" stroke="#0057B8" stroke-width="1" stroke-linejoin="round" transform="translate(2,0)"/>
+      <path d="M11 4 a3 3 0 0 1 0 4" fill="none" stroke="#0057B8" stroke-width="0.9" stroke-linecap="round"/>
+    </g>
 
     <!-- 3 phone CTAs -->
     <g transform="translate(14,182)">
@@ -216,6 +222,13 @@
       <text x="80" y="14" text-anchor="middle" fill="#0057B8">Copy or email transcript</text>
     </g>
     <path d="M845 154 L 814 162" stroke="#5C6470" stroke-width="1.2" fill="none" marker-end="url(#tagArr)"/>
+
+    <!-- Read-aloud (TTS) tag pointing at the speaker icon in the bot bubble -->
+    <g transform="translate(845,250)">
+      <rect width="140" height="22" rx="11" fill="white" stroke="#10AA6F"/>
+      <text x="70" y="14" text-anchor="middle" fill="#10AA6F">Read aloud · TTS</text>
+    </g>
+    <path d="M845 262 L 800 300" stroke="#5C6470" stroke-width="1.2" fill="none" marker-end="url(#tagArr)"/>
   </g>
 
   <!-- ─── MOCKUP 3 · SHOW ME ON THE PAGE ─── -->
@@ -315,7 +328,7 @@
     <g transform="translate(264,16)" font-family="Inter">
       <text x="130" y="38" text-anchor="middle" font-size="38" font-weight="700" fill="#0057B8" letter-spacing="-1">2</text>
       <text x="130" y="60" text-anchor="middle" font-size="12" font-weight="600" fill="#080808">Languages</text>
-      <text x="130" y="74" text-anchor="middle" font-size="10" fill="#5C6470">English + Spanish, toggled at runtime</text>
+      <text x="130" y="74" text-anchor="middle" font-size="10" fill="#5C6470">EN + ES · chrome, voice in, read-aloud</text>
     </g>
     <line x1="526" y1="22" x2="526" y2="78" stroke="#E5E9EE"/>
     <g transform="translate(528,16)" font-family="Inter">
@@ -361,7 +374,7 @@
     <text x="22" y="64" font-size="20" font-weight="600" fill="#080808" letter-spacing="-0.4">Multilingual, multimodal.</text>
     <g font-size="13" fill="#3A4654">
       <text x="22" y="106"><tspan fill="#0057B8" font-weight="700">›</tspan>  English + Spanish (toggle in header)</text>
-      <text x="22" y="130"><tspan fill="#0057B8" font-weight="700">›</tspan>  Voice input via Web Speech (EN + ES)</text>
+      <text x="22" y="130"><tspan fill="#0057B8" font-weight="700">›</tspan>  Voice in + read-aloud (EN + ES)</text>
       <text x="22" y="154"><tspan fill="#0057B8" font-weight="700">›</tspan>  Full-screen mobile takeover</text>
       <text x="22" y="178"><tspan fill="#0057B8" font-weight="700">›</tspan>  Capability cards for low-friction entry</text>
       <text x="22" y="202"><tspan fill="#0057B8" font-weight="700">›</tspan>  Streaming reply — no wait-then-dump</text>
