@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1400 760" font-family="Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" role="img" aria-label="Mayo Scheduling Assistant — system architecture for engineers">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1400 800" font-family="Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" role="img" aria-label="Mayo Scheduling Assistant — system architecture for engineers">
   <title>Mayo Scheduling Assistant — Architecture</title>
 
   <defs>
@@ -26,7 +26,7 @@
     </marker>
   </defs>
 
-  <rect width="1400" height="760" fill="#FFFFFF"/>
+  <rect width="1400" height="800" fill="#FFFFFF"/>
 
   <!-- Title -->
   <text x="40" y="48" font-size="24" font-weight="700" fill="#080808" letter-spacing="-0.4">Mayo Scheduling Assistant — Architecture</text>
@@ -154,18 +154,18 @@
 
   <g transform="translate(40,710)">
     <text x="0" y="0" font-size="12" font-weight="600" fill="#080808">Stateless edge</text>
-    <text x="0" y="16" font-size="11" fill="#5C6470">Per-IP rate limit · Upstash-ready</text>
-  </g>
-  <g transform="translate(370,710)">
-    <text x="0" y="0" font-size="12" font-weight="600" fill="#080808">KB hot-reload</text>
-    <text x="0" y="16" font-size="11" fill="#5C6470">Edit kb.json · redeploy · done</text>
+    <text x="0" y="16" font-size="11" fill="#5C6470">Per-IP rate limit in-memory · swap Upstash for production</text>
   </g>
   <g transform="translate(700,710)">
-    <text x="0" y="0" font-size="12" font-weight="600" fill="#080808">Server-built prompt</text>
-    <text x="0" y="16" font-size="11" fill="#5C6470">Rules + KB never reach the client</text>
+    <text x="0" y="0" font-size="12" font-weight="600" fill="#080808">KB hot-reload</text>
+    <text x="0" y="16" font-size="11" fill="#5C6470">Edit kb.json, redeploy — no frontend rebuild, no cache</text>
   </g>
-  <g transform="translate(1030,710)">
+  <g transform="translate(40,742)">
+    <text x="0" y="0" font-size="12" font-weight="600" fill="#080808">Server-built prompt</text>
+    <text x="0" y="16" font-size="11" fill="#5C6470">Rules + KB live on the edge — clients can't read or override</text>
+  </g>
+  <g transform="translate(700,742)">
     <text x="0" y="0" font-size="12" font-weight="600" fill="#080808">SSE passthrough</text>
-    <text x="0" y="16" font-size="11" fill="#5C6470">No buffering · Cache-Control: no-store</text>
+    <text x="0" y="16" font-size="11" fill="#5C6470">No buffering · Cache-Control: no-store on every response</text>
   </g>
 </svg>
