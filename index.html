@@ -1745,6 +1745,10 @@
   function addBotMessage(text, citations = [], actions = [], opts = {}) {
     const wrap = document.createElement('div');
     wrap.className = 'msg bot';
+    /* Preserve the raw markdown text so voice read-out gets proper
+       sentence breaks (textContent of the rendered DOM smashes
+       paragraph boundaries together). */
+    if (text) wrap.dataset.speakText = text;
 
     const body = document.createElement('div');
     body.className = 'msg-body';
@@ -2197,6 +2201,49 @@
   const SPEAK_ICON = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>`;
   const SPEAK_ICON_PLAYING = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/></svg>`;
 
+  /* Browsers (notably Chrome) load voices asynchronously — kick the
+     list once and again on voiceschanged so the first toggleSpeak
+     after page load can already pick a good voice. */
+  let cachedVoices = [];
+  function refreshVoices() { cachedVoices = (window.speechSynthesis?.getVoices?.() || []); }
+  if (TTS_SUPPORTED) {
+    refreshVoices();
+    window.speechSynthesis.addEventListener?.('voiceschanged', refreshVoices);
+  }
+
+  /* Prefer high-quality named voices per platform, falling back to
+     the first voice that matches the requested language. */
+  function pickVoice(lang) {
+    if (!cachedVoices.length) refreshVoices();
+    const prefix = lang.split('-')[0];
+    const candidates = cachedVoices.filter(v => v.lang && v.lang.toLowerCase().startsWith(prefix));
+    const preferred = prefix === 'es'
+      ? ['Paulina', 'Google español', 'Mónica', 'Marisol', 'Microsoft Sabina', 'Microsoft Helena']
+      : ['Samantha', 'Google US English', 'Google UK English Female', 'Microsoft Aria', 'Microsoft Jenny', 'Microsoft Zira'];
+    for (const name of preferred) {
+      const v = candidates.find(c => c.name && c.name.includes(name));
+      if (v) return v;
+    }
+    /* Prefer the platform's "default" or local-service voices over remote ones */
+    return candidates.find(v => v.localService && v.default)
+        || candidates.find(v => v.localService)
+        || candidates[0]
+        || null;
+  }
+
+  /* Normalize whitespace and add a sentence break between paragraphs
+     so the engine pauses where the user would expect. */
+  function prepSpeechText(raw) {
+    return String(raw || '')
+      .replace(/\r\n/g, '\n')
+      .replace(/\n{2,}/g, '. ')      // paragraph break → period + space
+      .replace(/\n/g, ' ')           // single newlines → space
+      .replace(/\*\*(.+?)\*\*/g, '$1') // strip markdown bold
+      .replace(/\s+/g, ' ')
+      .replace(/\.\s*\./g, '.')      // collapse accidental ".. "
+      .trim();
+  }
+
   let activeSpeak = null;
 
   function stopSpeaking() {
@@ -2213,25 +2260,29 @@
 
   function toggleSpeak(btn, wrap) {
     if (!TTS_SUPPORTED) return;
-    /* Tapping the active speaker stops playback. */
-    if (activeSpeak && activeSpeak.btn === btn) {
-      stopSpeaking();
-      return;
-    }
-    /* Cancel any other speaker that's currently playing. */
+    if (activeSpeak && activeSpeak.btn === btn) { stopSpeaking(); return; }
     stopSpeaking();
 
-    const body = wrap.querySelector('.msg-body');
-    if (!body) return;
-    const clone = body.cloneNode(true);
-    clone.querySelectorAll('.cite-chip, .cite-drawer, .stream-caret').forEach(el => el.remove());
-    const text = clone.textContent.replace(/\s+/g, ' ').trim();
+    /* Prefer the raw markdown saved on the wrap (preserves paragraph
+       breaks). Fall back to DOM text only if the dataset is missing. */
+    let raw = wrap.dataset.speakText || '';
+    if (!raw) {
+      const body = wrap.querySelector('.msg-body');
+      if (!body) return;
+      const clone = body.cloneNode(true);
+      clone.querySelectorAll('.cite-chip, .cite-drawer, .stream-caret').forEach(el => el.remove());
+      raw = clone.textContent;
+    }
+    const text = prepSpeechText(raw);
     if (!text) return;
 
+    const lang = currentLang === 'es' ? 'es-US' : 'en-US';
     const u = new SpeechSynthesisUtterance(text);
-    u.lang = currentLang === 'es' ? 'es-US' : 'en-US';
-    u.rate = 1;
+    u.lang = lang;
+    u.rate = 0.95;
     u.pitch = 1;
+    const voice = pickVoice(lang);
+    if (voice) u.voice = voice;
     u.onend = u.onerror = () => {
       if (activeSpeak && activeSpeak.btn === btn) stopSpeaking();
     };
