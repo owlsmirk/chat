@@ -1998,8 +1998,15 @@
       if (!response.ok) {
         const errBody = await response.json().catch(() => ({}));
         console.error('Proxy error', response.status, errBody);
-        const detail = errBody.detail ? ` — ${typeof errBody.detail === 'string' ? errBody.detail.slice(0, 200) : JSON.stringify(errBody.detail).slice(0, 200)}` : '';
-        throw new Error((errBody.error || `Server returned ${response.status}`) + detail);
+        const errStr = typeof errBody.error === 'string'
+          ? errBody.error
+          : (errBody.error && errBody.error.message)
+            ? errBody.error.message
+            : (errBody.error ? JSON.stringify(errBody.error) : `Server returned ${response.status}`);
+        const detail = errBody.detail
+          ? ` — ${typeof errBody.detail === 'string' ? errBody.detail.slice(0, 200) : JSON.stringify(errBody.detail).slice(0, 200)}`
+          : '';
+        throw new Error(errStr + detail);
       }
 
       const reader = response.body.getReader();
@@ -2041,10 +2048,15 @@
               }
             } catch {}
           } else if (eventName === 'error') {
+            let msg = 'Stream error';
             try {
               const obj = JSON.parse(dataStr);
-              throw new Error(obj.error?.message || 'Stream error');
-            } catch (e) { throw e; }
+              msg = (obj && obj.error && obj.error.message)
+                || (obj && typeof obj.error === 'string' ? obj.error : null)
+                || (obj && obj.message)
+                || msg;
+            } catch {}
+            throw new Error(msg);
           }
         }
       }
