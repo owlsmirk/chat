@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1400 1140" font-family="Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" role="img" aria-label="Mayo Scheduling Assistant — patient experience for stakeholders">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1400 970" font-family="Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" role="img" aria-label="Mayo Scheduling Assistant — patient experience for stakeholders">
   <title>Mayo Scheduling Assistant — Patient Experience</title>
 
   <defs>
@@ -18,7 +18,7 @@
     </marker>
   </defs>
 
-  <rect width="1400" height="1140" fill="#FFFFFF"/>
+  <rect width="1400" height="970" fill="#FFFFFF"/>
 
   <!-- Title -->
   <text x="40" y="56" font-size="32" font-weight="700" fill="#080808" letter-spacing="-0.6">Mayo Scheduling Assistant</text>
@@ -311,51 +311,12 @@
   </g>
 
   <!-- ════════════════════════════════════════════════════════
-       BY THE NUMBERS — concrete stats strip
-       ════════════════════════════════════════════════════════ -->
-  <line x1="40" y1="676" x2="1360" y2="676" stroke="#E5E9EE"/>
-  <text x="40" y="702" font-size="11" font-weight="700" fill="#0057B8" letter-spacing="2">BY THE NUMBERS</text>
-
-  <g transform="translate(40,720)">
-    <rect width="1320" height="92" rx="14" fill="#FAFBFC" stroke="#E5E9EE"/>
-    <!-- 5 cells, each 260 wide + 4 dividers -->
-    <g transform="translate(0,16)" font-family="Inter">
-      <text x="130" y="38" text-anchor="middle" font-size="38" font-weight="700" fill="#0057B8" letter-spacing="-1">18</text>
-      <text x="130" y="60" text-anchor="middle" font-size="12" font-weight="600" fill="#080808">KB entries</text>
-      <text x="130" y="74" text-anchor="middle" font-size="10" fill="#5C6470">paraphrased from mayoclinic.org</text>
-    </g>
-    <line x1="262" y1="22" x2="262" y2="78" stroke="#E5E9EE"/>
-    <g transform="translate(264,16)" font-family="Inter">
-      <text x="130" y="38" text-anchor="middle" font-size="38" font-weight="700" fill="#0057B8" letter-spacing="-1">2</text>
-      <text x="130" y="60" text-anchor="middle" font-size="12" font-weight="600" fill="#080808">Languages</text>
-      <text x="130" y="74" text-anchor="middle" font-size="10" fill="#5C6470">EN + ES · chrome, voice in, read-aloud</text>
-    </g>
-    <line x1="526" y1="22" x2="526" y2="78" stroke="#E5E9EE"/>
-    <g transform="translate(528,16)" font-family="Inter">
-      <text x="130" y="38" text-anchor="middle" font-size="38" font-weight="700" fill="#0057B8" letter-spacing="-1">3</text>
-      <text x="130" y="60" text-anchor="middle" font-size="12" font-weight="600" fill="#080808">U.S. campuses</text>
-      <text x="130" y="74" text-anchor="middle" font-size="10" fill="#5C6470">Rochester · Phoenix · Jacksonville</text>
-    </g>
-    <line x1="790" y1="22" x2="790" y2="78" stroke="#E5E9EE"/>
-    <g transform="translate(792,16)" font-family="Inter">
-      <text x="130" y="38" text-anchor="middle" font-size="38" font-weight="700" fill="#0057B8" letter-spacing="-1">4</text>
-      <text x="130" y="60" text-anchor="middle" font-size="12" font-weight="600" fill="#080808">Page targets</text>
-      <text x="130" y="74" text-anchor="middle" font-size="10" fill="#5C6470">Show-me highlights on the page</text>
-    </g>
-    <line x1="1054" y1="22" x2="1054" y2="78" stroke="#E5E9EE"/>
-    <g transform="translate(1056,16)" font-family="Inter">
-      <text x="130" y="38" text-anchor="middle" font-size="38" font-weight="700" fill="#0057B8" letter-spacing="-1">100%</text>
-      <text x="130" y="60" text-anchor="middle" font-size="12" font-weight="600" fill="#080808">Cited answers</text>
-      <text x="130" y="74" text-anchor="middle" font-size="10" fill="#5C6470">Every claim links to a KB source</text>
-    </g>
-  </g>
-
-  <!-- ════════════════════════════════════════════════════════
        THREE PILLARS — BULLET POINTS, NOT PARAGRAPHS
        ════════════════════════════════════════════════════════ -->
-  <text x="40" y="852" font-size="11" font-weight="700" fill="#0057B8" letter-spacing="2">VALUE</text>
+  <line x1="40" y1="676" x2="1360" y2="676" stroke="#E5E9EE"/>
+  <text x="40" y="694" font-size="11" font-weight="700" fill="#0057B8" letter-spacing="2">VALUE</text>
 
-  <g transform="translate(40,868)">
+  <g transform="translate(40,704)">
     <rect width="420" height="232" rx="14" fill="#FAFBFC" stroke="#E5E9EE"/>
     <text x="22" y="34" font-size="12" font-weight="700" fill="#0057B8" letter-spacing="2">TRUST</text>
     <text x="22" y="64" font-size="20" font-weight="600" fill="#080808" letter-spacing="-0.4">Every answer is cited.</text>
@@ -368,7 +329,7 @@
     </g>
   </g>
 
-  <g transform="translate(490,868)">
+  <g transform="translate(490,704)">
     <rect width="420" height="232" rx="14" fill="#FAFBFC" stroke="#E5E9EE"/>
     <text x="22" y="34" font-size="12" font-weight="700" fill="#0057B8" letter-spacing="2">REACH</text>
     <text x="22" y="64" font-size="20" font-weight="600" fill="#080808" letter-spacing="-0.4">Multilingual, multimodal.</text>
@@ -381,7 +342,7 @@
     </g>
   </g>
 
-  <g transform="translate(940,868)">
+  <g transform="translate(940,704)">
     <rect width="420" height="232" rx="14" fill="#FAFBFC" stroke="#E5E9EE"/>
     <text x="22" y="34" font-size="12" font-weight="700" fill="#0057B8" letter-spacing="2">ACTION</text>
     <text x="22" y="64" font-size="20" font-weight="600" fill="#080808" letter-spacing="-0.4">From answer to next step.</text>
