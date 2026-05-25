@@ -5,15 +5,20 @@ appointment scheduling, billing, insurance, and locations. Grounded in
 a paraphrased knowledge base, runs against Claude Sonnet 4.6 through a
 thin Vercel proxy that owns the system prompt.
 
-## At a glance
+## Two visual artifacts
 
-![Mayo Clinic Scheduling Assistant — user journey + architecture](docs/story.svg)
+**For engineering / technical reviewers:**
 
-One artifact tells the whole story: four user moments at the top
-(open + orient → ask in voice or Spanish → grounded answer with
-citations and three-campus CTAs → show me on the page), the
-three-layer architecture below, and the three pillars that make
-this nimble, scalable, and grounded.
+![System architecture](docs/architecture.svg)
+
+**For product / stakeholder audiences:**
+
+![Patient experience](docs/experience.svg)
+
+One artifact per audience. The technical view shows dataflow,
+contracts, gates, and key engineering choices. The product view
+shows what patients actually see and the three value pillars
+(trust, reach, action).
 
 ## Quick reference
 
@@ -314,5 +319,6 @@ would be required before real-patient deployment:
 ├── README.md               # 10-minute deploy guide
 ├── ARCHITECTURE.md         # this document
 └── docs/
-    └── story.svg           # user journey + architecture + pillars
+    ├── architecture.svg    # technical view — dataflow + contracts
+    └── experience.svg      # product view — patient experience
 ```

@@ -1,0 +1,317 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1400 900" font-family="Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" role="img" aria-label="Mayo Scheduling Assistant — patient experience for stakeholders">
+  <title>Mayo Scheduling Assistant — Patient Experience</title>
+
+  <defs>
+    <linearGradient id="chatHeaderGrad2" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#FFFFFF"/>
+      <stop offset="100%" stop-color="#FAFBFC"/>
+    </linearGradient>
+    <filter id="widgetShadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feGaussianBlur in="SourceAlpha" stdDeviation="4"/>
+      <feOffset dx="0" dy="3" result="o"/>
+      <feComponentTransfer><feFuncA type="linear" slope="0.12"/></feComponentTransfer>
+      <feMerge><feMergeNode/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <marker id="tagArr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+      <path d="M0 0 L10 5 L0 10 Z" fill="#5C6470"/>
+    </marker>
+  </defs>
+
+  <rect width="1400" height="900" fill="#FFFFFF"/>
+
+  <!-- Title -->
+  <text x="40" y="56" font-size="32" font-weight="700" fill="#080808" letter-spacing="-0.6">Mayo Scheduling Assistant</text>
+  <text x="40" y="84" font-size="14" font-weight="500" fill="#5C6470">Branded · multilingual · voice-ready · grounded in mayoclinic.org</text>
+  <line x1="40" y1="104" x2="1360" y2="104" stroke="#E5E9EE"/>
+
+  <!-- ════════════════════════════════════════════════════════
+       THREE WIDGET MOCKUPS, BIG AND CLEAN
+       Positions: x=140, 580, 1020 (each 240 wide)
+       ════════════════════════════════════════════════════════ -->
+
+  <!-- ─── MOCKUP 1 · CAPABILITY CARDS ─── -->
+  <g transform="translate(140,140)">
+    <rect width="240" height="420" rx="14" fill="white" stroke="#D5DCE3" filter="url(#widgetShadow)"/>
+    <rect x="0" y="0" width="240" height="2" fill="#0057B8"/>
+    <rect x="0" y="2" width="240" height="38" fill="url(#chatHeaderGrad2)"/>
+    <line x1="0" y1="40" x2="240" y2="40" stroke="#E8E5DD"/>
+    <text x="14" y="26" font-size="12" fill="#5C6470">×</text>
+    <rect x="30" y="14" width="22" height="14" rx="7" fill="white" stroke="#DDD9CF"/>
+    <text x="41" y="24" text-anchor="middle" font-size="8" font-weight="600" fill="#2D3540" letter-spacing="0.6">EN</text>
+    <text x="120" y="26" text-anchor="middle" font-size="11" font-weight="600" fill="#080808" letter-spacing="-0.2">Mayo Assistant</text>
+    <circle cx="200" cy="22" r="3" fill="#10B981"/>
+    <circle cx="220" cy="18" r="1.2" fill="#5C6470"/>
+    <circle cx="220" cy="22" r="1.2" fill="#5C6470"/>
+    <circle cx="220" cy="26" r="1.2" fill="#5C6470"/>
+
+    <rect x="0" y="41" width="240" height="22" fill="#FAFAF7"/>
+    <text x="12" y="56" font-size="8.5" font-weight="600" fill="#1A1F26">⚠</text>
+    <text x="22" y="56" font-size="9" fill="#5C6470">For medical emergencies, call 911.</text>
+
+    <text x="14" y="84" font-size="11" fill="#080808">Hi, I'm the Mayo Assistant.</text>
+    <text x="14" y="98" font-size="11" fill="#080808">How can I help?</text>
+
+    <g transform="translate(14,114)">
+      <rect width="212" height="44" rx="8" fill="white" stroke="#E8E5DD"/>
+      <rect x="12" y="14" width="14" height="14" rx="2" fill="none" stroke="#0057B8" stroke-width="1.5"/>
+      <line x1="16" y1="11" x2="16" y2="16" stroke="#0057B8" stroke-width="1.5" stroke-linecap="round"/>
+      <line x1="22" y1="11" x2="22" y2="16" stroke="#0057B8" stroke-width="1.5" stroke-linecap="round"/>
+      <text x="38" y="23" font-size="11" font-weight="600" fill="#080808">Appointments</text>
+      <text x="38" y="36" font-size="9.5" fill="#5C6470">Request, prepare, or change a visit</text>
+      <text x="200" y="26" text-anchor="middle" font-size="12" fill="#8A929C">›</text>
+    </g>
+    <g transform="translate(14,164)">
+      <rect width="212" height="44" rx="8" fill="white" stroke="#E8E5DD"/>
+      <path d="M10 14 L10 28 L13 26 L16 28 L19 26 L22 28 L24 26 L24 14 Z" fill="none" stroke="#0057B8" stroke-width="1.4"/>
+      <text x="38" y="23" font-size="11" font-weight="600" fill="#080808">Billing &amp; Insurance</text>
+      <text x="38" y="36" font-size="9.5" fill="#5C6470">Coverage, estimates, financial help</text>
+      <text x="200" y="26" text-anchor="middle" font-size="12" fill="#8A929C">›</text>
+    </g>
+    <g transform="translate(14,214)">
+      <rect width="212" height="44" rx="8" fill="white" stroke="#E8E5DD"/>
+      <path d="M17 11 C 11 11 10 17 10 19 C 10 25 17 31 17 31 C 17 31 24 25 24 19 C 24 17 23 11 17 11 Z" fill="none" stroke="#0057B8" stroke-width="1.4"/>
+      <circle cx="17" cy="19" r="2.5" fill="none" stroke="#0057B8" stroke-width="1.4"/>
+      <text x="38" y="23" font-size="11" font-weight="600" fill="#080808">Locations &amp; Visits</text>
+      <text x="38" y="36" font-size="9.5" fill="#5C6470">Campuses, travel, what to bring</text>
+      <text x="200" y="26" text-anchor="middle" font-size="12" fill="#8A929C">›</text>
+    </g>
+    <g transform="translate(14,264)">
+      <rect width="212" height="44" rx="8" fill="white" stroke="#E8E5DD"/>
+      <circle cx="17" cy="17" r="4" fill="none" stroke="#0057B8" stroke-width="1.4"/>
+      <path d="M9 30 C 9 26 13 24 17 24 C 21 24 25 26 25 30" fill="none" stroke="#0057B8" stroke-width="1.4"/>
+      <text x="38" y="23" font-size="11" font-weight="600" fill="#080808">Patient Portal</text>
+      <text x="38" y="36" font-size="9.5" fill="#5C6470">Sign in, records, messages</text>
+      <text x="200" y="26" text-anchor="middle" font-size="12" fill="#8A929C">›</text>
+    </g>
+
+    <rect x="14" y="324" width="212" height="32" rx="16" fill="#F3F1ED"/>
+    <text x="22" y="343" font-size="10" fill="#8A929C">Type your question…</text>
+    <circle cx="206" cy="340" r="7" fill="white" stroke="#5C6470" stroke-width="1.3"/>
+    <path d="M204 336 v4 a2 2 0 0 0 4 0 v-4 a2 2 0 0 0 -4 0 z" fill="#5C6470"/>
+    <circle cx="220" cy="340" r="7" fill="#0057B8"/>
+
+    <text x="120" y="380" text-anchor="middle" font-size="9" fill="#8A929C">AI can make mistakes.</text>
+    <text x="120" y="394" text-anchor="middle" font-size="9" fill="#8A929C">Verify important information.</text>
+  </g>
+
+  <!-- Capability tags around mockup 1 -->
+  <g font-size="11" font-weight="600" fill="#080808">
+    <!-- EN/ES toggle tag -->
+    <g transform="translate(40,170)">
+      <rect width="80" height="22" rx="11" fill="white" stroke="#0057B8"/>
+      <text x="40" y="14" text-anchor="middle" fill="#0057B8">EN / ES</text>
+    </g>
+    <path d="M120 178 L 168 174" stroke="#5C6470" stroke-width="1.2" fill="none" marker-end="url(#tagArr)"/>
+
+    <!-- Capability cards tag -->
+    <g transform="translate(20,290)">
+      <rect width="100" height="22" rx="11" fill="white" stroke="#0057B8"/>
+      <text x="50" y="14" text-anchor="middle" fill="#0057B8">Quick entry</text>
+    </g>
+    <path d="M120 300 L 158 300" stroke="#5C6470" stroke-width="1.2" fill="none" marker-end="url(#tagArr)"/>
+
+    <!-- Voice tag -->
+    <g transform="translate(40,470)">
+      <rect width="80" height="22" rx="11" fill="white" stroke="#0057B8"/>
+      <text x="40" y="14" text-anchor="middle" fill="#0057B8">Voice in</text>
+    </g>
+    <path d="M120 482 L 332 480" stroke="#5C6470" stroke-width="1.2" fill="none" marker-end="url(#tagArr)"/>
+  </g>
+
+  <!-- ─── MOCKUP 2 · GROUNDED REPLY ─── -->
+  <g transform="translate(580,140)">
+    <rect width="240" height="420" rx="14" fill="white" stroke="#D5DCE3" filter="url(#widgetShadow)"/>
+    <rect x="0" y="0" width="240" height="2" fill="#0057B8"/>
+    <rect x="0" y="2" width="240" height="38" fill="url(#chatHeaderGrad2)"/>
+    <line x1="0" y1="40" x2="240" y2="40" stroke="#E8E5DD"/>
+    <text x="14" y="26" font-size="12" fill="#5C6470">×</text>
+    <rect x="30" y="14" width="22" height="14" rx="7" fill="white" stroke="#DDD9CF"/>
+    <text x="41" y="24" text-anchor="middle" font-size="8" font-weight="600" fill="#2D3540" letter-spacing="0.6">EN</text>
+    <text x="120" y="26" text-anchor="middle" font-size="11" font-weight="600" fill="#080808" letter-spacing="-0.2">Mayo Assistant</text>
+    <circle cx="200" cy="22" r="3" fill="#10B981"/>
+    <circle cx="220" cy="18" r="1.2" fill="#5C6470"/>
+    <circle cx="220" cy="22" r="1.2" fill="#5C6470"/>
+    <circle cx="220" cy="26" r="1.2" fill="#5C6470"/>
+
+    <!-- user message -->
+    <rect x="46" y="56" width="180" height="32" rx="12" fill="#EFEAE0"/>
+    <text x="56" y="76" font-size="10.5" fill="#1A1F26">What's the phone number?</text>
+
+    <!-- bot reply with citations -->
+    <rect x="14" y="98" width="212" height="74" rx="12" fill="#E1F0FF"/>
+    <text x="26" y="116" font-size="10" fill="#1A1F26">Mayo Clinic has three U.S.</text>
+    <text x="26" y="130" font-size="10" fill="#1A1F26">campuses with dedicated</text>
+    <text x="26" y="144" font-size="10" fill="#1A1F26">appointment lines.</text>
+    <rect x="26" y="152" width="100" height="14" rx="7" fill="#F3F1ED"/>
+    <text x="34" y="162" font-size="8" fill="#5C6470">↗ mayoclinic.org +2</text>
+
+    <!-- 3 phone CTAs -->
+    <g transform="translate(14,182)">
+      <rect width="212" height="22" rx="11" fill="#0057B8"/>
+      <text x="14" y="15" font-size="10" fill="white">📞</text>
+      <text x="32" y="15" font-size="10" font-weight="500" fill="white">Call Rochester</text>
+      <text x="200" y="15" text-anchor="end" font-size="9" fill="rgba(255,255,255,0.85)">507-538-3270</text>
+    </g>
+    <g transform="translate(14,210)">
+      <rect width="212" height="22" rx="11" fill="white" stroke="#DDD9CF"/>
+      <text x="14" y="15" font-size="10" fill="#0057B8">📞</text>
+      <text x="32" y="15" font-size="10" font-weight="500" fill="#080808">Call Phoenix</text>
+      <text x="200" y="15" text-anchor="end" font-size="9" fill="#8A929C">480-301-8484</text>
+    </g>
+    <g transform="translate(14,238)">
+      <rect width="212" height="22" rx="11" fill="white" stroke="#DDD9CF"/>
+      <text x="14" y="15" font-size="10" fill="#0057B8">📞</text>
+      <text x="32" y="15" font-size="10" font-weight="500" fill="#080808">Call Jacksonville</text>
+      <text x="200" y="15" text-anchor="end" font-size="9" fill="#8A929C">904-953-0853</text>
+    </g>
+
+    <!-- follow-ups -->
+    <g transform="translate(14,270)">
+      <rect width="100" height="20" rx="10" fill="white" stroke="#DDD9CF"/>
+      <text x="10" y="13" font-size="8" fill="#0057B8">↗</text>
+      <text x="22" y="13" font-size="9" font-weight="500" fill="#002443">Phoenix campus</text>
+    </g>
+    <g transform="translate(120,270)">
+      <rect width="106" height="20" rx="10" fill="white" stroke="#DDD9CF"/>
+      <text x="10" y="13" font-size="8" fill="#0057B8">↗</text>
+      <text x="22" y="13" font-size="9" font-weight="500" fill="#002443">After I request</text>
+    </g>
+
+    <rect x="14" y="324" width="212" height="32" rx="16" fill="#F3F1ED"/>
+    <text x="22" y="343" font-size="10" fill="#8A929C">Type your question…</text>
+    <circle cx="220" cy="340" r="7" fill="#0057B8"/>
+  </g>
+
+  <!-- Capability tags around mockup 2 -->
+  <g font-size="11" font-weight="600" fill="#080808">
+    <g transform="translate(580,114)">
+      <rect width="120" height="22" rx="11" fill="white" stroke="#0057B8"/>
+      <text x="60" y="14" text-anchor="middle" fill="#0057B8">Cited sources</text>
+    </g>
+    <path d="M652 138 L 690 246" stroke="#5C6470" stroke-width="1.2" fill="none" marker-end="url(#tagArr)"/>
+
+    <g transform="translate(845,300)">
+      <rect width="140" height="22" rx="11" fill="white" stroke="#0057B8"/>
+      <text x="70" y="14" text-anchor="middle" fill="#0057B8">All 3 campuses</text>
+    </g>
+    <path d="M845 312 L 815 322" stroke="#5C6470" stroke-width="1.2" fill="none" marker-end="url(#tagArr)"/>
+
+    <g transform="translate(845,420)">
+      <rect width="140" height="22" rx="11" fill="white" stroke="#0057B8"/>
+      <text x="70" y="14" text-anchor="middle" fill="#0057B8">Smart follow-ups</text>
+    </g>
+    <path d="M845 432 L 815 418" stroke="#5C6470" stroke-width="1.2" fill="none" marker-end="url(#tagArr)"/>
+  </g>
+
+  <!-- ─── MOCKUP 3 · SHOW ME ON THE PAGE ─── -->
+  <g transform="translate(1020,140)">
+    <rect width="320" height="420" rx="14" fill="#FAFAF7" stroke="#D5DCE3" filter="url(#widgetShadow)"/>
+    <!-- nav -->
+    <rect x="0" y="0" width="320" height="34" fill="#FFFFFF"/>
+    <line x1="0" y1="34" x2="320" y2="34" stroke="#E8E5DD"/>
+    <text x="14" y="14" font-size="9" font-weight="900" fill="#080808">MAYO</text>
+    <text x="14" y="24" font-size="9" font-weight="900" fill="#080808">CLINIC</text>
+    <text x="64" y="22" font-size="9" fill="#5C6470">Care · Library · Professionals</text>
+    <rect x="216" y="8" width="92" height="18" rx="3" fill="#0057B8"/>
+    <text x="262" y="20" text-anchor="middle" font-size="8" font-weight="500" fill="white">Request appointment</text>
+
+    <!-- hero -->
+    <text x="14" y="64" font-size="15" font-weight="500" fill="#080808" font-family="Source Serif 4, Georgia, serif">Start your appointment</text>
+    <text x="14" y="82" font-size="15" font-weight="500" fill="#080808" font-family="Source Serif 4, Georgia, serif">request.</text>
+    <text x="14" y="100" font-size="9" fill="#5C6470">Most patients can request online or by phone.</text>
+
+    <!-- cards, middle highlighted -->
+    <g transform="translate(14,118)">
+      <rect width="92" height="86" rx="4" fill="white" stroke="#E8E5DD"/>
+      <text x="8" y="20" font-size="10" font-weight="600" fill="#080808">New patients</text>
+      <text x="8" y="34" font-size="8" fill="#5C6470">Share your info and</text>
+      <text x="8" y="44" font-size="8" fill="#5C6470">pick a follow-up time.</text>
+      <text x="8" y="76" font-size="9" font-weight="500" fill="#0057B8">Request online →</text>
+    </g>
+    <g transform="translate(114,118)">
+      <rect x="-8" y="-8" width="108" height="102" rx="8" fill="none" stroke="#0057B8" stroke-width="2.5" opacity="0.55"/>
+      <rect x="-14" y="-14" width="120" height="114" rx="10" fill="none" stroke="#0057B8" stroke-width="1.5" opacity="0.22"/>
+      <rect width="92" height="86" rx="4" fill="white" stroke="#0057B8" stroke-width="1.5"/>
+      <text x="8" y="20" font-size="10" font-weight="600" fill="#080808">Returning</text>
+      <text x="8" y="32" font-size="10" font-weight="600" fill="#080808">patients</text>
+      <text x="8" y="46" font-size="8" fill="#5C6470">Sign in to your</text>
+      <text x="8" y="56" font-size="8" fill="#5C6470">patient account.</text>
+      <text x="8" y="76" font-size="9" font-weight="500" fill="#0057B8">Sign in →</text>
+    </g>
+    <g transform="translate(214,118)">
+      <rect width="92" height="86" rx="4" fill="white" stroke="#E8E5DD"/>
+      <text x="8" y="20" font-size="10" font-weight="600" fill="#080808">Referring</text>
+      <text x="8" y="32" font-size="10" font-weight="600" fill="#080808">physicians</text>
+      <text x="8" y="46" font-size="8" fill="#5C6470">Refer a patient</text>
+      <text x="8" y="56" font-size="8" fill="#5C6470">or consult.</text>
+      <text x="8" y="76" font-size="9" font-weight="500" fill="#0057B8">Provider portal →</text>
+    </g>
+
+    <!-- Back to chat pill -->
+    <g transform="translate(100,370)">
+      <rect width="120" height="32" rx="16" fill="#0057B8"/>
+      <path d="M22 16 q 0 -1.5 -1.5 -1.5 h-5 l-3 3 v-12 q0 -1.5 1.5 -1.5 h15 q1.5 0 1.5 1.5 v9 q 0 1.5 -1.5 1.5 z" fill="none" stroke="white" stroke-width="1.5"/>
+      <text x="68" y="21" text-anchor="middle" font-size="10.5" font-weight="600" fill="white">Back to chat</text>
+    </g>
+  </g>
+
+  <!-- Capability tags around mockup 3 -->
+  <g font-size="11" font-weight="600" fill="#080808">
+    <g transform="translate(1080,108)">
+      <rect width="180" height="22" rx="11" fill="white" stroke="#10AA6F"/>
+      <text x="90" y="14" text-anchor="middle" fill="#10AA6F">Page reacts in place</text>
+    </g>
+    <path d="M1170 132 L 1175 246" stroke="#5C6470" stroke-width="1.2" fill="none" marker-end="url(#tagArr)"/>
+
+    <g transform="translate(1080,580)">
+      <rect width="180" height="22" rx="11" fill="white" stroke="#10AA6F"/>
+      <text x="90" y="14" text-anchor="middle" fill="#10AA6F">One tap back to chat</text>
+    </g>
+    <path d="M1170 580 L 1170 542" stroke="#5C6470" stroke-width="1.2" fill="none" marker-end="url(#tagArr)"/>
+  </g>
+
+  <!-- Numbered step labels above mockups -->
+  <g font-size="13" font-weight="700" fill="#080808">
+    <text x="260" y="616" text-anchor="middle">1 · Open + orient</text>
+    <text x="260" y="636" text-anchor="middle" font-size="11" font-weight="500" fill="#5C6470">Capability cards as quick entry</text>
+
+    <text x="700" y="616" text-anchor="middle">2 · Ask, get a cited answer</text>
+    <text x="700" y="636" text-anchor="middle" font-size="11" font-weight="500" fill="#5C6470">All three campuses, tap-to-call</text>
+
+    <text x="1180" y="616" text-anchor="middle">3 · Show me on the page</text>
+    <text x="1180" y="636" text-anchor="middle" font-size="11" font-weight="500" fill="#5C6470">The page itself reacts, not a link out</text>
+  </g>
+
+  <!-- ════════════════════════════════════════════════════════
+       THREE PILLARS — PLAIN-LANGUAGE VALUE
+       ════════════════════════════════════════════════════════ -->
+  <line x1="40" y1="676" x2="1360" y2="676" stroke="#E5E9EE"/>
+
+  <g transform="translate(40,712)">
+    <rect width="420" height="156" rx="14" fill="#FAFBFC" stroke="#E5E9EE"/>
+    <text x="22" y="36" font-size="13" font-weight="700" fill="#0057B8" letter-spacing="2">TRUST</text>
+    <text x="22" y="68" font-size="22" font-weight="600" fill="#080808" letter-spacing="-0.4">Every answer is cited.</text>
+    <text x="22" y="98" font-size="13" fill="#5C6470">Grounded in 18 paraphrased entries from</text>
+    <text x="22" y="116" font-size="13" fill="#5C6470">mayoclinic.org. The assistant refuses to</text>
+    <text x="22" y="134" font-size="13" fill="#5C6470">guess phone numbers, hours, or policies.</text>
+  </g>
+
+  <g transform="translate(490,712)">
+    <rect width="420" height="156" rx="14" fill="#FAFBFC" stroke="#E5E9EE"/>
+    <text x="22" y="36" font-size="13" font-weight="700" fill="#0057B8" letter-spacing="2">REACH</text>
+    <text x="22" y="68" font-size="22" font-weight="600" fill="#080808" letter-spacing="-0.4">English + Spanish, voice or type.</text>
+    <text x="22" y="98" font-size="13" fill="#5C6470">A pill in the header flips the entire</text>
+    <text x="22" y="116" font-size="13" fill="#5C6470">experience between languages. Voice</text>
+    <text x="22" y="134" font-size="13" fill="#5C6470">input works in both. Mobile-ready.</text>
+  </g>
+
+  <g transform="translate(940,712)">
+    <rect width="420" height="156" rx="14" fill="#FAFBFC" stroke="#E5E9EE"/>
+    <text x="22" y="36" font-size="13" font-weight="700" fill="#0057B8" letter-spacing="2">ACTION</text>
+    <text x="22" y="68" font-size="22" font-weight="600" fill="#080808" letter-spacing="-0.4">From answer to next step.</text>
+    <text x="22" y="98" font-size="13" fill="#5C6470">Tap to call a campus, navigate to a Mayo</text>
+    <text x="22" y="116" font-size="13" fill="#5C6470">page, or have the assistant highlight the</text>
+    <text x="22" y="134" font-size="13" fill="#5C6470">right card on the page in front of you.</text>
+  </g>
+</svg>
