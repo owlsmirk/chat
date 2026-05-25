@@ -163,11 +163,136 @@
   .content-grid {
     max-width: 1100px;
     margin: 0 auto;
-    padding: 0 32px 120px;
+    padding: 0 32px 32px;
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 20px;
   }
+
+  /* Appointment request form — receives pre-filled values from chat */
+  .quick-request {
+    max-width: 1100px;
+    margin: 0 auto 120px;
+    padding: 0 32px;
+  }
+  .quick-request-inner {
+    background: var(--surface);
+    border: 1px solid var(--rule);
+    border-radius: 12px;
+    padding: 28px 32px;
+    transition: box-shadow 0.3s ease, border-color 0.3s ease;
+  }
+  .quick-request-inner.populated {
+    box-shadow: 0 6px 28px rgba(0, 87, 184, 0.08);
+    border-color: rgba(0, 87, 184, 0.25);
+  }
+  .quick-request-head {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 22px;
+  }
+  .quick-request-title {
+    font-family: var(--font-display);
+    font-size: 26px;
+    font-weight: 600;
+    letter-spacing: -0.018em;
+    margin: 0 0 6px;
+    color: var(--ink);
+  }
+  .quick-request-lede {
+    font-size: 14px;
+    line-height: 1.5;
+    color: var(--ink-2);
+    max-width: 56ch;
+    margin: 0;
+  }
+  .quick-request-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: var(--mayo-blue-light);
+    color: var(--mayo-blue-deep);
+    padding: 6px 12px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: -0.005em;
+    flex-shrink: 0;
+    animation: badge-in 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .quick-request-badge svg { width: 14px; height: 14px; color: var(--mayo-blue); }
+  @keyframes badge-in {
+    from { opacity: 0; transform: translateY(-4px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .quick-request-form {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px 20px;
+  }
+  .qr-field { display: flex; flex-direction: column; gap: 6px; }
+  .qr-field-wide { grid-column: 1 / -1; }
+  .qr-field label {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--ink-1);
+    letter-spacing: -0.003em;
+  }
+  .qr-field input,
+  .qr-field select {
+    font-family: var(--font-body);
+    font-size: 14px;
+    padding: 10px 12px;
+    border: 1px solid var(--rule-2);
+    border-radius: 8px;
+    background: var(--surface);
+    color: var(--ink);
+    transition: border-color 0.18s, box-shadow 0.18s, background 0.3s ease;
+  }
+  .qr-field input:focus,
+  .qr-field select:focus {
+    outline: none;
+    border-color: var(--mayo-blue);
+    box-shadow: 0 0 0 3px rgba(0, 87, 184, 0.12);
+  }
+  .qr-field.filled input,
+  .qr-field.filled select {
+    background: rgba(0, 87, 184, 0.04);
+    border-color: rgba(0, 87, 184, 0.35);
+  }
+  .qr-actions {
+    grid-column: 1 / -1;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-top: 4px;
+  }
+  .qr-submit {
+    font-family: var(--font-body);
+    font-size: 14px;
+    font-weight: 600;
+    padding: 11px 22px;
+    background: var(--mayo-blue);
+    color: white;
+    border: none;
+    border-radius: 999px;
+    cursor: pointer;
+    transition: background 0.15s, transform 0.12s, box-shadow 0.2s;
+  }
+  .qr-submit:hover { background: var(--mayo-blue-deep); }
+  .qr-submit:active { transform: scale(0.98); }
+  .qr-submit.pulse { box-shadow: 0 0 0 0 rgba(0, 87, 184, 0.5); animation: qr-pulse 1.6s ease-out 2; }
+  @keyframes qr-pulse {
+    0%   { box-shadow: 0 0 0 0 rgba(0, 87, 184, 0.5); }
+    70%  { box-shadow: 0 0 0 12px rgba(0, 87, 184, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(0, 87, 184, 0); }
+  }
+  .qr-disclaimer { font-size: 12px; color: var(--ink-3); }
+  .qr-submit.submitted { background: #10B981; cursor: default; }
+  .qr-submit.submitted:hover { background: #10B981; }
   .card {
     background: var(--surface);
     border-radius: 8px;
@@ -1044,6 +1169,74 @@
   }
   .cta.show-me .cta-icon { color: var(--mayo-blue); }
 
+  /* Chat → form prefill — solid Mayo blue, signals a "do" action */
+  .cta.prefill {
+    background: var(--mayo-blue);
+    color: white;
+    border-color: var(--mayo-blue);
+  }
+  .cta.prefill:hover {
+    background: var(--mayo-blue-deep);
+    border-color: var(--mayo-blue-deep);
+  }
+  .cta.prefill .cta-icon,
+  .cta.prefill .cta-arrow { color: rgba(255, 255, 255, 0.85); }
+
+  /* Chat → human coordinator — distinct outlined look with person icon */
+  .cta.handoff {
+    background: var(--surface);
+    color: var(--ink);
+    border-color: var(--mayo-blue);
+  }
+  .cta.handoff:hover {
+    background: var(--mayo-blue-light);
+    border-color: var(--mayo-blue-deep);
+  }
+  .cta.handoff .cta-icon { color: var(--mayo-blue); }
+  .cta.handoff .cta-wait {
+    margin-left: auto;
+    background: var(--mayo-blue);
+    color: white;
+    font-size: 10.5px;
+    font-weight: 600;
+    padding: 2px 8px;
+    border-radius: 999px;
+    letter-spacing: 0.02em;
+  }
+
+  /* Out-of-scope → other assistant transfer */
+  .cta.transfer {
+    background: linear-gradient(0deg, #FAFBFC 0%, var(--surface) 100%);
+    border-color: var(--rule-2);
+    align-items: center;
+    padding: 11px 14px;
+  }
+  .cta.transfer:hover {
+    background: var(--surface-3);
+    border-color: var(--ink-4);
+  }
+  .cta.transfer .cta-icon { color: var(--mayo-blue); width: 16px; height: 16px; }
+  .cta.transfer .cta-arrow { color: var(--ink-3); }
+  .cta-transfer-text {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+    flex: 1;
+  }
+  .cta-transfer-label {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--ink);
+    line-height: 1.25;
+  }
+  .cta-transfer-dest {
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--ink-2);
+    line-height: 1.2;
+  }
+
   /* "Back to chat" floating pill, shown after the chat dismisses
      itself to reveal a highlighted page target */
   .back-to-chat {
@@ -1115,8 +1308,14 @@
     .lede { font-size: 16px; }
     .content-grid {
       grid-template-columns: 1fr;
-      padding: 0 20px 100px;
+      padding: 0 20px 32px;
     }
+    .quick-request { margin-bottom: 100px; padding: 0 20px; }
+    .quick-request-inner { padding: 22px; }
+    .quick-request-head { flex-direction: column; }
+    .quick-request-form { grid-template-columns: 1fr; }
+    .qr-field-wide { grid-column: auto; }
+    .quick-request-title { font-size: 22px; }
   }
 </style>
 
@@ -1168,6 +1367,56 @@
       <h3>Referring physicians</h3>
       <p>Refer a patient or request a consultation with a Mayo specialist.</p>
       <span class="card-link">Provider portal</span>
+    </div>
+  </section>
+
+  <!-- ════════════════════════════════════════════════════════════════
+       APPOINTMENT REQUEST FORM
+       Receives pre-filled values from the chat when the bot detects
+       intent. The "Pre-filled by Mayo Assistant" badge appears once
+       the chat populates it.
+       ═══════════════════════════════════════════════════════════════ -->
+  <section class="quick-request" id="quick-request">
+    <div class="quick-request-inner">
+      <div class="quick-request-head">
+        <div>
+          <h2 class="quick-request-title">Request your appointment</h2>
+          <p class="quick-request-lede">Tell us about your needs and a coordinator will plan your visit. Most requests get a response within one business day.</p>
+        </div>
+        <span class="quick-request-badge" id="qrBadge" hidden>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="10"/></svg>
+          <span>Pre-filled by Mayo Assistant</span>
+        </span>
+      </div>
+
+      <form class="quick-request-form" id="qrForm" onsubmit="return false;">
+        <div class="qr-field">
+          <label for="qr-name">Full name</label>
+          <input type="text" id="qr-name" autocomplete="name" placeholder="Jane Doe">
+        </div>
+        <div class="qr-field">
+          <label for="qr-campus">Preferred campus</label>
+          <select id="qr-campus">
+            <option value="">Choose a campus…</option>
+            <option value="rochester">Mayo Clinic — Rochester, MN</option>
+            <option value="phoenix">Mayo Clinic — Phoenix / Scottsdale, AZ</option>
+            <option value="jacksonville">Mayo Clinic — Jacksonville, FL</option>
+            <option value="health-system">Mayo Clinic Health System</option>
+          </select>
+        </div>
+        <div class="qr-field qr-field-wide">
+          <label for="qr-reason">Reason for visit</label>
+          <input type="text" id="qr-reason" placeholder="e.g. Cardiology consultation">
+        </div>
+        <div class="qr-field qr-field-wide">
+          <label for="qr-contact">Phone or email</label>
+          <input type="text" id="qr-contact" autocomplete="tel email" placeholder="555-555-0123 or you@example.com">
+        </div>
+        <div class="qr-actions">
+          <button type="submit" class="qr-submit" id="qrSubmit">Submit request</button>
+          <span class="qr-disclaimer">By submitting, a Mayo coordinator will contact you to confirm.</span>
+        </div>
+      </form>
     </div>
   </section>
 </div>
@@ -1594,6 +1843,85 @@
   });
 
   // ────────────────────────────────────────────────────────────────
+  //  Chat → on-page form prefill ("appointment hand-off")
+  //  Receives the values the bot collected, dismisses the widget,
+  //  scrolls to the form, animates fields filling in, then pulses
+  //  the Submit button so the user knows their next move.
+  // ────────────────────────────────────────────────────────────────
+  function prefillRequestForm(values) {
+    const form = document.getElementById('quick-request');
+    if (!form) return;
+
+    const fields = [
+      { id: 'qr-name',    key: 'name'    },
+      { id: 'qr-campus',  key: 'campus'  },
+      { id: 'qr-reason',  key: 'reason'  },
+      { id: 'qr-contact', key: 'contact' }
+    ];
+
+    /* Reset any prior fill state */
+    fields.forEach(({ id }) => {
+      const el = document.getElementById(id);
+      if (el) {
+        el.value = '';
+        el.parentElement?.classList.remove('filled');
+      }
+    });
+    document.querySelector('.quick-request-inner')?.classList.remove('populated');
+    document.getElementById('qrSubmit')?.classList.remove('submitted', 'pulse');
+    const submit = document.getElementById('qrSubmit');
+    if (submit) submit.textContent = 'Submit request';
+
+    const wasOpen = widget.classList.contains('open');
+    if (wasOpen) {
+      closeWidget();
+      fab.style.display = 'none';
+      document.querySelector('.fab-label').style.display = 'none';
+      backToChatBtn.classList.add('show');
+    }
+
+    /* Scroll the form into view first, then stagger the field fills
+       so the user actually sees the assistant populating it. */
+    setTimeout(() => {
+      form.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      document.getElementById('qrBadge')?.removeAttribute('hidden');
+      document.querySelector('.quick-request-inner')?.classList.add('populated');
+    }, wasOpen ? 320 : 0);
+
+    let delay = wasOpen ? 700 : 350;
+    fields.forEach(({ id, key }) => {
+      const val = values[key];
+      if (!val) return;
+      const el = document.getElementById(id);
+      if (!el) return;
+      setTimeout(() => {
+        el.value = val;
+        el.parentElement?.classList.add('filled');
+        el.dispatchEvent(new Event('change', { bubbles: true }));
+      }, delay);
+      delay += 220;
+    });
+
+    /* Pulse the submit button after all fields settle */
+    setTimeout(() => {
+      const submitBtn = document.getElementById('qrSubmit');
+      if (submitBtn && !submitBtn.classList.contains('submitted')) {
+        submitBtn.classList.add('pulse');
+      }
+    }, delay + 200);
+  }
+
+  /* Fake submit — for the demo, swap the button into a confirmed
+     state so stakeholders see the loop close. */
+  document.getElementById('qrSubmit')?.addEventListener('click', () => {
+    const btn = document.getElementById('qrSubmit');
+    if (!btn || btn.classList.contains('submitted')) return;
+    btn.classList.remove('pulse');
+    btn.classList.add('submitted');
+    btn.textContent = '✓ Request submitted';
+  });
+
+  // ────────────────────────────────────────────────────────────────
   //  Conversation options menu — copy / email transcript
   // ────────────────────────────────────────────────────────────────
   const menuBtn = document.getElementById('menuBtn');
@@ -1797,9 +2125,7 @@
       actions.forEach((a, i) => {
         let el;
         if (a.type === 'show') {
-          // Render as a button — clicking scrolls the page target into
-          // view and pulses a highlight. On mobile we dismiss the chat
-          // first so the user can actually see the page.
+          // In-page highlight CTA
           el = document.createElement('button');
           el.type = 'button';
           el.className = 'cta show-me' + (i === 0 ? ' primary' : '');
@@ -1809,6 +2135,44 @@
             <svg class="cta-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
           `;
           el.addEventListener('click', () => showPageTarget(a.value));
+        } else if (a.type === 'prefill') {
+          // Chat-to-form hand-off — opens the on-page appointment form
+          // with the values the bot collected, pulses the submit button.
+          el = document.createElement('button');
+          el.type = 'button';
+          el.className = 'cta prefill' + (i === 0 ? ' primary' : '');
+          el.innerHTML = `
+            <svg class="cta-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="9" y1="13" x2="15" y2="13"/><line x1="9" y1="17" x2="15" y2="17"/></svg>
+            <span>${escapeHtml(a.label || 'Open your pre-filled request')}</span>
+            <svg class="cta-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+          `;
+          el.addEventListener('click', () => prefillRequestForm(a.value || {}));
+        } else if (a.type === 'handoff') {
+          // Live-agent handoff — phone CTA with a distinct "human"
+          // affordance and optional estimated wait time.
+          el = document.createElement('a');
+          el.className = 'cta handoff' + (i === 0 ? ' primary' : '');
+          el.href = `tel:${String(a.value || '').replace(/[^0-9+]/g, '')}`;
+          el.innerHTML = `
+            <svg class="cta-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            <span>${escapeHtml(a.label || 'Talk to a coordinator')}</span>
+            ${a.wait ? `<span class="cta-wait">${escapeHtml(a.wait)}</span>` : `<span class="cta-arrow">${escapeHtml(a.value || '')}</span>`}
+          `;
+        } else if (a.type === 'transfer') {
+          // Out-of-scope → hand off to a different specialized chat
+          el = document.createElement('a');
+          el.className = 'cta transfer' + (i === 0 ? ' primary' : '');
+          el.href = a.value;
+          el.target = '_blank';
+          el.rel = 'noopener';
+          el.innerHTML = `
+            <svg class="cta-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg>
+            <span class="cta-transfer-text">
+              <span class="cta-transfer-label">${escapeHtml(a.label || 'Continue elsewhere')}</span>
+              ${a.destination ? `<span class="cta-transfer-dest">${escapeHtml(a.destination)}</span>` : ''}
+            </span>
+            <svg class="cta-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+          `;
         } else {
           el = document.createElement('a');
           el.className = 'cta' + (i === 0 ? ' primary' : '');
@@ -1823,9 +2187,6 @@
             el.href = a.value;
             el.target = '_blank';
             el.rel = 'noopener';
-            /* External-link glyph (arrow exiting a box) signals
-               "opens in a new tab" — distinct from the show CTA's
-               in-page arrow. */
             el.innerHTML = `
               <span>${escapeHtml(a.label)}</span>
               <svg class="cta-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
