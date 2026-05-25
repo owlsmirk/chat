@@ -711,6 +711,19 @@
   .feedback button.active { color: var(--mayo-blue); background: rgba(0, 120, 160, 0.08); }
   .feedback svg { width: 15px; height: 15px; }
 
+  /* Speaker button — speaks the reply via SpeechSynthesis */
+  .feedback .speak-btn.speaking {
+    color: var(--mayo-blue);
+    background: rgba(0, 87, 184, 0.10);
+  }
+  .feedback .speak-btn.speaking svg {
+    animation: speak-pulse 1.2s ease-in-out infinite;
+  }
+  @keyframes speak-pulse {
+    0%, 100% { transform: scale(1); }
+    50%      { transform: scale(1.12); }
+  }
+
   /* CTAs — stacked pill buttons */
   .cta-stack {
     margin-top: 10px;
@@ -1282,6 +1295,8 @@
       status: "Online",
       placeholder: "Type your question…",
       voiceLabel: "Voice input",
+      listenLabel: "Listen",
+      stopLabel: "Stop",
       sourcesTitle: "Sources",
       backToChat: "Back to chat",
       showMeLabel: "Show me on this page",
@@ -1313,6 +1328,8 @@
       status: "En línea",
       placeholder: "Escriba su pregunta…",
       voiceLabel: "Entrada de voz",
+      listenLabel: "Escuchar",
+      stopLabel: "Detener",
       sourcesTitle: "Fuentes",
       backToChat: "Volver al chat",
       showMeLabel: "Mostrar en la página",
@@ -1522,6 +1539,7 @@
     document.body.classList.remove('widget-open');
     fab.style.display = 'grid';
     document.querySelector('.fab-label').style.display = '';
+    stopSpeaking();
   }
 
   // ────────────────────────────────────────────────────────────────
@@ -1819,7 +1837,19 @@
     if (opts.feedback !== false) {
       const fb = document.createElement('div');
       fb.className = 'feedback';
-      fb.innerHTML = `
+
+      // Speaker button — only if SpeechSynthesis is available
+      if (TTS_SUPPORTED) {
+        const speak = document.createElement('button');
+        speak.className = 'speak-btn';
+        speak.setAttribute('aria-label', L10N[currentLang].listenLabel);
+        speak.setAttribute('title', L10N[currentLang].listenLabel);
+        speak.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>`;
+        speak.addEventListener('click', () => toggleSpeak(speak, wrap));
+        fb.appendChild(speak);
+      }
+
+      const thumbsHtml = `
         <button data-fb="up" aria-label="Helpful">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"/></svg>
         </button>
@@ -1827,9 +1857,11 @@
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 15v4a3 3 0 0 0 3 3l4-9V2H5.72a2 2 0 0 0-2 1.7l-1.38 9a2 2 0 0 0 2 2.3zm7-13h2.67A2.31 2.31 0 0 1 22 4v7a2.31 2.31 0 0 1-2.33 2H17"/></svg>
         </button>
       `;
-      fb.querySelectorAll('button').forEach(b => {
+      fb.insertAdjacentHTML('beforeend', thumbsHtml);
+
+      fb.querySelectorAll('button[data-fb]').forEach(b => {
         b.addEventListener('click', () => {
-          fb.querySelectorAll('button').forEach(x => x.classList.remove('active'));
+          fb.querySelectorAll('button[data-fb]').forEach(x => x.classList.remove('active'));
           b.classList.add('active');
         });
       });
@@ -2142,6 +2174,62 @@
       messagesEl.innerHTML = '';
       greet();
     }
+  }
+
+  // ────────────────────────────────────────────────────────────────
+  //  Voice read-out (TTS) — per-message speaker button
+  //  Browser-native SpeechSynthesis; opt-in via tap, language flips
+  //  with the EN/ES toggle.
+  // ────────────────────────────────────────────────────────────────
+  const TTS_SUPPORTED = 'speechSynthesis' in window && typeof window.SpeechSynthesisUtterance === 'function';
+  const SPEAK_ICON = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>`;
+  const SPEAK_ICON_PLAYING = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/></svg>`;
+
+  let activeSpeak = null;
+
+  function stopSpeaking() {
+    if (!TTS_SUPPORTED) return;
+    try { window.speechSynthesis.cancel(); } catch (e) {}
+    if (activeSpeak) {
+      activeSpeak.btn.classList.remove('speaking');
+      activeSpeak.btn.innerHTML = SPEAK_ICON;
+      activeSpeak.btn.setAttribute('aria-label', L10N[currentLang].listenLabel);
+      activeSpeak.btn.setAttribute('title', L10N[currentLang].listenLabel);
+      activeSpeak = null;
+    }
+  }
+
+  function toggleSpeak(btn, wrap) {
+    if (!TTS_SUPPORTED) return;
+    /* Tapping the active speaker stops playback. */
+    if (activeSpeak && activeSpeak.btn === btn) {
+      stopSpeaking();
+      return;
+    }
+    /* Cancel any other speaker that's currently playing. */
+    stopSpeaking();
+
+    const body = wrap.querySelector('.msg-body');
+    if (!body) return;
+    const clone = body.cloneNode(true);
+    clone.querySelectorAll('.cite-chip, .cite-drawer, .stream-caret').forEach(el => el.remove());
+    const text = clone.textContent.replace(/\s+/g, ' ').trim();
+    if (!text) return;
+
+    const u = new SpeechSynthesisUtterance(text);
+    u.lang = currentLang === 'es' ? 'es-US' : 'en-US';
+    u.rate = 1;
+    u.pitch = 1;
+    u.onend = u.onerror = () => {
+      if (activeSpeak && activeSpeak.btn === btn) stopSpeaking();
+    };
+
+    btn.classList.add('speaking');
+    btn.innerHTML = SPEAK_ICON_PLAYING;
+    btn.setAttribute('aria-label', L10N[currentLang].stopLabel);
+    btn.setAttribute('title', L10N[currentLang].stopLabel);
+    activeSpeak = { btn, utterance: u };
+    window.speechSynthesis.speak(u);
   }
 
   let voiceCleanup = () => {};
