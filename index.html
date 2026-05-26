@@ -402,6 +402,21 @@
   }
   .widget-menu button:hover { background: var(--surface-3); }
   .widget-menu button svg { width: 16px; height: 16px; color: var(--ink-2); flex-shrink: 0; }
+  .widget-menu .menu-check {
+    margin-left: auto;
+    color: var(--mayo-blue);
+    font-weight: 700;
+    font-size: 13px;
+    opacity: 0;
+    transition: opacity 0.12s ease;
+  }
+  .widget-menu button[aria-checked="true"] .menu-check { opacity: 1; }
+  .widget-menu button[aria-checked="true"] svg { color: var(--mayo-blue); }
+  .menu-divider {
+    height: 1px;
+    background: var(--rule);
+    margin: 4px 6px;
+  }
   .widget-menu button:disabled { color: var(--ink-3); cursor: not-allowed; }
   .widget-menu button:disabled svg { color: var(--ink-4); }
 
@@ -1218,6 +1233,12 @@
       </svg>
     </button>
     <div class="widget-menu" id="widgetMenu" role="menu" hidden>
+      <button type="button" data-action="auto-read" role="menuitemcheckbox" aria-checked="false" id="autoReadItem">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/></svg>
+        <span data-i18n="menuAutoRead">Read replies aloud</span>
+        <span class="menu-check" aria-hidden="true">✓</span>
+      </button>
+      <div class="menu-divider" aria-hidden="true"></div>
       <button type="button" data-action="copy" role="menuitem">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
         <span data-i18n="menuCopy">Copy transcript</span>
@@ -1305,8 +1326,11 @@
       sourcesTitle: "Sources",
       backToChat: "Back to chat",
       showMeLabel: "Show me on this page",
+      menuAutoRead: "Read replies aloud",
       menuCopy: "Copy transcript",
       menuEmail: "Email transcript",
+      toastAutoReadOn: "Replies will read aloud",
+      toastAutoReadOff: "Auto read-aloud off",
       toastCopied: "Transcript copied",
       toastDownloaded: "Transcript downloaded",
       toastEmpty: "No conversation yet",
@@ -1338,8 +1362,11 @@
       sourcesTitle: "Fuentes",
       backToChat: "Volver al chat",
       showMeLabel: "Mostrar en la página",
+      menuAutoRead: "Leer respuestas en voz alta",
       menuCopy: "Copiar transcripción",
       menuEmail: "Enviar por correo",
+      toastAutoReadOn: "Las respuestas se leerán en voz alta",
+      toastAutoReadOff: "Lectura automática desactivada",
       toastCopied: "Transcripción copiada",
       toastDownloaded: "Transcripción descargada",
       toastEmpty: "Aún no hay conversación",
@@ -1708,6 +1735,11 @@
   widgetMenu.addEventListener('click', (e) => {
     const btn = e.target.closest('button[data-action]');
     if (!btn) return;
+    if (btn.dataset.action === 'auto-read') {
+      setAutoRead(!autoReadEnabled);
+      toast(L10N[currentLang][autoReadEnabled ? 'toastAutoReadOn' : 'toastAutoReadOff']);
+      return;  // keep the menu open so the user sees the checkmark flip
+    }
     setMenuOpen(false);
     if (btn.dataset.action === 'copy') copyTranscript();
     else if (btn.dataset.action === 'email') emailTranscript();
@@ -2078,6 +2110,12 @@
       const botWrap = addBotMessage(clean, citations, actions);
       history.push({ role: 'assistant', content: clean });
       addFollowupsTo(botWrap, pickFollowups(clean, citations));
+      /* If the user has turned on auto read-aloud, fire the same
+         per-message TTS pipeline as if they had tapped the speaker. */
+      if (autoReadEnabled && TTS_SUPPORTED) {
+        const speakBtn = botWrap.querySelector('.speak-btn');
+        if (speakBtn) setTimeout(() => toggleSpeak(speakBtn, botWrap), 120);
+      }
     } catch (err) {
       aborted = err.name === 'AbortError';
       if (aborted) {
@@ -2249,6 +2287,24 @@
       .trim();
   }
 
+  /* Auto read-aloud preference — when on, every completed bot reply
+     auto-plays through the same TTS pipeline. Persists in localStorage
+     so the choice survives a refresh. Hidden from browsers without
+     SpeechSynthesis support. */
+  let autoReadEnabled = (() => {
+    try { return localStorage.getItem('mayo-tts-auto') === 'true'; }
+    catch (e) { return false; }
+  })();
+
+  function setAutoRead(on) {
+    autoReadEnabled = !!on;
+    try { localStorage.setItem('mayo-tts-auto', autoReadEnabled ? 'true' : 'false'); } catch (e) {}
+    const item = document.getElementById('autoReadItem');
+    if (item) item.setAttribute('aria-checked', autoReadEnabled ? 'true' : 'false');
+    /* Stop any in-flight playback when the feature is turned off */
+    if (!autoReadEnabled) stopSpeaking();
+  }
+
   let activeSpeak = null;
 
   function stopSpeaking() {
@@ -2409,4 +2465,16 @@
   /* Initial paint: render starter chips + sync all chrome to the
      restored language (defaults to EN). */
   applyLang(currentLang);
+
+  /* Auto read-aloud menu item: sync the checkbox state on load,
+     and hide it entirely on browsers without SpeechSynthesis. */
+  if (TTS_SUPPORTED) {
+    const item = document.getElementById('autoReadItem');
+    if (item) item.setAttribute('aria-checked', autoReadEnabled ? 'true' : 'false');
+  } else {
+    const item = document.getElementById('autoReadItem');
+    if (item) item.style.display = 'none';
+    const divider = item?.nextElementSibling;
+    if (divider && divider.classList.contains('menu-divider')) divider.style.display = 'none';
+  }
 </script>
