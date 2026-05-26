@@ -468,41 +468,6 @@
   }
   .lang-toggle:active { transform: scale(0.94); }
 
-  /* Read-aloud toggle — sits next to the lang pill. Outlined when
-     off, filled blue when on. Highlights replies as they're spoken. */
-  .read-toggle {
-    background: transparent;
-    border: 1px solid var(--rule-2);
-    color: var(--ink-2);
-    width: 30px;
-    height: 24px;
-    border-radius: 999px;
-    cursor: pointer;
-    display: grid;
-    place-items: center;
-    transition: background 0.18s, border-color 0.18s, color 0.18s, transform 0.12s;
-    flex-shrink: 0;
-    padding: 0;
-  }
-  .read-toggle svg { width: 14px; height: 14px; }
-  .read-toggle .read-toggle-wave { opacity: 0; transition: opacity 0.18s; }
-  .read-toggle:hover {
-    background: var(--surface-3);
-    border-color: var(--ink-4);
-    color: var(--ink);
-  }
-  .read-toggle:active { transform: scale(0.94); }
-  .read-toggle[aria-pressed="true"] {
-    background: var(--mayo-blue);
-    border-color: var(--mayo-blue);
-    color: white;
-  }
-  .read-toggle[aria-pressed="true"]:hover {
-    background: var(--mayo-blue-deep);
-    border-color: var(--mayo-blue-deep);
-  }
-  .read-toggle[aria-pressed="true"] .read-toggle-wave { opacity: 1; }
-
   /* Sentence highlight while TTS is reading aloud */
   .tts-sentence { transition: background-color 0.18s ease; padding: 0 1px; border-radius: 3px; }
   .tts-sentence.tts-speaking { background-color: rgba(0, 87, 184, 0.16); }
@@ -1262,13 +1227,6 @@
     <button class="lang-toggle" id="langBtn" aria-label="Switch language">
       <span id="langCurrent">EN</span>
     </button>
-    <button class="read-toggle" id="readBtn" aria-label="Read replies aloud" aria-pressed="false" title="Read replies aloud">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-        <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/>
-        <path d="M15.54 8.46a5 5 0 0 1 0 7.07"/>
-        <path d="M19.07 4.93a10 10 0 0 1 0 14.14" class="read-toggle-wave"/>
-      </svg>
-    </button>
     <span class="widget-title" data-i18n="title">Mayo Assistant</span>
     <span class="widget-status"><span class="status-dot"></span><span data-i18n="status">Online</span></span>
     <button class="widget-menu-btn" id="menuBtn" aria-label="Conversation options" aria-haspopup="true" aria-expanded="false">
@@ -1366,11 +1324,8 @@
       sourcesTitle: "Sources",
       backToChat: "Back to chat",
       showMeLabel: "Show me on this page",
-      menuAutoRead: "Read replies aloud",
       menuCopy: "Copy transcript",
       menuEmail: "Email transcript",
-      toastAutoReadOn: "Replies will read aloud",
-      toastAutoReadOff: "Auto read-aloud off",
       toastCopied: "Transcript copied",
       toastDownloaded: "Transcript downloaded",
       toastEmpty: "No conversation yet",
@@ -1402,11 +1357,8 @@
       sourcesTitle: "Fuentes",
       backToChat: "Volver al chat",
       showMeLabel: "Mostrar en la página",
-      menuAutoRead: "Leer respuestas en voz alta",
       menuCopy: "Copiar transcripción",
       menuEmail: "Enviar por correo",
-      toastAutoReadOn: "Las respuestas se leerán en voz alta",
-      toastAutoReadOff: "Lectura automática desactivada",
       toastCopied: "Transcripción copiada",
       toastDownloaded: "Transcripción descargada",
       toastEmpty: "Aún no hay conversación",
@@ -1785,20 +1737,6 @@
     else if (btn.dataset.action === 'email') emailTranscript();
   });
 
-  /* Header read-aloud toggle — promoted out of the kebab menu so
-     it's a one-tap affordance. */
-  const readBtn = document.getElementById('readBtn');
-  if (readBtn) {
-    if (!TTS_SUPPORTED) {
-      readBtn.style.display = 'none';
-    } else {
-      readBtn.addEventListener('click', () => {
-        setAutoRead(!autoReadEnabled);
-        readBtn.setAttribute('aria-pressed', autoReadEnabled ? 'true' : 'false');
-        toast(L10N[currentLang][autoReadEnabled ? 'toastAutoReadOn' : 'toastAutoReadOff']);
-      });
-    }
-  }
   document.addEventListener('click', (e) => {
     if (widgetMenu.hidden) return;
     if (!widgetMenu.contains(e.target) && e.target !== menuBtn) setMenuOpen(false);
@@ -2138,23 +2076,9 @@
                   if (dots) dots.classList.add('fade-out');
                   bubble = createStreamBubble();
                   thinking.replaceWith(bubble.wrap);
-                  /* If auto read-aloud is on, kick off the streaming TTS
-                     pipeline now. It runs "headless" (no speaker button
-                     yet — that's created when the bubble finalizes), so
-                     the user starts hearing audio inside ~500ms of the
-                     first token. */
-                  if (autoReadEnabled && TTS_SUPPORTED) {
-                    const lang = currentLang === 'es' ? 'es-US' : 'en-US';
-                    streamTTS = { lang, voice: pickVoice(lang), cursor: 0, btn: null };
-                  }
                 }
                 fullText += delta;
                 updateStream(bubble.textEl, fullText);
-                if (streamTTS) {
-                  const cut = fullText.indexOf('<<');
-                  const visible = cut === -1 ? fullText : fullText.slice(0, cut);
-                  feedStreamTTS(visible);
-                }
               }
             } catch {}
           } else if (eventName === 'error') {
@@ -2179,33 +2103,8 @@
       const botWrap = addBotMessage(clean, citations, actions);
       history.push({ role: 'assistant', content: clean });
       addFollowupsTo(botWrap, pickFollowups(clean, citations));
-      if (autoReadEnabled && TTS_SUPPORTED) {
-        const speakBtn = botWrap.querySelector('.speak-btn');
-        if (streamTTS && speakBtn) {
-          /* Streaming TTS has been running headlessly since the first
-             token. Now that the real speaker button exists, attach it
-             so the playing state and stop-tap controls work, then
-             flush whatever sentence tail came in after the last
-             boundary. */
-          streamTTS.btn = speakBtn;
-          speakBtn.classList.add('speaking');
-          speakBtn.innerHTML = SPEAK_ICON_PLAYING;
-          speakBtn.setAttribute('aria-label', L10N[currentLang].stopLabel);
-          speakBtn.setAttribute('title', L10N[currentLang].stopLabel);
-          activeSpeak = { btn: speakBtn, utterance: null };
-          endStreamTTS(clean);
-        } else if (speakBtn) {
-          /* TTS unsupported during stream or stream-TTS never started.
-             Fall back to the original "speak the whole reply at once"
-             behavior. */
-          setTimeout(() => toggleSpeak(speakBtn, botWrap), 120);
-        }
-      }
     } catch (err) {
       aborted = err.name === 'AbortError';
-      /* Cancel any in-flight streaming TTS so audio stops when the
-         reply does. The user shouldn't hear the abandoned tail. */
-      if (streamTTS) { stopSpeaking(); streamTTS = null; }
       if (aborted) {
         // Keep what was streamed so far as the assistant turn
         const { clean, citations, actions } = parseResponse(fullText);
@@ -2375,131 +2274,11 @@
       .trim();
   }
 
-  /* Auto read-aloud preference — when on, every completed bot reply
-     auto-plays through the same TTS pipeline. Persists in localStorage
-     so the choice survives a refresh. Hidden from browsers without
-     SpeechSynthesis support. */
-  let autoReadEnabled = (() => {
-    try { return localStorage.getItem('mayo-tts-auto') === 'true'; }
-    catch (e) { return false; }
-  })();
-
-  function setAutoRead(on) {
-    autoReadEnabled = !!on;
-    try { localStorage.setItem('mayo-tts-auto', autoReadEnabled ? 'true' : 'false'); } catch (e) {}
-    const btn = document.getElementById('readBtn');
-    if (btn) btn.setAttribute('aria-pressed', autoReadEnabled ? 'true' : 'false');
-    /* Stop any in-flight playback when the feature is turned off */
-    if (!autoReadEnabled) stopSpeaking();
-  }
-
   let activeSpeak = null;
-
-  /* ─── Streaming TTS ───────────────────────────────────────────────
-     When auto-read is on, hand each completed sentence to the speech
-     synthesizer as soon as it arrives — don't wait for the whole reply.
-     SpeechSynthesis queues utterances natively, so sentence 2 starts
-     the instant sentence 1 finishes. First audio lands within ~500ms
-     of the first token instead of after the full 1–3s stream. */
-  let streamTTS = null;  // { lang, voice, cursor, lastBtn } while active
-
-  function startStreamTTS(speakBtn) {
-    if (!TTS_SUPPORTED) return;
-    /* Cancel any unrelated speech and reset state for this reply */
-    stopSpeaking();
-    const lang = currentLang === 'es' ? 'es-US' : 'en-US';
-    const voice = pickVoice(lang);
-    streamTTS = { lang, voice, cursor: 0, btn: speakBtn };
-    /* Show the speaker button in "playing" state immediately so the
-       user sees feedback even before the first utterance actually
-       starts (browser TTS has a small warmup on first call). */
-    speakBtn.classList.add('speaking');
-    speakBtn.innerHTML = SPEAK_ICON_PLAYING;
-    speakBtn.setAttribute('aria-label', L10N[currentLang].stopLabel);
-    speakBtn.setAttribute('title', L10N[currentLang].stopLabel);
-    activeSpeak = { btn: speakBtn, utterance: null };
-  }
-
-  /* Speak any newly-completed sentences in `visibleText`. Called
-     after every SSE delta. Idempotent — only queues text past the
-     cursor. */
-  function feedStreamTTS(visibleText) {
-    if (!streamTTS) return;
-    const fresh = visibleText.slice(streamTTS.cursor);
-    if (!fresh) return;
-    /* Look for the last sentence boundary in the fresh text. Anything
-       before it is a complete unit and safe to queue; anything after
-       waits for more tokens. We treat `. ! ? …` followed by space or
-       newline as a boundary, plus a paragraph break (\n\n). */
-    const boundary = /[.!?…](?:\s|$)|\n\n/g;
-    let lastEnd = -1;
-    let m;
-    while ((m = boundary.exec(fresh)) !== null) lastEnd = m.index + m[0].length;
-    if (lastEnd < 0) return;
-
-    const complete = fresh.slice(0, lastEnd).trim();
-    streamTTS.cursor += lastEnd;
-    if (!complete) return;
-
-    /* Strip markdown bold and the citation footnote chips before TTS */
-    const speakable = complete
-      .replace(/\*\*(.+?)\*\*/g, '$1')
-      .replace(/\s+/g, ' ')
-      .trim();
-    if (!speakable) return;
-
-    const u = new SpeechSynthesisUtterance(speakable);
-    u.lang = streamTTS.lang;
-    u.rate = 0.95;
-    u.pitch = 1;
-    if (streamTTS.voice) u.voice = streamTTS.voice;
-    window.speechSynthesis.speak(u);  // queues naturally
-  }
-
-  /* Flush the final unspoken tail once the stream ends. */
-  function endStreamTTS(visibleText) {
-    if (!streamTTS) return;
-    const tail = visibleText.slice(streamTTS.cursor).trim();
-    if (tail) {
-      const speakable = tail
-        .replace(/\*\*(.+?)\*\*/g, '$1')
-        .replace(/\s+/g, ' ')
-        .trim();
-      if (speakable) {
-        const u = new SpeechSynthesisUtterance(speakable);
-        u.lang = streamTTS.lang;
-        u.rate = 0.95;
-        u.pitch = 1;
-        if (streamTTS.voice) u.voice = streamTTS.voice;
-        u.onend = () => {
-          /* When the final utterance ends, drop the playing state. */
-          if (activeSpeak && activeSpeak.btn === streamTTS?.btn) stopSpeaking();
-          streamTTS = null;
-        };
-        window.speechSynthesis.speak(u);
-      } else {
-        streamTTS = null;
-      }
-    } else {
-      /* No tail — flip the button back to idle after the queue drains.
-         There's no per-queue 'finished' event, so poll briefly. */
-      const btn = streamTTS.btn;
-      streamTTS = null;
-      const poll = setInterval(() => {
-        if (!window.speechSynthesis.speaking && !window.speechSynthesis.pending) {
-          clearInterval(poll);
-          if (activeSpeak && activeSpeak.btn === btn) stopSpeaking();
-        }
-      }, 200);
-    }
-  }
 
   function stopSpeaking() {
     if (!TTS_SUPPORTED) return;
     try { window.speechSynthesis.cancel(); } catch (e) {}
-    /* Also clear streaming-TTS state so feedStreamTTS stops queuing
-       new sentences when the user tapped stop mid-stream. */
-    streamTTS = null;
     /* Clear any sentence highlight left behind. */
     document.querySelectorAll('.tts-sentence.tts-speaking').forEach(el => el.classList.remove('tts-speaking'));
     if (activeSpeak) {
@@ -2756,9 +2535,4 @@
   /* Initial paint: render starter chips + sync all chrome to the
      restored language (defaults to EN). */
   applyLang(currentLang);
-
-  /* Sync header read-aloud toggle state on load. */
-  if (readBtn && TTS_SUPPORTED) {
-    readBtn.setAttribute('aria-pressed', autoReadEnabled ? 'true' : 'false');
-  }
 </script>
