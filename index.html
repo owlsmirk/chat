@@ -468,6 +468,45 @@
   }
   .lang-toggle:active { transform: scale(0.94); }
 
+  /* Read-aloud toggle — sits next to the lang pill. Outlined when
+     off, filled blue when on. Highlights replies as they're spoken. */
+  .read-toggle {
+    background: transparent;
+    border: 1px solid var(--rule-2);
+    color: var(--ink-2);
+    width: 30px;
+    height: 24px;
+    border-radius: 999px;
+    cursor: pointer;
+    display: grid;
+    place-items: center;
+    transition: background 0.18s, border-color 0.18s, color 0.18s, transform 0.12s;
+    flex-shrink: 0;
+    padding: 0;
+  }
+  .read-toggle svg { width: 14px; height: 14px; }
+  .read-toggle .read-toggle-wave { opacity: 0; transition: opacity 0.18s; }
+  .read-toggle:hover {
+    background: var(--surface-3);
+    border-color: var(--ink-4);
+    color: var(--ink);
+  }
+  .read-toggle:active { transform: scale(0.94); }
+  .read-toggle[aria-pressed="true"] {
+    background: var(--mayo-blue);
+    border-color: var(--mayo-blue);
+    color: white;
+  }
+  .read-toggle[aria-pressed="true"]:hover {
+    background: var(--mayo-blue-deep);
+    border-color: var(--mayo-blue-deep);
+  }
+  .read-toggle[aria-pressed="true"] .read-toggle-wave { opacity: 1; }
+
+  /* Sentence highlight while TTS is reading aloud */
+  .tts-sentence { transition: background-color 0.18s ease; padding: 0 1px; border-radius: 3px; }
+  .tts-sentence.tts-speaking { background-color: rgba(0, 87, 184, 0.16); }
+
   .widget-title {
     position: absolute;
     left: 50%;
@@ -1223,6 +1262,13 @@
     <button class="lang-toggle" id="langBtn" aria-label="Switch language">
       <span id="langCurrent">EN</span>
     </button>
+    <button class="read-toggle" id="readBtn" aria-label="Read replies aloud" aria-pressed="false" title="Read replies aloud">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/>
+        <path d="M15.54 8.46a5 5 0 0 1 0 7.07"/>
+        <path d="M19.07 4.93a10 10 0 0 1 0 14.14" class="read-toggle-wave"/>
+      </svg>
+    </button>
     <span class="widget-title" data-i18n="title">Mayo Assistant</span>
     <span class="widget-status"><span class="status-dot"></span><span data-i18n="status">Online</span></span>
     <button class="widget-menu-btn" id="menuBtn" aria-label="Conversation options" aria-haspopup="true" aria-expanded="false">
@@ -1233,12 +1279,6 @@
       </svg>
     </button>
     <div class="widget-menu" id="widgetMenu" role="menu" hidden>
-      <button type="button" data-action="auto-read" role="menuitemcheckbox" aria-checked="false" id="autoReadItem">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/></svg>
-        <span data-i18n="menuAutoRead">Read replies aloud</span>
-        <span class="menu-check" aria-hidden="true">✓</span>
-      </button>
-      <div class="menu-divider" aria-hidden="true"></div>
       <button type="button" data-action="copy" role="menuitem">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
         <span data-i18n="menuCopy">Copy transcript</span>
@@ -1735,15 +1775,25 @@
   widgetMenu.addEventListener('click', (e) => {
     const btn = e.target.closest('button[data-action]');
     if (!btn) return;
-    if (btn.dataset.action === 'auto-read') {
-      setAutoRead(!autoReadEnabled);
-      toast(L10N[currentLang][autoReadEnabled ? 'toastAutoReadOn' : 'toastAutoReadOff']);
-      return;  // keep the menu open so the user sees the checkmark flip
-    }
     setMenuOpen(false);
     if (btn.dataset.action === 'copy') copyTranscript();
     else if (btn.dataset.action === 'email') emailTranscript();
   });
+
+  /* Header read-aloud toggle — promoted out of the kebab menu so
+     it's a one-tap affordance. */
+  const readBtn = document.getElementById('readBtn');
+  if (readBtn) {
+    if (!TTS_SUPPORTED) {
+      readBtn.style.display = 'none';
+    } else {
+      readBtn.addEventListener('click', () => {
+        setAutoRead(!autoReadEnabled);
+        readBtn.setAttribute('aria-pressed', autoReadEnabled ? 'true' : 'false');
+        toast(L10N[currentLang][autoReadEnabled ? 'toastAutoReadOn' : 'toastAutoReadOff']);
+      });
+    }
+  }
   document.addEventListener('click', (e) => {
     if (widgetMenu.hidden) return;
     if (!widgetMenu.contains(e.target) && e.target !== menuBtn) setMenuOpen(false);
@@ -2332,8 +2382,8 @@
   function setAutoRead(on) {
     autoReadEnabled = !!on;
     try { localStorage.setItem('mayo-tts-auto', autoReadEnabled ? 'true' : 'false'); } catch (e) {}
-    const item = document.getElementById('autoReadItem');
-    if (item) item.setAttribute('aria-checked', autoReadEnabled ? 'true' : 'false');
+    const btn = document.getElementById('readBtn');
+    if (btn) btn.setAttribute('aria-pressed', autoReadEnabled ? 'true' : 'false');
     /* Stop any in-flight playback when the feature is turned off */
     if (!autoReadEnabled) stopSpeaking();
   }
@@ -2445,6 +2495,8 @@
     /* Also clear streaming-TTS state so feedStreamTTS stops queuing
        new sentences when the user tapped stop mid-stream. */
     streamTTS = null;
+    /* Clear any sentence highlight left behind. */
+    document.querySelectorAll('.tts-sentence.tts-speaking').forEach(el => el.classList.remove('tts-speaking'));
     if (activeSpeak) {
       activeSpeak.btn.classList.remove('speaking');
       activeSpeak.btn.innerHTML = SPEAK_ICON;
@@ -2454,41 +2506,112 @@
     }
   }
 
+  /* Walk a bubble's body and wrap each sentence in a span so we
+     can highlight it as TTS reads it aloud. Idempotent — second
+     call short-circuits. Returns the array of sentence spans in
+     DOM order. */
+  function wrapSentencesInBubble(wrap) {
+    const body = wrap.querySelector('.msg-body');
+    if (!body) return [];
+    if (body.dataset.sentencesWrapped) {
+      return Array.from(body.querySelectorAll('.tts-sentence'));
+    }
+    const sentences = [];
+    /* Walk text nodes, skipping anything inside citation chips or
+       drawers — we don't want to highlight those. */
+    const walker = document.createTreeWalker(body, NodeFilter.SHOW_TEXT, {
+      acceptNode(node) {
+        let p = node.parentElement;
+        while (p && p !== body) {
+          if (p.classList.contains('cite-chip') ||
+              p.classList.contains('cite-drawer') ||
+              p.classList.contains('stream-caret')) {
+            return NodeFilter.FILTER_REJECT;
+          }
+          p = p.parentElement;
+        }
+        return node.textContent.trim() ? NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_REJECT;
+      }
+    });
+    const nodes = [];
+    let n;
+    while ((n = walker.nextNode())) nodes.push(n);
+
+    for (const node of nodes) {
+      const text = node.textContent;
+      /* Split into sentences. The regex keeps the punctuation with
+         the preceding chunk so prosody stays intact. */
+      const parts = text.match(/[^.!?…\n]+[.!?…]+["')\]]*\s*|[^.!?…\n]+$/g);
+      if (!parts || parts.length === 0) continue;
+      if (parts.length === 1) {
+        /* Single sentence in this text node — still wrap so we can
+           highlight it. */
+        const span = document.createElement('span');
+        span.className = 'tts-sentence';
+        span.textContent = parts[0];
+        node.parentNode.replaceChild(span, node);
+        sentences.push(span);
+      } else {
+        const frag = document.createDocumentFragment();
+        for (const part of parts) {
+          if (!part) continue;
+          const span = document.createElement('span');
+          span.className = 'tts-sentence';
+          span.textContent = part;
+          frag.appendChild(span);
+          sentences.push(span);
+        }
+        node.parentNode.replaceChild(frag, node);
+      }
+    }
+    body.dataset.sentencesWrapped = '1';
+    return sentences;
+  }
+
   function toggleSpeak(btn, wrap) {
     if (!TTS_SUPPORTED) return;
     if (activeSpeak && activeSpeak.btn === btn) { stopSpeaking(); return; }
     stopSpeaking();
 
-    /* Prefer the raw markdown saved on the wrap (preserves paragraph
-       breaks). Fall back to DOM text only if the dataset is missing. */
-    let raw = wrap.dataset.speakText || '';
-    if (!raw) {
-      const body = wrap.querySelector('.msg-body');
-      if (!body) return;
-      const clone = body.cloneNode(true);
-      clone.querySelectorAll('.cite-chip, .cite-drawer, .stream-caret').forEach(el => el.remove());
-      raw = clone.textContent;
-    }
-    const text = prepSpeechText(raw);
-    if (!text) return;
+    /* Wrap each sentence in a span so we can highlight as we read. */
+    const sentences = wrapSentencesInBubble(wrap);
+    if (!sentences.length) return;
 
     const lang = currentLang === 'es' ? 'es-US' : 'en-US';
-    const u = new SpeechSynthesisUtterance(text);
-    u.lang = lang;
-    u.rate = 0.95;
-    u.pitch = 1;
     const voice = pickVoice(lang);
-    if (voice) u.voice = voice;
-    u.onend = u.onerror = () => {
-      if (activeSpeak && activeSpeak.btn === btn) stopSpeaking();
-    };
 
     btn.classList.add('speaking');
     btn.innerHTML = SPEAK_ICON_PLAYING;
     btn.setAttribute('aria-label', L10N[currentLang].stopLabel);
     btn.setAttribute('title', L10N[currentLang].stopLabel);
-    activeSpeak = { btn, utterance: u };
-    window.speechSynthesis.speak(u);
+    activeSpeak = { btn, utterance: null };
+
+    /* Queue one utterance per sentence. SpeechSynthesis runs them
+       back-to-back; highlight follows the currently-speaking one. */
+    sentences.forEach((span, idx) => {
+      const speakable = (span.textContent || '')
+        .replace(/\*\*(.+?)\*\*/g, '$1')
+        .replace(/\s+/g, ' ')
+        .trim();
+      if (!speakable) return;
+      const u = new SpeechSynthesisUtterance(speakable);
+      u.lang = lang;
+      u.rate = 0.95;
+      u.pitch = 1;
+      if (voice) u.voice = voice;
+      u.onstart = () => { span.classList.add('tts-speaking'); };
+      u.onend = () => {
+        span.classList.remove('tts-speaking');
+        if (idx === sentences.length - 1) {
+          if (activeSpeak && activeSpeak.btn === btn) stopSpeaking();
+        }
+      };
+      u.onerror = () => {
+        span.classList.remove('tts-speaking');
+        if (activeSpeak && activeSpeak.btn === btn) stopSpeaking();
+      };
+      window.speechSynthesis.speak(u);
+    });
   }
 
   let voiceCleanup = () => {};
@@ -2601,15 +2724,8 @@
      restored language (defaults to EN). */
   applyLang(currentLang);
 
-  /* Auto read-aloud menu item: sync the checkbox state on load,
-     and hide it entirely on browsers without SpeechSynthesis. */
-  if (TTS_SUPPORTED) {
-    const item = document.getElementById('autoReadItem');
-    if (item) item.setAttribute('aria-checked', autoReadEnabled ? 'true' : 'false');
-  } else {
-    const item = document.getElementById('autoReadItem');
-    if (item) item.style.display = 'none';
-    const divider = item?.nextElementSibling;
-    if (divider && divider.classList.contains('menu-divider')) divider.style.display = 'none';
+  /* Sync header read-aloud toggle state on load. */
+  if (readBtn && TTS_SUPPORTED) {
+    readBtn.setAttribute('aria-pressed', autoReadEnabled ? 'true' : 'false');
   }
 </script>
