@@ -2083,9 +2083,23 @@
                   if (dots) dots.classList.add('fade-out');
                   bubble = createStreamBubble();
                   thinking.replaceWith(bubble.wrap);
+                  /* If auto read-aloud is on, kick off the streaming TTS
+                     pipeline now. It runs "headless" (no speaker button
+                     yet — that's created when the bubble finalizes), so
+                     the user starts hearing audio inside ~500ms of the
+                     first token. */
+                  if (autoReadEnabled && TTS_SUPPORTED) {
+                    const lang = currentLang === 'es' ? 'es-US' : 'en-US';
+                    streamTTS = { lang, voice: pickVoice(lang), cursor: 0, btn: null };
+                  }
                 }
                 fullText += delta;
                 updateStream(bubble.textEl, fullText);
+                if (streamTTS) {
+                  const cut = fullText.indexOf('<<');
+                  const visible = cut === -1 ? fullText : fullText.slice(0, cut);
+                  feedStreamTTS(visible);
+                }
               }
             } catch {}
           } else if (eventName === 'error') {
@@ -2110,14 +2124,33 @@
       const botWrap = addBotMessage(clean, citations, actions);
       history.push({ role: 'assistant', content: clean });
       addFollowupsTo(botWrap, pickFollowups(clean, citations));
-      /* If the user has turned on auto read-aloud, fire the same
-         per-message TTS pipeline as if they had tapped the speaker. */
       if (autoReadEnabled && TTS_SUPPORTED) {
         const speakBtn = botWrap.querySelector('.speak-btn');
-        if (speakBtn) setTimeout(() => toggleSpeak(speakBtn, botWrap), 120);
+        if (streamTTS && speakBtn) {
+          /* Streaming TTS has been running headlessly since the first
+             token. Now that the real speaker button exists, attach it
+             so the playing state and stop-tap controls work, then
+             flush whatever sentence tail came in after the last
+             boundary. */
+          streamTTS.btn = speakBtn;
+          speakBtn.classList.add('speaking');
+          speakBtn.innerHTML = SPEAK_ICON_PLAYING;
+          speakBtn.setAttribute('aria-label', L10N[currentLang].stopLabel);
+          speakBtn.setAttribute('title', L10N[currentLang].stopLabel);
+          activeSpeak = { btn: speakBtn, utterance: null };
+          endStreamTTS(clean);
+        } else if (speakBtn) {
+          /* TTS unsupported during stream or stream-TTS never started.
+             Fall back to the original "speak the whole reply at once"
+             behavior. */
+          setTimeout(() => toggleSpeak(speakBtn, botWrap), 120);
+        }
       }
     } catch (err) {
       aborted = err.name === 'AbortError';
+      /* Cancel any in-flight streaming TTS so audio stops when the
+         reply does. The user shouldn't hear the abandoned tail. */
+      if (streamTTS) { stopSpeaking(); streamTTS = null; }
       if (aborted) {
         // Keep what was streamed so far as the assistant turn
         const { clean, citations, actions } = parseResponse(fullText);
@@ -2307,9 +2340,111 @@
 
   let activeSpeak = null;
 
+  /* ─── Streaming TTS ───────────────────────────────────────────────
+     When auto-read is on, hand each completed sentence to the speech
+     synthesizer as soon as it arrives — don't wait for the whole reply.
+     SpeechSynthesis queues utterances natively, so sentence 2 starts
+     the instant sentence 1 finishes. First audio lands within ~500ms
+     of the first token instead of after the full 1–3s stream. */
+  let streamTTS = null;  // { lang, voice, cursor, lastBtn } while active
+
+  function startStreamTTS(speakBtn) {
+    if (!TTS_SUPPORTED) return;
+    /* Cancel any unrelated speech and reset state for this reply */
+    stopSpeaking();
+    const lang = currentLang === 'es' ? 'es-US' : 'en-US';
+    const voice = pickVoice(lang);
+    streamTTS = { lang, voice, cursor: 0, btn: speakBtn };
+    /* Show the speaker button in "playing" state immediately so the
+       user sees feedback even before the first utterance actually
+       starts (browser TTS has a small warmup on first call). */
+    speakBtn.classList.add('speaking');
+    speakBtn.innerHTML = SPEAK_ICON_PLAYING;
+    speakBtn.setAttribute('aria-label', L10N[currentLang].stopLabel);
+    speakBtn.setAttribute('title', L10N[currentLang].stopLabel);
+    activeSpeak = { btn: speakBtn, utterance: null };
+  }
+
+  /* Speak any newly-completed sentences in `visibleText`. Called
+     after every SSE delta. Idempotent — only queues text past the
+     cursor. */
+  function feedStreamTTS(visibleText) {
+    if (!streamTTS) return;
+    const fresh = visibleText.slice(streamTTS.cursor);
+    if (!fresh) return;
+    /* Look for the last sentence boundary in the fresh text. Anything
+       before it is a complete unit and safe to queue; anything after
+       waits for more tokens. We treat `. ! ? …` followed by space or
+       newline as a boundary, plus a paragraph break (\n\n). */
+    const boundary = /[.!?…](?:\s|$)|\n\n/g;
+    let lastEnd = -1;
+    let m;
+    while ((m = boundary.exec(fresh)) !== null) lastEnd = m.index + m[0].length;
+    if (lastEnd < 0) return;
+
+    const complete = fresh.slice(0, lastEnd).trim();
+    streamTTS.cursor += lastEnd;
+    if (!complete) return;
+
+    /* Strip markdown bold and the citation footnote chips before TTS */
+    const speakable = complete
+      .replace(/\*\*(.+?)\*\*/g, '$1')
+      .replace(/\s+/g, ' ')
+      .trim();
+    if (!speakable) return;
+
+    const u = new SpeechSynthesisUtterance(speakable);
+    u.lang = streamTTS.lang;
+    u.rate = 0.95;
+    u.pitch = 1;
+    if (streamTTS.voice) u.voice = streamTTS.voice;
+    window.speechSynthesis.speak(u);  // queues naturally
+  }
+
+  /* Flush the final unspoken tail once the stream ends. */
+  function endStreamTTS(visibleText) {
+    if (!streamTTS) return;
+    const tail = visibleText.slice(streamTTS.cursor).trim();
+    if (tail) {
+      const speakable = tail
+        .replace(/\*\*(.+?)\*\*/g, '$1')
+        .replace(/\s+/g, ' ')
+        .trim();
+      if (speakable) {
+        const u = new SpeechSynthesisUtterance(speakable);
+        u.lang = streamTTS.lang;
+        u.rate = 0.95;
+        u.pitch = 1;
+        if (streamTTS.voice) u.voice = streamTTS.voice;
+        u.onend = () => {
+          /* When the final utterance ends, drop the playing state. */
+          if (activeSpeak && activeSpeak.btn === streamTTS?.btn) stopSpeaking();
+          streamTTS = null;
+        };
+        window.speechSynthesis.speak(u);
+      } else {
+        streamTTS = null;
+      }
+    } else {
+      /* No tail — flip the button back to idle after the queue drains.
+         There's no per-queue 'finished' event, so poll briefly. */
+      const btn = streamTTS.btn;
+      streamTTS = null;
+      const poll = setInterval(() => {
+        if (!window.speechSynthesis.speaking && !window.speechSynthesis.pending) {
+          clearInterval(poll);
+          if (activeSpeak && activeSpeak.btn === btn) stopSpeaking();
+        }
+      }, 200);
+    }
+  }
+
   function stopSpeaking() {
     if (!TTS_SUPPORTED) return;
     try { window.speechSynthesis.cancel(); } catch (e) {}
+    /* Also clear streaming-TTS state so feedStreamTTS stops queuing
+       new sentences when the user tapped stop mid-stream. */
+    streamTTS = null;
     if (activeSpeak) {
       activeSpeak.btn.classList.remove('speaking');
       activeSpeak.btn.innerHTML = SPEAK_ICON;
