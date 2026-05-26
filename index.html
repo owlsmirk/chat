@@ -2589,34 +2589,62 @@
     btn.innerHTML = SPEAK_ICON_PLAYING;
     btn.setAttribute('aria-label', L10N[currentLang].stopLabel);
     btn.setAttribute('title', L10N[currentLang].stopLabel);
-    activeSpeak = { btn, utterance: null };
+    /* Tag the session so async onend/onerror handlers can detect
+       being cancelled by a different speak request. */
+    const session = Symbol('speak-session');
+    activeSpeak = { btn, utterance: null, session };
 
-    /* Queue one utterance per sentence. SpeechSynthesis runs them
-       back-to-back; highlight follows the currently-speaking one. */
-    sentences.forEach((span, idx) => {
-      const speakable = (span.textContent || '')
-        .replace(/\*\*(.+?)\*\*/g, '$1')
-        .replace(/\s+/g, ' ')
-        .trim();
-      if (!speakable) return;
-      const u = new SpeechSynthesisUtterance(speakable);
-      u.lang = lang;
-      u.rate = 0.95;
-      u.pitch = 1;
-      if (voice) u.voice = voice;
-      u.onstart = () => { span.classList.add('tts-speaking'); };
-      u.onend = () => {
-        span.classList.remove('tts-speaking');
-        if (idx === sentences.length - 1) {
-          if (activeSpeak && activeSpeak.btn === btn) stopSpeaking();
-        }
-      };
-      u.onerror = () => {
-        span.classList.remove('tts-speaking');
-        if (activeSpeak && activeSpeak.btn === btn) stopSpeaking();
-      };
-      window.speechSynthesis.speak(u);
-    });
+    /* Chain sentences via onend instead of batch-queueing. Chrome
+       drops queued utterances when speak() is called multiple times
+       in one tick after a recent cancel(); iOS Safari only honors
+       one utterance per user-gesture context. Both work fine when
+       we start the next utterance inside the previous one's onend. */
+    let idx = 0;
+    const speakNext = () => {
+      /* If the user tapped stop or started a different bubble, the
+         session reference will have been replaced — bail out. */
+      if (!activeSpeak || activeSpeak.session !== session) return;
+      while (idx < sentences.length) {
+        const span = sentences[idx];
+        const speakable = (span.textContent || '')
+          .replace(/\*\*(.+?)\*\*/g, '$1')
+          .replace(/\s+/g, ' ')
+          .trim();
+        if (!speakable) { idx++; continue; }
+        const u = new SpeechSynthesisUtterance(speakable);
+        u.lang = lang;
+        u.rate = 0.95;
+        u.pitch = 1;
+        if (voice) u.voice = voice;
+        u.onstart = () => {
+          if (activeSpeak && activeSpeak.session === session) span.classList.add('tts-speaking');
+        };
+        u.onend = () => {
+          span.classList.remove('tts-speaking');
+          idx++;
+          speakNext();
+        };
+        u.onerror = (ev) => {
+          span.classList.remove('tts-speaking');
+          /* Benign "interrupted" / "canceled" events fire during
+             normal queue transitions on some browsers — don't
+             tear down the session for those. */
+          const benign = ev && (ev.error === 'interrupted' || ev.error === 'canceled');
+          if (benign) {
+            idx++;
+            speakNext();
+          } else if (activeSpeak && activeSpeak.session === session) {
+            stopSpeaking();
+          }
+        };
+        activeSpeak.utterance = u;
+        window.speechSynthesis.speak(u);
+        return;  // wait for this utterance to finish before queuing next
+      }
+      /* Walked off the end — all sentences spoken. */
+      if (activeSpeak && activeSpeak.session === session) stopSpeaking();
+    };
+    speakNext();
   }
 
   let voiceCleanup = () => {};
