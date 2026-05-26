@@ -1,0 +1,255 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1400 1020" font-family="Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" role="img" aria-label="Show me on the page — end-to-end flow">
+  <title>Show me on the page — end-to-end</title>
+
+  <defs>
+    <linearGradient id="serverBg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#E8F1FB"/>
+      <stop offset="100%" stop-color="#DAE7F5"/>
+    </linearGradient>
+    <linearGradient id="clientBg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#F7F9FC"/>
+      <stop offset="100%" stop-color="#EEF3FA"/>
+    </linearGradient>
+    <linearGradient id="contractBg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#FAFBFC"/>
+      <stop offset="100%" stop-color="#F0F1F4"/>
+    </linearGradient>
+    <filter id="cardShadow3" x="-10%" y="-10%" width="120%" height="120%">
+      <feGaussianBlur in="SourceAlpha" stdDeviation="2"/>
+      <feOffset dx="0" dy="1" result="o"/>
+      <feComponentTransfer><feFuncA type="linear" slope="0.10"/></feComponentTransfer>
+      <feMerge><feMergeNode/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <marker id="flowA" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0 L10 5 L0 10 Z" fill="#0057B8"/>
+    </marker>
+    <marker id="flowG" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0 L10 5 L0 10 Z" fill="#10AA6F"/>
+    </marker>
+  </defs>
+
+  <rect width="1400" height="1020" fill="#FFFFFF"/>
+
+  <!-- Title -->
+  <text x="40" y="50" font-size="24" font-weight="700" fill="#080808" letter-spacing="-0.4">"Show me on the page" — end-to-end flow</text>
+  <text x="40" y="74" font-size="12" font-weight="500" fill="#5C6470">How the assistant tells the page to react, and how the page reacts back. One control token does the work.</text>
+  <line x1="40" y1="92" x2="1360" y2="92" stroke="#E5E9EE"/>
+
+  <!-- ═══════════════════════════════════════════════════════════════
+       STEP 1 · SERVER teaches the model which IDs are valid
+       ═══════════════════════════════════════════════════════════════ -->
+  <g transform="translate(40,118)">
+    <rect width="640" height="186" rx="12" fill="url(#serverBg)" stroke="#C9D4E2" filter="url(#cardShadow3)"/>
+    <circle cx="28" cy="28" r="14" fill="#002443"/>
+    <text x="28" y="33" text-anchor="middle" font-size="13" font-weight="700" fill="white">1</text>
+    <text x="52" y="24" font-size="13" font-weight="700" fill="#080808">System prompt teaches Claude the rules</text>
+    <text x="52" y="40" font-size="11" font-weight="500" fill="#5C6470">api/chat.js · BASE_RULES rule 9 — assembled server-side per request</text>
+
+    <g transform="translate(20,58)" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="10.5">
+      <rect width="600" height="116" rx="8" fill="white" stroke="#C9D4E2"/>
+      <text x="14" y="20" fill="#5C6470">"show" — point the user at a CURRENT-page element.</text>
+      <text x="14" y="36" fill="#5C6470">Valid target IDs (use exactly these strings):</text>
+      <text x="22" y="54" fill="#002443">▸ </text>
+      <text x="34" y="54" fill="#0057B8" font-weight="600">"page-request-appointment-button"</text>
+      <text x="22" y="70" fill="#002443">▸ </text>
+      <text x="34" y="70" fill="#0057B8" font-weight="600">"page-new-patients-card"</text>
+      <text x="22" y="86" fill="#002443">▸ </text>
+      <text x="34" y="86" fill="#0057B8" font-weight="600">"page-returning-patients-card"</text>
+      <text x="22" y="102" fill="#002443">▸ </text>
+      <text x="34" y="102" fill="#0057B8" font-weight="600">"page-referring-physicians-card"</text>
+    </g>
+  </g>
+
+  <!-- ═══════════════════════════════════════════════════════════════
+       STEP 2 · MODEL emits the control token in its reply
+       ═══════════════════════════════════════════════════════════════ -->
+  <g transform="translate(720,118)">
+    <rect width="640" height="186" rx="12" fill="url(#serverBg)" stroke="#C9D4E2" filter="url(#cardShadow3)"/>
+    <circle cx="28" cy="28" r="14" fill="#002443"/>
+    <text x="28" y="33" text-anchor="middle" font-size="13" font-weight="700" fill="white">2</text>
+    <text x="52" y="24" font-size="13" font-weight="700" fill="#080808">Claude emits text + a control token</text>
+    <text x="52" y="40" font-size="11" font-weight="500" fill="#5C6470">Streamed back as SSE — last tokens of the response body</text>
+
+    <g transform="translate(20,58)" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="10.5">
+      <rect width="600" height="116" rx="8" fill="white" stroke="#C9D4E2"/>
+      <text x="14" y="20" fill="#3A4654">Tap <tspan font-weight="700" fill="#080808">Sign in</tspan> on the Returning patients card.</text>
+      <text x="14" y="42" fill="#7A8696">…</text>
+      <text x="14" y="64" fill="#0057B8">&lt;&lt;CITATIONS&gt;&gt;</text>
+      <text x="14" y="78" fill="#3A4654">  [{"id":"kb-018","title":"…"}]</text>
+      <text x="14" y="92" fill="#0057B8">&lt;&lt;END&gt;&gt;</text>
+      <text x="14" y="106" fill="#10AA6F" font-weight="700">&lt;&lt;ACTION&gt;&gt;{"type":"show","value":"page-returning-patients-card"}&lt;&lt;END&gt;&gt;</text>
+    </g>
+  </g>
+
+  <!-- Connecting arrows down to the contract -->
+  <path d="M360 312 V 348" stroke="#0057B8" stroke-width="2" fill="none" marker-end="url(#flowA)"/>
+  <path d="M1040 312 V 348" stroke="#10AA6F" stroke-width="2" fill="none" marker-end="url(#flowG)"/>
+
+  <!-- ═══════════════════════════════════════════════════════════════
+       THE CONTRACT — the token in the middle
+       ═══════════════════════════════════════════════════════════════ -->
+  <g transform="translate(40,356)">
+    <rect width="1320" height="76" rx="12" fill="url(#contractBg)" stroke="#0057B8"/>
+    <text x="20" y="26" font-size="11" font-weight="700" fill="#0057B8" letter-spacing="2">THE CONTRACT — one JSON object, three fields</text>
+    <g transform="translate(20,40)" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13">
+      <text x="0" y="20" fill="#3A4654">&lt;&lt;ACTION&gt;&gt;{ </text>
+      <text x="116" y="20" fill="#10AA6F" font-weight="700">"type"</text>
+      <text x="158" y="20" fill="#3A4654">: </text>
+      <text x="172" y="20" fill="#0057B8" font-weight="600">"show"</text>
+      <text x="216" y="20" fill="#3A4654">, </text>
+      <text x="230" y="20" fill="#10AA6F" font-weight="700">"label"</text>
+      <text x="278" y="20" fill="#3A4654">: </text>
+      <text x="292" y="20" fill="#0057B8" font-weight="600">"Show me on this page"</text>
+      <text x="448" y="20" fill="#3A4654">, </text>
+      <text x="462" y="20" fill="#10AA6F" font-weight="700">"value"</text>
+      <text x="510" y="20" fill="#3A4654">: </text>
+      <text x="524" y="20" fill="#0057B8" font-weight="600">"page-returning-patients-card"</text>
+      <text x="734" y="20" fill="#3A4654"> }&lt;&lt;END&gt;&gt;</text>
+
+      <text x="846" y="20" fill="#5C6470" font-family="Inter">value MUST match one of the four IDs the prompt listed</text>
+    </g>
+  </g>
+
+  <!-- Connecting arrows down to client side -->
+  <path d="M360 432 V 470" stroke="#0057B8" stroke-width="2" fill="none" marker-end="url(#flowA)"/>
+  <path d="M1040 432 V 470" stroke="#0057B8" stroke-width="2" fill="none" marker-end="url(#flowA)"/>
+
+  <!-- ═══════════════════════════════════════════════════════════════
+       STEP 3 · BROWSER parses and renders the button
+       ═══════════════════════════════════════════════════════════════ -->
+  <g transform="translate(40,478)">
+    <rect width="640" height="190" rx="12" fill="url(#clientBg)" stroke="#D5DCE3" filter="url(#cardShadow3)"/>
+    <circle cx="28" cy="28" r="14" fill="#0057B8"/>
+    <text x="28" y="33" text-anchor="middle" font-size="13" font-weight="700" fill="white">3</text>
+    <text x="52" y="24" font-size="13" font-weight="700" fill="#080808">Browser parses + renders a CTA button</text>
+    <text x="52" y="40" font-size="11" font-weight="500" fill="#5C6470">index.html · parseResponse() strips tokens · addBotMessage() draws them</text>
+
+    <g transform="translate(20,58)" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="10.5">
+      <rect width="600" height="76" rx="8" fill="white" stroke="#D5DCE3"/>
+      <text x="14" y="22" fill="#3A4654">const actionRe = /&lt;&lt;ACTION&gt;&gt;(.*?)&lt;&lt;END&gt;&gt;/gs;</text>
+      <text x="14" y="38" fill="#3A4654">while ((m = actionRe.exec(text))) </text>
+      <text x="14" y="54" fill="#3A4654">  actions.push(JSON.parse(m[1]));</text>
+      <text x="14" y="68" fill="#7A8696">// → { type:"show", value:"page-returning-patients-card", … }</text>
+    </g>
+
+    <!-- the rendered CTA button -->
+    <g transform="translate(20,144)">
+      <rect width="600" height="34" rx="17" fill="#E1F0FF" stroke="#0057B8"/>
+      <g transform="translate(16,11)">
+        <path d="M1 6 C3 2, 8 -1, 12 0 C16 1, 20 4, 22 6 C20 8, 16 11, 12 12 C8 12, 3 10, 1 6 Z" fill="none" stroke="#0057B8" stroke-width="1.5"/>
+        <circle cx="11.5" cy="6" r="2.5" fill="none" stroke="#0057B8" stroke-width="1.5"/>
+      </g>
+      <text x="48" y="22" font-size="12" font-weight="600" fill="#002443">Show me on this page</text>
+      <text x="586" y="22" text-anchor="end" font-size="14" fill="#0057B8">→</text>
+    </g>
+  </g>
+
+  <!-- ═══════════════════════════════════════════════════════════════
+       STEP 4 · USER TAPS — handler fires
+       ═══════════════════════════════════════════════════════════════ -->
+  <g transform="translate(720,478)">
+    <rect width="640" height="190" rx="12" fill="url(#clientBg)" stroke="#D5DCE3" filter="url(#cardShadow3)"/>
+    <circle cx="28" cy="28" r="14" fill="#0057B8"/>
+    <text x="28" y="33" text-anchor="middle" font-size="13" font-weight="700" fill="white">4</text>
+    <text x="52" y="24" font-size="13" font-weight="700" fill="#080808">User taps — showPageTarget(value) fires</text>
+    <text x="52" y="40" font-size="11" font-weight="500" fill="#5C6470">index.html · click handler attached when the CTA was rendered</text>
+
+    <g transform="translate(20,58)" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="10.5">
+      <rect width="600" height="120" rx="8" fill="white" stroke="#D5DCE3"/>
+      <text x="14" y="22" fill="#3A4654">function showPageTarget(targetId) {</text>
+      <text x="14" y="38" fill="#3A4654">  const el = document.getElementById(targetId);</text>
+      <text x="14" y="54" fill="#7A8696">  // unknown id → silently ignore (defense-in-depth)</text>
+      <text x="14" y="70" fill="#3A4654">  if (!el) return;</text>
+      <text x="14" y="86" fill="#3A4654">  closeWidget();   </text>
+      <text x="172" y="86" fill="#7A8696">// dismiss chat so highlight is visible</text>
+      <text x="14" y="102" fill="#3A4654">  el.scrollIntoView({behavior:'smooth', block:'center'});</text>
+      <text x="14" y="116" fill="#3A4654">  el.classList.add('page-highlight');</text>
+    </g>
+  </g>
+
+  <!-- Connecting arrow down to step 5 -->
+  <path d="M1040 668 V 706" stroke="#0057B8" stroke-width="2" fill="none" marker-end="url(#flowA)"/>
+
+  <!-- ═══════════════════════════════════════════════════════════════
+       STEP 5 · PAGE REACTS — spotlight on the matching element
+       ═══════════════════════════════════════════════════════════════ -->
+  <g transform="translate(40,714)">
+    <rect width="1320" height="226" rx="12" fill="url(#clientBg)" stroke="#D5DCE3" filter="url(#cardShadow3)"/>
+    <circle cx="28" cy="28" r="14" fill="#10AA6F"/>
+    <text x="28" y="33" text-anchor="middle" font-size="13" font-weight="700" fill="white">5</text>
+    <text x="52" y="24" font-size="13" font-weight="700" fill="#080808">The page reacts in place — Mayo-blue spotlight ring pulses on the matching element</text>
+    <text x="52" y="40" font-size="11" font-weight="500" fill="#5C6470">CSS .page-highlight class drives the animation · "Back to chat" pill restores the widget</text>
+
+    <!-- mini Mayo page mockup with three cards -->
+    <g transform="translate(40,62)">
+      <rect width="900" height="146" rx="8" fill="#FAFAF7" stroke="#D5DCE3"/>
+      <!-- nav -->
+      <rect x="0" y="0" width="900" height="28" fill="#FFFFFF"/>
+      <line x1="0" y1="28" x2="900" y2="28" stroke="#E8E5DD"/>
+      <text x="12" y="12" font-size="8" font-weight="900" fill="#080808">MAYO</text>
+      <text x="12" y="20" font-size="8" font-weight="900" fill="#080808">CLINIC</text>
+      <rect x="794" y="6" width="96" height="16" rx="3" fill="#0057B8"/>
+      <text x="842" y="17" text-anchor="middle" font-size="8" font-weight="500" fill="white">Request appointment</text>
+
+      <text x="14" y="50" font-size="11" font-weight="500" fill="#080808" font-family="Source Serif 4, Georgia, serif">Start your appointment request.</text>
+
+      <!-- three cards -->
+      <g transform="translate(14,64)">
+        <rect width="270" height="68" rx="4" fill="white" stroke="#E8E5DD"/>
+        <text x="10" y="20" font-size="10" font-weight="600" fill="#080808">New patients</text>
+        <text x="10" y="34" font-size="8" fill="#5C6470">Share your info and pick a time.</text>
+        <text x="10" y="58" font-size="9" font-weight="500" fill="#0057B8">Request online →</text>
+      </g>
+      <g transform="translate(298,64)">
+        <!-- HIGHLIGHTED — two pulse rings -->
+        <rect x="-8" y="-8" width="286" height="84" rx="8" fill="none" stroke="#0057B8" stroke-width="2.5" opacity="0.55"/>
+        <rect x="-14" y="-14" width="298" height="96" rx="10" fill="none" stroke="#0057B8" stroke-width="1.5" opacity="0.22"/>
+        <rect width="270" height="68" rx="4" fill="white" stroke="#0057B8" stroke-width="1.6"/>
+        <text x="10" y="20" font-size="10" font-weight="600" fill="#080808">Returning patients</text>
+        <text x="10" y="34" font-size="8" fill="#5C6470">Sign in to your patient account.</text>
+        <text x="10" y="58" font-size="9" font-weight="500" fill="#0057B8">Sign in →</text>
+      </g>
+      <g transform="translate(582,64)">
+        <rect width="270" height="68" rx="4" fill="white" stroke="#E8E5DD"/>
+        <text x="10" y="20" font-size="10" font-weight="600" fill="#080808">Referring physicians</text>
+        <text x="10" y="34" font-size="8" fill="#5C6470">Refer a patient or consult.</text>
+        <text x="10" y="58" font-size="9" font-weight="500" fill="#0057B8">Provider portal →</text>
+      </g>
+    </g>
+
+    <!-- annotation column -->
+    <g transform="translate(980,62)">
+      <text x="0" y="14" font-size="11" font-weight="700" fill="#0057B8" letter-spacing="1">HOW IT WORKS</text>
+
+      <g transform="translate(0,30)">
+        <rect x="0" y="0" width="14" height="14" rx="3" fill="#0057B8"/>
+        <text x="6" y="11" text-anchor="middle" font-size="10" font-weight="700" fill="white">1</text>
+        <text x="22" y="12" font-size="11" font-weight="600" fill="#080808">Element ID matched</text>
+        <text x="22" y="26" font-size="10" fill="#5C6470">page-returning-patients-card</text>
+      </g>
+
+      <g transform="translate(0,68)">
+        <rect x="0" y="0" width="14" height="14" rx="3" fill="#0057B8"/>
+        <text x="6" y="11" text-anchor="middle" font-size="10" font-weight="700" fill="white">2</text>
+        <text x="22" y="12" font-size="11" font-weight="600" fill="#080808">Scrolled into view</text>
+        <text x="22" y="26" font-size="10" fill="#5C6470">scrollIntoView · smooth · center</text>
+      </g>
+
+      <g transform="translate(0,106)">
+        <rect x="0" y="0" width="14" height="14" rx="3" fill="#10AA6F"/>
+        <text x="6" y="11" text-anchor="middle" font-size="10" font-weight="700" fill="white">3</text>
+        <text x="22" y="12" font-size="11" font-weight="600" fill="#080808">Spotlight pulses 2×</text>
+        <text x="22" y="26" font-size="10" fill="#5C6470">CSS @keyframes spotlight · 1.6s ease-out</text>
+      </g>
+    </g>
+  </g>
+
+  <!-- Footer -->
+  <line x1="40" y1="964" x2="1360" y2="964" stroke="#E5E9EE"/>
+  <g transform="translate(40,988)">
+    <text x="0" y="0" font-size="11" font-weight="600" fill="#080808">To add a new page target:</text>
+    <text x="190" y="0" font-size="11" fill="#5C6470">give the element an <tspan font-family="ui-monospace, SFMono-Regular, monospace" fill="#0057B8">id="page-…"</tspan> · add it to the rule-9 list in <tspan font-family="ui-monospace, SFMono-Regular, monospace" fill="#0057B8">api/chat.js</tspan> · redeploy.</text>
+    <text x="1360" y="0" text-anchor="end" font-size="10" fill="#9CA3AF">Mayo Scheduling Assistant · 2026</text>
+  </g>
+</svg>
