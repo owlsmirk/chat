@@ -7,6 +7,11 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#0057B8">
 <title>Mayo Clinic — Request an appointment</title>
+
+<!-- Vercel Web Analytics — auto-resolves under the project domain.
+     Reports page views + visitor counts to the Vercel dashboard.
+     No cookies, no PII, no external CDN. -->
+<script defer src="/_vercel/insights/script.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600;8..60,700&display=swap" rel="stylesheet">
@@ -711,6 +716,19 @@
   .feedback button.active { color: var(--mayo-blue); background: rgba(0, 120, 160, 0.08); }
   .feedback svg { width: 15px; height: 15px; }
 
+  /* Speaker button — speaks the reply via SpeechSynthesis */
+  .feedback .speak-btn.speaking {
+    color: var(--mayo-blue);
+    background: rgba(0, 87, 184, 0.10);
+  }
+  .feedback .speak-btn.speaking svg {
+    animation: speak-pulse 1.2s ease-in-out infinite;
+  }
+  @keyframes speak-pulse {
+    0%, 100% { transform: scale(1); }
+    50%      { transform: scale(1.12); }
+  }
+
   /* CTAs — stacked pill buttons */
   .cta-stack {
     margin-top: 10px;
@@ -1282,12 +1300,15 @@
       status: "Online",
       placeholder: "Type your question…",
       voiceLabel: "Voice input",
+      listenLabel: "Listen",
+      stopLabel: "Stop",
       sourcesTitle: "Sources",
       backToChat: "Back to chat",
       showMeLabel: "Show me on this page",
       menuCopy: "Copy transcript",
       menuEmail: "Email transcript",
       toastCopied: "Transcript copied",
+      toastDownloaded: "Transcript downloaded",
       toastEmpty: "No conversation yet",
       transcriptTitle: "Mayo Assistant — conversation transcript",
       transcriptYou: "You",
@@ -1312,12 +1333,15 @@
       status: "En línea",
       placeholder: "Escriba su pregunta…",
       voiceLabel: "Entrada de voz",
+      listenLabel: "Escuchar",
+      stopLabel: "Detener",
       sourcesTitle: "Fuentes",
       backToChat: "Volver al chat",
       showMeLabel: "Mostrar en la página",
       menuCopy: "Copiar transcripción",
       menuEmail: "Enviar por correo",
       toastCopied: "Transcripción copiada",
+      toastDownloaded: "Transcripción descargada",
       toastEmpty: "Aún no hay conversación",
       transcriptTitle: "Asistente Mayo — transcripción de la conversación",
       transcriptYou: "Usted",
@@ -1520,6 +1544,7 @@
     document.body.classList.remove('widget-open');
     fab.style.display = 'grid';
     document.querySelector('.fab-label').style.display = '';
+    stopSpeaking();
   }
 
   // ────────────────────────────────────────────────────────────────
@@ -1537,7 +1562,6 @@
       console.warn('show: unknown target', targetId);
       return;
     }
-    const isMobile = window.matchMedia('(max-width: 640px)').matches;
     const wasOpen = widget.classList.contains('open');
 
     const doHighlight = () => {
@@ -1555,10 +1579,14 @@
       }, 3400);
     };
 
-    if (isMobile && wasOpen) {
+    /* Dismiss the widget on both desktop and mobile so the highlight
+       isn't behind the blurred scrim. Hide the FAB too — the "Back
+       to chat" pill replaces it as the temporary entry point. */
+    if (wasOpen) {
       closeWidget();
-      // Wait for the slide-down to clear before we scroll the page
-      setTimeout(doHighlight, 360);
+      fab.style.display = 'none';
+      document.querySelector('.fab-label').style.display = 'none';
+      setTimeout(doHighlight, 320);
       backToChatBtn.classList.add('show');
     } else {
       doHighlight();
@@ -1596,17 +1624,30 @@
     lines.push(t.transcriptTitle);
     lines.push(new Date().toLocaleString(currentLang === 'es' ? 'es-US' : 'en-US'));
     lines.push('');
-    /* Include the greeting if it was shown */
-    if (widgetOpened) {
-      lines.push(`${t.transcriptBot}:`);
-      lines.push(L10N[currentLang].greeting);
+
+    /* Walk every rendered message in DOM order. Reading from the DOM
+       (rather than `history`) means we also capture the greeting and
+       any reply that's still mid-stream. */
+    for (const msg of messagesEl.querySelectorAll('.msg')) {
+      const isUser = msg.classList.contains('user');
+      const isBot  = msg.classList.contains('bot');
+      if (!isUser && !isBot) continue;
+
+      const body = msg.querySelector('.msg-body');
+      if (!body) continue;
+
+      /* Clone so we can strip chrome that shouldn't appear in the transcript:
+         capability cards, citation chips and the inline drawer. */
+      const clone = body.cloneNode(true);
+      clone.querySelectorAll('.capability-cards, .cite-chip, .cite-drawer, .stream-caret').forEach(el => el.remove());
+      const text = clone.textContent.replace(/\s+\n/g, '\n').trim();
+      if (!text) continue;
+
+      lines.push(`${isUser ? t.transcriptYou : t.transcriptBot}:`);
+      lines.push(text);
       lines.push('');
     }
-    for (const m of history) {
-      lines.push(`${m.role === 'user' ? t.transcriptYou : t.transcriptBot}:`);
-      lines.push(m.content);
-      lines.push('');
-    }
+
     lines.push('---');
     lines.push(t.transcriptDisclaimer);
     return lines.join('\n');
@@ -1634,12 +1675,30 @@
   function emailTranscript() {
     if (history.length === 0) { toast(L10N[currentLang].toastEmpty); return; }
     const t = L10N[currentLang];
+    const body = buildTranscript();
     const subject = encodeURIComponent(t.emailSubject);
-    /* mailto bodies have practical length limits (~1800 chars in
-       Outlook/Gmail). Truncate gracefully so the link still opens. */
-    let body = buildTranscript();
-    if (body.length > 1800) body = body.slice(0, 1780) + '\n\n…';
-    window.location.href = `mailto:?subject=${subject}&body=${encodeURIComponent(body)}`;
+    const encodedBody = encodeURIComponent(body);
+
+    /* mailto: URLs are capped by the OS / mail client (Outlook ≈ 2 KB,
+       Gmail much higher). If the encoded URL would push past a safe
+       window, fall back to downloading the transcript as a .txt file —
+       the conversation arrives whole rather than chopped mid-sentence. */
+    const SAFE_URL = 7000;
+    if (encodedBody.length + 64 > SAFE_URL) {
+      const blob = new Blob([body], { type: 'text/plain;charset=utf-8' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'mayo-assistant-transcript.txt';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      setTimeout(() => URL.revokeObjectURL(url), 1000);
+      toast(L10N[currentLang].toastDownloaded || 'Transcript downloaded');
+      return;
+    }
+
+    window.location.href = `mailto:?subject=${subject}&body=${encodedBody}`;
   }
 
   menuBtn.addEventListener('click', (e) => {
@@ -1691,6 +1750,10 @@
   function addBotMessage(text, citations = [], actions = [], opts = {}) {
     const wrap = document.createElement('div');
     wrap.className = 'msg bot';
+    /* Preserve the raw markdown text so voice read-out gets proper
+       sentence breaks (textContent of the rendered DOM smashes
+       paragraph boundaries together). */
+    if (text) wrap.dataset.speakText = text;
 
     const body = document.createElement('div');
     body.className = 'msg-body';
@@ -1765,9 +1828,12 @@
             el.href = a.value;
             el.target = '_blank';
             el.rel = 'noopener';
+            /* External-link glyph (arrow exiting a box) signals
+               "opens in a new tab" — distinct from the show CTA's
+               in-page arrow. */
             el.innerHTML = `
               <span>${escapeHtml(a.label)}</span>
-              <svg class="cta-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+              <svg class="cta-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
             `;
           }
         }
@@ -1780,7 +1846,19 @@
     if (opts.feedback !== false) {
       const fb = document.createElement('div');
       fb.className = 'feedback';
-      fb.innerHTML = `
+
+      // Speaker button — only if SpeechSynthesis is available
+      if (TTS_SUPPORTED) {
+        const speak = document.createElement('button');
+        speak.className = 'speak-btn';
+        speak.setAttribute('aria-label', L10N[currentLang].listenLabel);
+        speak.setAttribute('title', L10N[currentLang].listenLabel);
+        speak.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>`;
+        speak.addEventListener('click', () => toggleSpeak(speak, wrap));
+        fb.appendChild(speak);
+      }
+
+      const thumbsHtml = `
         <button data-fb="up" aria-label="Helpful">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"/></svg>
         </button>
@@ -1788,9 +1866,11 @@
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 15v4a3 3 0 0 0 3 3l4-9V2H5.72a2 2 0 0 0-2 1.7l-1.38 9a2 2 0 0 0 2 2.3zm7-13h2.67A2.31 2.31 0 0 1 22 4v7a2.31 2.31 0 0 1-2.33 2H17"/></svg>
         </button>
       `;
-      fb.querySelectorAll('button').forEach(b => {
+      fb.insertAdjacentHTML('beforeend', thumbsHtml);
+
+      fb.querySelectorAll('button[data-fb]').forEach(b => {
         b.addEventListener('click', () => {
-          fb.querySelectorAll('button').forEach(x => x.classList.remove('active'));
+          fb.querySelectorAll('button[data-fb]').forEach(x => x.classList.remove('active'));
           b.classList.add('active');
         });
       });
@@ -1927,8 +2007,15 @@
       if (!response.ok) {
         const errBody = await response.json().catch(() => ({}));
         console.error('Proxy error', response.status, errBody);
-        const detail = errBody.detail ? ` — ${typeof errBody.detail === 'string' ? errBody.detail.slice(0, 200) : JSON.stringify(errBody.detail).slice(0, 200)}` : '';
-        throw new Error((errBody.error || `Server returned ${response.status}`) + detail);
+        const errStr = typeof errBody.error === 'string'
+          ? errBody.error
+          : (errBody.error && errBody.error.message)
+            ? errBody.error.message
+            : (errBody.error ? JSON.stringify(errBody.error) : `Server returned ${response.status}`);
+        const detail = errBody.detail
+          ? ` — ${typeof errBody.detail === 'string' ? errBody.detail.slice(0, 200) : JSON.stringify(errBody.detail).slice(0, 200)}`
+          : '';
+        throw new Error(errStr + detail);
       }
 
       const reader = response.body.getReader();
@@ -1970,10 +2057,15 @@
               }
             } catch {}
           } else if (eventName === 'error') {
+            let msg = 'Stream error';
             try {
               const obj = JSON.parse(dataStr);
-              throw new Error(obj.error?.message || 'Stream error');
-            } catch (e) { throw e; }
+              msg = (obj && obj.error && obj.error.message)
+                || (obj && typeof obj.error === 'string' ? obj.error : null)
+                || (obj && obj.message)
+                || msg;
+            } catch {}
+            throw new Error(msg);
           }
         }
       }
@@ -2103,6 +2195,109 @@
       messagesEl.innerHTML = '';
       greet();
     }
+  }
+
+  // ────────────────────────────────────────────────────────────────
+  //  Voice read-out (TTS) — per-message speaker button
+  //  Browser-native SpeechSynthesis; opt-in via tap, language flips
+  //  with the EN/ES toggle.
+  // ────────────────────────────────────────────────────────────────
+  const TTS_SUPPORTED = 'speechSynthesis' in window && typeof window.SpeechSynthesisUtterance === 'function';
+  const SPEAK_ICON = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>`;
+  const SPEAK_ICON_PLAYING = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/></svg>`;
+
+  /* Browsers (notably Chrome) load voices asynchronously — kick the
+     list once and again on voiceschanged so the first toggleSpeak
+     after page load can already pick a good voice. */
+  let cachedVoices = [];
+  function refreshVoices() { cachedVoices = (window.speechSynthesis?.getVoices?.() || []); }
+  if (TTS_SUPPORTED) {
+    refreshVoices();
+    window.speechSynthesis.addEventListener?.('voiceschanged', refreshVoices);
+  }
+
+  /* Prefer high-quality named voices per platform, falling back to
+     the first voice that matches the requested language. */
+  function pickVoice(lang) {
+    if (!cachedVoices.length) refreshVoices();
+    const prefix = lang.split('-')[0];
+    const candidates = cachedVoices.filter(v => v.lang && v.lang.toLowerCase().startsWith(prefix));
+    const preferred = prefix === 'es'
+      ? ['Paulina', 'Google español', 'Mónica', 'Marisol', 'Microsoft Sabina', 'Microsoft Helena']
+      : ['Samantha', 'Google US English', 'Google UK English Female', 'Microsoft Aria', 'Microsoft Jenny', 'Microsoft Zira'];
+    for (const name of preferred) {
+      const v = candidates.find(c => c.name && c.name.includes(name));
+      if (v) return v;
+    }
+    /* Prefer the platform's "default" or local-service voices over remote ones */
+    return candidates.find(v => v.localService && v.default)
+        || candidates.find(v => v.localService)
+        || candidates[0]
+        || null;
+  }
+
+  /* Normalize whitespace and add a sentence break between paragraphs
+     so the engine pauses where the user would expect. */
+  function prepSpeechText(raw) {
+    return String(raw || '')
+      .replace(/\r\n/g, '\n')
+      .replace(/\n{2,}/g, '. ')      // paragraph break → period + space
+      .replace(/\n/g, ' ')           // single newlines → space
+      .replace(/\*\*(.+?)\*\*/g, '$1') // strip markdown bold
+      .replace(/\s+/g, ' ')
+      .replace(/\.\s*\./g, '.')      // collapse accidental ".. "
+      .trim();
+  }
+
+  let activeSpeak = null;
+
+  function stopSpeaking() {
+    if (!TTS_SUPPORTED) return;
+    try { window.speechSynthesis.cancel(); } catch (e) {}
+    if (activeSpeak) {
+      activeSpeak.btn.classList.remove('speaking');
+      activeSpeak.btn.innerHTML = SPEAK_ICON;
+      activeSpeak.btn.setAttribute('aria-label', L10N[currentLang].listenLabel);
+      activeSpeak.btn.setAttribute('title', L10N[currentLang].listenLabel);
+      activeSpeak = null;
+    }
+  }
+
+  function toggleSpeak(btn, wrap) {
+    if (!TTS_SUPPORTED) return;
+    if (activeSpeak && activeSpeak.btn === btn) { stopSpeaking(); return; }
+    stopSpeaking();
+
+    /* Prefer the raw markdown saved on the wrap (preserves paragraph
+       breaks). Fall back to DOM text only if the dataset is missing. */
+    let raw = wrap.dataset.speakText || '';
+    if (!raw) {
+      const body = wrap.querySelector('.msg-body');
+      if (!body) return;
+      const clone = body.cloneNode(true);
+      clone.querySelectorAll('.cite-chip, .cite-drawer, .stream-caret').forEach(el => el.remove());
+      raw = clone.textContent;
+    }
+    const text = prepSpeechText(raw);
+    if (!text) return;
+
+    const lang = currentLang === 'es' ? 'es-US' : 'en-US';
+    const u = new SpeechSynthesisUtterance(text);
+    u.lang = lang;
+    u.rate = 0.95;
+    u.pitch = 1;
+    const voice = pickVoice(lang);
+    if (voice) u.voice = voice;
+    u.onend = u.onerror = () => {
+      if (activeSpeak && activeSpeak.btn === btn) stopSpeaking();
+    };
+
+    btn.classList.add('speaking');
+    btn.innerHTML = SPEAK_ICON_PLAYING;
+    btn.setAttribute('aria-label', L10N[currentLang].stopLabel);
+    btn.setAttribute('title', L10N[currentLang].stopLabel);
+    activeSpeak = { btn, utterance: u };
+    window.speechSynthesis.speak(u);
   }
 
   let voiceCleanup = () => {};

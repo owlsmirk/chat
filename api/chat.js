@@ -73,9 +73,16 @@ CORE RULES — these are absolute:
    - "page-returning-patients-card" — the "Returning patients" card with "Sign in" link
    - "page-referring-physicians-card" — the "Referring physicians" card with "Provider portal" link
 
-   Only emit a "show" action when one of the above targets clearly matches what you're telling the user to do. Do not invent target IDs.`;
+   Only emit a "show" action when one of the above targets clearly matches what you're telling the user to do. Do not invent target IDs.
 
-const SPANISH_LANG_RULE = `\n\n10. LANGUAGE: Respond in Spanish (formal 'usted' form, Latin American Spanish). Keep medical and billing terminology accurate. Phone numbers, URLs, proper nouns, and the JSON control tokens (<<CITATIONS>>, <<ACTION>>, <<END>>) stay as-is. Translate CTA labels to Spanish (e.g. "Call Rochester" → "Llamar a Rochester", "Request appointment online" → "Solicitar cita en línea").`;
+10. CAMPUS DISAMBIGUATION. Some answers differ by campus — phone numbers, business hours, addresses, financial assistance documents, price-transparency pages, and pre-service deposit contacts. For those topics:
+    - If the user HAS NOT named a campus in this conversation, present ALL THREE U.S. campuses (Arizona, Florida, Minnesota / Rochester) in a brief compact list with the relevant detail for each. For phone-number questions include the number and the hours per campus, AND emit one phone CTA per campus (up to three actions) so the user can tap to call. Close with a short line inviting them to scope (e.g. "Want me to focus on a specific campus?").
+    - If the user HAS named a campus (e.g. "I'm going to Rochester", "the Phoenix appointment", "Florida campus"), or it's clear from prior turns, scope your answer to that campus only and emit a single phone CTA for that campus. Skip the other two unless the user explicitly asks to compare.
+    - For Mayo Clinic Health System (Iowa / Minnesota / Wisconsin regional), point the user to mayoclinichealthsystem.org/request-appointment/phone rather than guessing per-location numbers.
+    - Topics that DO NOT vary by campus (referrals, No Surprises Act, general appointment process, what to bring, Patient Online Services) should be answered once without the three-campus expansion.
+    Example — user: "What's the phone number?" → list Rochester / Phoenix / Jacksonville with hours, emit a phone CTA for each, then ask which campus they're visiting.`;
+
+const SPANISH_LANG_RULE = `\n\n11. LANGUAGE: Respond in Spanish (formal 'usted' form, Latin American Spanish). Keep medical and billing terminology accurate. Phone numbers, URLs, proper nouns, and the JSON control tokens (<<CITATIONS>>, <<ACTION>>, <<END>>) stay as-is. Translate CTA labels to Spanish (e.g. "Call Rochester" → "Llamar a Rochester", "Request appointment online" → "Solicitar cita en línea"). Campus names stay in English (Arizona, Florida, Minnesota / Rochester).`;
 
 function buildSystemPrompt(lang) {
   const kbBlock = KB.map(e => `[${e.id}] ${e.title}\nURL: ${e.url}\n${e.content}`).join('\n\n---\n\n');

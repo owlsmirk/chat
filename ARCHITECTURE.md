@@ -1,48 +1,67 @@
 # Mayo Clinic Scheduling Assistant — Architecture
 
 A single-page chat assistant that helps U.S. Mayo Clinic patients with
-appointment scheduling, billing, insurance, and locations. Grounded in a
-small paraphrased knowledge base, runs against Claude Sonnet 4.5 through
-a thin Vercel proxy.
+appointment scheduling, billing, insurance, and locations. Grounded in
+a paraphrased knowledge base, runs against Claude Sonnet 4.6 through a
+thin Vercel proxy that owns the system prompt.
 
-## At a glance
+## Two visual artifacts
+
+**For engineering / technical reviewers:**
+
+![System architecture](docs/architecture.svg)
+
+**Request workflow — one chat turn, end-to-end:**
+
+![Request workflow](docs/workflow.svg)
+
+**For product / stakeholder audiences:**
+
+![Patient experience](docs/experience.svg)
+
+Three artifacts, three audiences. The **architecture** view shows
+where things run and how they connect. The **workflow** view walks
+through a single request as it crosses the three lifelines. The
+**experience** view shows what patients actually see and the three
+value pillars (trust, reach, action).
+
+## Quick reference
 
 | | |
 |---|---|
-| **Surface** | One HTML file (`index.html`, ~1900 LOC) — page + widget + client modules |
-| **Edge** | Vercel serverless function (`api/chat.js`, ~120 LOC, zero deps) |
-| **Model** | Claude Sonnet 4.5 (`claude-sonnet-4-5-20250929`), streaming SSE |
+| **Surface** | One HTML file (`index.html`) — page + widget + client modules |
+| **Edge** | Vercel serverless function (`api/chat.js`) — owns the system prompt + KB |
+| **KB** | `kb.json` at the repo root — 18 paraphrased entries, server-loaded |
+| **Model** | Claude Sonnet 4.6, streaming SSE |
 | **Hosting** | Vercel Hobby tier (free for stakeholder demos) |
 | **Languages** | English + Spanish, toggled at runtime |
 | **State** | In-conversation only; language preference in `localStorage` |
 | **Auth** | None (server-side API key is the only secret) |
 
-## System architecture
-
-![Architecture diagram](docs/architecture.svg)
-
-Three layers, each with a clear responsibility and a thin contract
-between them.
+## Components
 
 ### Client (the browser)
 
-A single HTML file ships everything the user touches:
+A single HTML file ships everything the user touches — and **nothing
+more**. The system prompt and knowledge base no longer live here:
 
 - **Mock Mayo page** — hero, three intake cards, top nav with logo
   and "Request appointment" CTA. The cards and the nav button each
   have a stable `id` so the assistant can address them by name.
 - **Chat widget** — a slide-up panel on desktop and a full-screen
-  takeover on mobile. FAB collapses it; close + safe-area + body
-  scroll-lock + return-pill handle the edge cases.
-- **Client modules**, all in the same script tag:
-  - **Knowledge Base** — 18 paraphrased entries from mayoclinic.org,
-    inlined into the system prompt at request time.
-  - **L10N** — EN/ES table for every visible string, starter chip,
-    contextual follow-up, and voice-recognition locale.
+  takeover on mobile. Light header with a 2px Mayo-blue accent
+  strip at the top, accented blue reply bubbles, capability cards
+  in the greeting.
+- **Client modules**:
+  - **L10N** — EN/ES table for every visible string, capability
+    card, contextual follow-up, and voice-recognition locale.
   - **Streaming renderer** — reads SSE chunks, strips control
     tokens, appends text into the active bubble with a caret.
   - **Token parser** — extracts `<<CITATIONS>>` and `<<ACTION>>`
     blocks from the finalized text.
+  - **Capability cards** — four list-row entries inside the greeting
+    (Appointments, Billing & Insurance, Locations & Visits, Patient
+    Portal). Dismissed once the first message is sent.
   - **Voice input** — Web Speech API; interim transcripts stream
     into the composer; language flips with the toggle.
   - **Show-me highlighter** — scrolls a page target into view and
@@ -54,7 +73,7 @@ A single HTML file ships everything the user touches:
 
 ### Edge (Vercel serverless)
 
-`api/chat.js` is intentionally small. It does four things, in order:
+`api/chat.js` does five things, in order:
 
 1. **CORS** — allows the configured origins (or `*` by default).
 2. **Rate limit** — 20 requests per minute per IP in an in-memory
@@ -62,48 +81,53 @@ A single HTML file ships everything the user touches:
 3. **Validate** — payload must have a `messages` array with at most
    50 turns, each role ∈ `{user, assistant}` and content ≤ 4000
    chars.
-4. **Stream proxy** — forwards to Anthropic with the server-side
+4. **Build prompt** — reads `kb.json` (cached per warm container),
+   assembles `BASE_RULES + kb.json + SPANISH_LANG_RULE` based on
+   the `lang` field. Any client-supplied `system` field is ignored.
+5. **Stream proxy** — forwards to Anthropic with the server-side
    `ANTHROPIC_API_KEY` and passes the SSE body straight back to the
    browser. `Cache-Control: no-store` on every response.
 
-The API key never reaches the browser.
+The API key never reaches the browser. The rules and KB are likewise
+server-only — clients can't override them or read them out of the
+HTML source.
 
 ### Model (Anthropic)
 
-Claude Sonnet 4.5 with the standard messages API and `stream=true`.
-The system prompt is rebuilt per request and contains:
+Claude Sonnet 4.6 with the standard messages API and `stream=true`.
+The system prompt assembled per request contains:
 
 - **Core rules** — no medical advice, no booking, no PHI, U.S.
   patients only, emergency routing, citation requirement.
-- **Knowledge base** — all 18 entries inlined as `[kb-XXX] title /
+- **Knowledge base** — `kb.json` entries inlined as `[kb-XXX] title /
   URL / content` blocks.
 - **Action protocol** — three valid CTA types (`phone`, `link`,
   `show`) with example syntax, and the exact four valid target IDs
   for `show`.
-- **Language rule** — appended only when ES is active; instructs
+- **Language rule** — appended only when `lang === 'es'`; instructs
   the model to respond in formal *usted* Latin American Spanish
   while keeping control tokens, URLs, and phone numbers intact.
 
 ## Request lifecycle
 
-![Request flow](docs/request-flow.svg)
-
 One chat turn, end to end:
 
-1. **Input** — user types or speaks; voice transcripts stream live
-   into the composer; pressing Enter (or tapping send) calls
+1. **Input** — user taps a capability card, speaks, or types. Voice
+   transcripts stream live into the composer; pressing Enter calls
    `ask()`.
-2. **Build payload** — the client assembles
-   `{ system: buildSystemPrompt(lang), messages: history }` and
-   `POST`s it to `/api/chat`.
-3. **Gate** — Vercel checks CORS, rate-limits the caller, validates
-   the shape, and injects the server-side API key.
+2. **Assemble payload** — the client builds a small JSON body:
+   `{ lang: currentLang, messages: history }`. No system prompt or
+   KB ships over the wire.
+3. **Gate + build** — Vercel checks CORS, rate-limits the caller,
+   validates the shape, then assembles the full system prompt from
+   `BASE_RULES + kb.json (+ ES rule if lang=es)` and injects the
+   server-side API key.
 4. **Generate** — Anthropic reads the system prompt + KB, emits text
    and control tokens, streams them as SSE deltas.
-5. **Render** — the browser appends each delta into the active
+5. **Render** — the browser appends each delta into the active blue
    bubble. Once the stream finishes, control tokens are parsed
    out: citations become chips and a Sources drawer; actions
-   become CTAs; contextual follow-ups are picked from the
+   become compact CTAs; contextual follow-ups are picked from the
    citation IDs.
 6. **Act** *(optional)* — if the user taps "Show me on this page,"
    the page scrolls to the target element and pulses a highlight
@@ -112,7 +136,7 @@ One chat turn, end to end:
 
 ## Control protocol
 
-The model and the client agree on three control tokens embedded in
+The model and the client agree on two control tokens embedded in
 plain text. The client strips them from the visible message and acts
 on them after the stream finishes.
 
@@ -139,25 +163,45 @@ Zero or more action tokens follow:
 
 | `type` | Renders as | Effect |
 |---|---|---|
-| `phone` | Filled blue button | `tel:` link, mobile-native |
-| `link` | Outlined pill | Opens external URL in new tab |
+| `phone` | Compact filled pill | `tel:` link, mobile-native |
+| `link` | Compact outlined pill | Opens external URL in new tab |
 | `show` | Outlined pill with eye icon | Scrolls + pulses a page element |
 
-Valid `show` targets are listed verbatim in the system prompt, so
-the model can't invent fake IDs.
+Valid `show` targets are listed verbatim in the server-side system
+prompt, so the model can't invent fake IDs.
+
+## Editing the knowledge base
+
+Open `kb.json`, edit or add entries, commit, push. Vercel redeploys
+the function and the next request includes the new content — no
+frontend redeploy, no cache invalidation, no browser involvement.
+
+```json
+{
+  "id": "kb-019",
+  "title": "Brief one-line title",
+  "url": "https://www.mayoclinic.org/...",
+  "content": "Plain-text paragraph the model uses to answer."
+}
+```
+
+The `id` must be unique. The model is told to cite only IDs that
+appear in the KB, so new IDs become citable automatically.
 
 ## Configuration
 
 | Env var | Required | Default | Notes |
 |---|---|---|---|
 | `ANTHROPIC_API_KEY` | yes | — | Vercel project setting |
-| `CLAUDE_MODEL` | no | `claude-sonnet-4-5-20250929` | Override per deploy |
+| `CLAUDE_MODEL` | no | `claude-sonnet-4-6` | Override per deploy |
 | `ALLOWED_ORIGINS` | no | `*` | Comma-separated for prod |
 
 ## Security & privacy
 
 - The Anthropic API key lives only on the Vercel edge — never on
   the wire to the browser.
+- The system prompt and KB are server-side too; clients can't
+  override them or read them from page source.
 - Per-IP rate limit prevents casual abuse from a single client.
 - `Cache-Control: no-store` on every API response keeps chat
   bodies out of intermediate caches.
@@ -173,16 +217,19 @@ the model can't invent fake IDs.
 - Source Serif 4 + Inter pairing (closest free match to Mayo's
   proprietary Publico + MayoSans)
 - Design-system token palette from the Mayo brand guidelines
-- Gradient chat header with hairline top highlight
-- Ghost-circle icon buttons, outlined lang pill
+- Light chat header with a 2px Mayo-blue strip at the very top for
+  brand anchoring; ghost-circle icon buttons, outlined lang pill
+- Accented `--mayo-blue-light` reply bubbles with smaller body type
+  (13.5px) for a refined editorial feel
 
 ### Conversation
 - Token-by-token streaming with thinking dots → caret → finalized
 - Markdown rendering (lists, bold, paragraphs)
 - Inline citation chips + expandable Sources drawer
-- Contextual follow-up chips, picked by citation IDs with keyword
-  + generic fallbacks; deduped against already-asked questions
-- 18-entry KB grounding; system prompt forbids invention beyond it
+- Contextual follow-up chips (compact 11.5px pills), picked by
+  citation IDs with keyword + generic fallbacks
+- 18-entry KB grounding in `kb.json`; the prompt forbids invention
+  beyond it
 - Out-of-scope routing for international and UK patients
 
 ### Direct action
@@ -203,7 +250,8 @@ the model can't invent fake IDs.
 ### Localization
 - EN ↔ ES toggle in the header
 - Flips title, status, placeholder, safety banner, disclaimer,
-  menu, starter chips, follow-ups, speech locale, system prompt
+  menu, capability cards, follow-ups, speech locale
+- Server appends the Spanish system-prompt rule on `lang=es`
 - Existing messages keep their original language; only chrome
   and future replies switch
 - Choice persists in `localStorage`
@@ -216,23 +264,25 @@ the model can't invent fake IDs.
 - Viewport meta tag + `viewport-fit=cover`
 
 ### Trust & safety
-- Pinned 911 emergency banner
+- Pinned 911 emergency banner (reskinned as a quiet system note,
+  brick-red warning glyph)
 - "AI can make mistakes" disclaimer under composer
 - Thumbs-up / thumbs-down feedback per reply (placeholder for
   pipeline integration)
-- All assertions cite a knowledge base entry
+- Every substantive answer cites a knowledge base entry
 
 ### Demo conveniences
 - Kebab menu with **Copy transcript** and **Email transcript**
 - Toast confirmation, click-outside / Escape to dismiss
-- Cold-start suggestion chips that auto-hide after first send
+- Greeting capability cards auto-hide after the first user message
 
 ## Tech choices & tradeoffs
 
 | Choice | Why | Tradeoff |
 |---|---|---|
 | Single HTML file | Easiest possible deploy; one upload | No build step means no module splitting |
-| Inline KB | Fits well below the prompt limit; deterministic grounding | Won't scale past a couple hundred entries |
+| KB as JSON file | Edit + redeploy without code change; portable to other consumers | Adds a `fs.readFileSync` at function init (fine for ~3.5 KB) |
+| Server-built prompt | Hides rules + KB from clients; smaller payload | Rules must be redeployed when prompt changes |
 | In-memory rate limit | Zero infra to set up | Resets on cold start; swap Upstash Redis in prod |
 | Web Speech API | Browser-native, no transcription service | Firefox unsupported; quality varies by OS |
 | Streaming SSE passthrough | Snappy perceived latency | Edge function counts towards Vercel's invocation quota |
@@ -266,13 +316,15 @@ would be required before real-patient deployment:
 
 ```
 .
-├── index.html              # Mock page + chat widget + all client modules
-├── api/chat.js             # Vercel serverless proxy (streaming)
+├── index.html              # Mock page + chat widget + client modules
+├── api/chat.js             # Vercel proxy: gate + build prompt + stream
+├── kb.json                 # Knowledge base (18 entries)
 ├── package.json            # type: module, Node 18+, zero deps
 ├── vercel.json             # Cache-Control: no-store on /api/*
 ├── README.md               # 10-minute deploy guide
 ├── ARCHITECTURE.md         # this document
 └── docs/
-    ├── architecture.svg    # layered system view
-    └── request-flow.svg    # one-turn sequence diagram
+    ├── architecture.svg    # technical view — dataflow + contracts
+    ├── workflow.svg        # sequence view — one chat turn end-to-end
+    └── experience.svg      # product view — patient experience
 ```
