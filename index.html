@@ -402,6 +402,21 @@
   }
   .widget-menu button:hover { background: var(--surface-3); }
   .widget-menu button svg { width: 16px; height: 16px; color: var(--ink-2); flex-shrink: 0; }
+  .widget-menu .menu-check {
+    margin-left: auto;
+    color: var(--mayo-blue);
+    font-weight: 700;
+    font-size: 13px;
+    opacity: 0;
+    transition: opacity 0.12s ease;
+  }
+  .widget-menu button[aria-checked="true"] .menu-check { opacity: 1; }
+  .widget-menu button[aria-checked="true"] svg { color: var(--mayo-blue); }
+  .menu-divider {
+    height: 1px;
+    background: var(--rule);
+    margin: 4px 6px;
+  }
   .widget-menu button:disabled { color: var(--ink-3); cursor: not-allowed; }
   .widget-menu button:disabled svg { color: var(--ink-4); }
 
@@ -452,6 +467,10 @@
     color: var(--ink);
   }
   .lang-toggle:active { transform: scale(0.94); }
+
+  /* Sentence highlight while TTS is reading aloud */
+  .tts-sentence { transition: background-color 0.18s ease; padding: 0 1px; border-radius: 3px; }
+  .tts-sentence.tts-speaking { background-color: rgba(0, 87, 184, 0.16); }
 
   .widget-title {
     position: absolute;
@@ -1508,6 +1527,11 @@
     if (stickToBottom) scrollToBottom(true);
   }
 
+  /* Feature detection — keep near the top so any module-scope code
+     (e.g. the header read-aloud toggle) can reference it without
+     hitting the const temporal dead zone. */
+  const TTS_SUPPORTED = 'speechSynthesis' in window && typeof window.SpeechSynthesisUtterance === 'function';
+
   // ────────────────────────────────────────────────────────────────
   //  UI wiring
   // ────────────────────────────────────────────────────────────────
@@ -1712,6 +1736,7 @@
     if (btn.dataset.action === 'copy') copyTranscript();
     else if (btn.dataset.action === 'email') emailTranscript();
   });
+
   document.addEventListener('click', (e) => {
     if (widgetMenu.hidden) return;
     if (!widgetMenu.contains(e.target) && e.target !== menuBtn) setMenuOpen(false);
@@ -2202,7 +2227,7 @@
   //  Browser-native SpeechSynthesis; opt-in via tap, language flips
   //  with the EN/ES toggle.
   // ────────────────────────────────────────────────────────────────
-  const TTS_SUPPORTED = 'speechSynthesis' in window && typeof window.SpeechSynthesisUtterance === 'function';
+  /* TTS_SUPPORTED is declared near the top of the script for early access. */
   const SPEAK_ICON = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>`;
   const SPEAK_ICON_PLAYING = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/></svg>`;
 
@@ -2254,6 +2279,8 @@
   function stopSpeaking() {
     if (!TTS_SUPPORTED) return;
     try { window.speechSynthesis.cancel(); } catch (e) {}
+    /* Clear any sentence highlight left behind. */
+    document.querySelectorAll('.tts-sentence.tts-speaking').forEach(el => el.classList.remove('tts-speaking'));
     if (activeSpeak) {
       activeSpeak.btn.classList.remove('speaking');
       activeSpeak.btn.innerHTML = SPEAK_ICON;
@@ -2263,41 +2290,140 @@
     }
   }
 
+  /* Walk a bubble's body and wrap each sentence in a span so we
+     can highlight it as TTS reads it aloud. Idempotent — second
+     call short-circuits. Returns the array of sentence spans in
+     DOM order. */
+  function wrapSentencesInBubble(wrap) {
+    const body = wrap.querySelector('.msg-body');
+    if (!body) return [];
+    if (body.dataset.sentencesWrapped) {
+      return Array.from(body.querySelectorAll('.tts-sentence'));
+    }
+    const sentences = [];
+    /* Walk text nodes, skipping anything inside citation chips or
+       drawers — we don't want to highlight those. */
+    const walker = document.createTreeWalker(body, NodeFilter.SHOW_TEXT, {
+      acceptNode(node) {
+        let p = node.parentElement;
+        while (p && p !== body) {
+          if (p.classList.contains('cite-chip') ||
+              p.classList.contains('cite-drawer') ||
+              p.classList.contains('stream-caret')) {
+            return NodeFilter.FILTER_REJECT;
+          }
+          p = p.parentElement;
+        }
+        return node.textContent.trim() ? NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_REJECT;
+      }
+    });
+    const nodes = [];
+    let n;
+    while ((n = walker.nextNode())) nodes.push(n);
+
+    for (const node of nodes) {
+      const text = node.textContent;
+      /* Split into sentences. The regex keeps the punctuation with
+         the preceding chunk so prosody stays intact. */
+      const parts = text.match(/[^.!?…\n]+[.!?…]+["')\]]*\s*|[^.!?…\n]+$/g);
+      if (!parts || parts.length === 0) continue;
+      if (parts.length === 1) {
+        /* Single sentence in this text node — still wrap so we can
+           highlight it. */
+        const span = document.createElement('span');
+        span.className = 'tts-sentence';
+        span.textContent = parts[0];
+        node.parentNode.replaceChild(span, node);
+        sentences.push(span);
+      } else {
+        const frag = document.createDocumentFragment();
+        for (const part of parts) {
+          if (!part) continue;
+          const span = document.createElement('span');
+          span.className = 'tts-sentence';
+          span.textContent = part;
+          frag.appendChild(span);
+          sentences.push(span);
+        }
+        node.parentNode.replaceChild(frag, node);
+      }
+    }
+    body.dataset.sentencesWrapped = '1';
+    return sentences;
+  }
+
   function toggleSpeak(btn, wrap) {
     if (!TTS_SUPPORTED) return;
     if (activeSpeak && activeSpeak.btn === btn) { stopSpeaking(); return; }
     stopSpeaking();
 
-    /* Prefer the raw markdown saved on the wrap (preserves paragraph
-       breaks). Fall back to DOM text only if the dataset is missing. */
-    let raw = wrap.dataset.speakText || '';
-    if (!raw) {
-      const body = wrap.querySelector('.msg-body');
-      if (!body) return;
-      const clone = body.cloneNode(true);
-      clone.querySelectorAll('.cite-chip, .cite-drawer, .stream-caret').forEach(el => el.remove());
-      raw = clone.textContent;
-    }
-    const text = prepSpeechText(raw);
-    if (!text) return;
+    /* Wrap each sentence in a span so we can highlight as we read. */
+    const sentences = wrapSentencesInBubble(wrap);
+    if (!sentences.length) return;
 
     const lang = currentLang === 'es' ? 'es-US' : 'en-US';
-    const u = new SpeechSynthesisUtterance(text);
-    u.lang = lang;
-    u.rate = 0.95;
-    u.pitch = 1;
     const voice = pickVoice(lang);
-    if (voice) u.voice = voice;
-    u.onend = u.onerror = () => {
-      if (activeSpeak && activeSpeak.btn === btn) stopSpeaking();
-    };
 
     btn.classList.add('speaking');
     btn.innerHTML = SPEAK_ICON_PLAYING;
     btn.setAttribute('aria-label', L10N[currentLang].stopLabel);
     btn.setAttribute('title', L10N[currentLang].stopLabel);
-    activeSpeak = { btn, utterance: u };
-    window.speechSynthesis.speak(u);
+    /* Tag the session so async onend/onerror handlers can detect
+       being cancelled by a different speak request. */
+    const session = Symbol('speak-session');
+    activeSpeak = { btn, utterance: null, session };
+
+    /* Chain sentences via onend instead of batch-queueing. Chrome
+       drops queued utterances when speak() is called multiple times
+       in one tick after a recent cancel(); iOS Safari only honors
+       one utterance per user-gesture context. Both work fine when
+       we start the next utterance inside the previous one's onend. */
+    let idx = 0;
+    const speakNext = () => {
+      /* If the user tapped stop or started a different bubble, the
+         session reference will have been replaced — bail out. */
+      if (!activeSpeak || activeSpeak.session !== session) return;
+      while (idx < sentences.length) {
+        const span = sentences[idx];
+        const speakable = (span.textContent || '')
+          .replace(/\*\*(.+?)\*\*/g, '$1')
+          .replace(/\s+/g, ' ')
+          .trim();
+        if (!speakable) { idx++; continue; }
+        const u = new SpeechSynthesisUtterance(speakable);
+        u.lang = lang;
+        u.rate = 0.95;
+        u.pitch = 1;
+        if (voice) u.voice = voice;
+        u.onstart = () => {
+          if (activeSpeak && activeSpeak.session === session) span.classList.add('tts-speaking');
+        };
+        u.onend = () => {
+          span.classList.remove('tts-speaking');
+          idx++;
+          speakNext();
+        };
+        u.onerror = (ev) => {
+          span.classList.remove('tts-speaking');
+          /* Benign "interrupted" / "canceled" events fire during
+             normal queue transitions on some browsers — don't
+             tear down the session for those. */
+          const benign = ev && (ev.error === 'interrupted' || ev.error === 'canceled');
+          if (benign) {
+            idx++;
+            speakNext();
+          } else if (activeSpeak && activeSpeak.session === session) {
+            stopSpeaking();
+          }
+        };
+        activeSpeak.utterance = u;
+        window.speechSynthesis.speak(u);
+        return;  // wait for this utterance to finish before queuing next
+      }
+      /* Walked off the end — all sentences spoken. */
+      if (activeSpeak && activeSpeak.session === session) stopSpeaking();
+    };
+    speakNext();
   }
 
   let voiceCleanup = () => {};
