@@ -192,6 +192,159 @@ For an enterprise platform you'll typically want:
 
 ---
 
+## Job #4 — Swapping the LLM (provider, model, or routing)
+
+The current code talks directly to Anthropic's API. Mayo's team
+may choose to (a) keep Claude but use a different key, (b) keep
+Claude but route through AWS Bedrock or GCP Vertex AI for
+compliance/billing reasons, or (c) switch to a different LLM
+entirely. Each scenario touches different lines of `api/chat.js`.
+
+The **good news**: the control tokens (`<<CITATIONS>>`,
+`<<ACTION>>`) are part of the **system prompt**, not the API.
+Any capable LLM can be instructed to emit them — so the
+client-side parser and renderer don't change. Only the upstream
+call and the SSE-parsing logic need adapting.
+
+### Scenario A — Same provider, new API key (trivial)
+
+Just rotate the env var. No code changes.
+
+```
+ANTHROPIC_API_KEY=<new-key>
+```
+
+### Scenario B — Same provider, different model version
+
+Update the env var:
+
+```
+CLAUDE_MODEL=claude-sonnet-4-6-20251101    # pin a specific date
+CLAUDE_MODEL=claude-opus-4-7               # switch model family
+```
+
+Heavier/lighter model, same wire format, same response shape.
+Test that the system prompt still produces clean
+`<<CITATIONS>>` / `<<ACTION>>` blocks — smaller models sometimes
+forget the protocol.
+
+### Scenario C — Claude via AWS Bedrock
+
+If Mayo already has an AWS BAA in place, routing through Bedrock
+keeps Claude but avoids a separate Anthropic contract.
+
+What changes in `api/chat.js`:
+
+| Concern | Direct (current) | Bedrock |
+|---|---|---|
+| Endpoint | `https://api.anthropic.com/v1/messages` | `https://bedrock-runtime.<region>.amazonaws.com/model/<model-id>/invoke-with-response-stream` |
+| Auth | `x-api-key: <key>` header | AWS SigV4 signed request (use `@aws-sdk/client-bedrock-runtime`) |
+| Request body | `{ model, system, messages, stream: true }` | Drop `model` (it's in the URL); add `anthropic_version: "bedrock-2023-05-31"` |
+| Model ID | `claude-sonnet-4-6` | `anthropic.claude-sonnet-4-6-v1:0` (Bedrock format) |
+| Streaming | Raw SSE chunks (`event: content_block_delta`) | Each chunk's `bytes` field is base64-encoded JSON of the equivalent SSE event — decode before parsing |
+| Env vars | `ANTHROPIC_API_KEY` | `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`, `AWS_REGION` (or IAM role on Cloud Run / Container Apps) |
+
+The Bedrock SDK does most of the auth/signing work; the main
+code change is parsing the wrapped chunks. ~30 lines.
+
+### Scenario D — Claude via GCP Vertex AI
+
+Equivalent to Bedrock but on the GCP side. Useful if you're
+deploying on Cloud Run and want everything inside one cloud's
+billing.
+
+What changes:
+
+| Concern | Direct (current) | Vertex AI |
+|---|---|---|
+| Endpoint | `https://api.anthropic.com/v1/messages` | `https://<region>-aiplatform.googleapis.com/v1/projects/<proj>/locations/<region>/publishers/anthropic/models/<model>:streamRawPredict` |
+| Auth | `x-api-key: <key>` header | OAuth bearer token from a GCP service account (`@google-cloud/aiplatform`) |
+| Request body | `{ model, system, messages, stream: true }` | Drop `model`; add `anthropic_version: "vertex-2023-10-16"` |
+| Streaming | SSE chunks directly | Server-sent events in Vertex's chunked format |
+| Env vars | `ANTHROPIC_API_KEY` | `GOOGLE_APPLICATION_CREDENTIALS` (or Workload Identity on Cloud Run) |
+
+### Scenario E — Different provider entirely (OpenAI, Azure OpenAI, Gemini)
+
+This is the biggest change. The wire format and response shape
+differ; only the system prompt + control-token protocol
+survive verbatim.
+
+**Azure OpenAI / OpenAI** (most likely if Mayo standardizes on Azure):
+
+| Concern | Anthropic (current) | OpenAI |
+|---|---|---|
+| Endpoint | `https://api.anthropic.com/v1/messages` | `https://<resource>.openai.azure.com/openai/deployments/<deployment>/chat/completions?api-version=2024-02-15-preview` |
+| Auth | `x-api-key` | `api-key` header (Azure) or `Authorization: Bearer <key>` (OpenAI) |
+| Request shape | `{ system: "...", messages: [{role, content}] }` | `{ messages: [{role:"system", content:"..."}, {role, content}, …] }` — system becomes a message |
+| Model | `claude-sonnet-4-6` | `gpt-4o-mini`, `gpt-4o`, `gpt-4.1`, etc. |
+| `max_tokens` | works | works (or `max_completion_tokens` on newer reasoning models) |
+| Streaming events | `event: content_block_delta` with `data: {delta:{text:"..."}}` | `data: {choices:[{delta:{content:"..."}}]}` (no event name; just data lines) |
+| Stream terminator | `event: message_stop` | `data: [DONE]` |
+
+**Google Gemini** (if they want Google's stack):
+
+| Concern | Anthropic (current) | Gemini |
+|---|---|---|
+| Endpoint | `https://api.anthropic.com/v1/messages` | `https://generativelanguage.googleapis.com/v1beta/models/<model>:streamGenerateContent?alt=sse&key=<key>` |
+| Request shape | `{ system, messages }` | `{ systemInstruction:{parts:[{text}]}, contents:[{role,parts:[{text}]}] }` — different role names ("user"/"model") |
+| Streaming events | SSE with `content_block_delta` | SSE with `data: {candidates:[{content:{parts:[{text:"..."}]}}]}` |
+
+**Self-hosted / on-prem LLM** (e.g. Llama 3, Mixtral via vLLM, or
+TGI behind an internal endpoint):
+
+Most on-prem inference servers ship an **OpenAI-compatible
+API**. Use the OpenAI scenario above with your internal
+endpoint and (usually) a bearer token. Watch out for:
+- Streaming compatibility — some self-hosted runtimes only
+  partially implement the OpenAI streaming schema
+- System prompt support — smaller models may need the system
+  prompt prepended to the first user message instead of
+  passed as a separate field
+
+### What stays the same regardless of provider
+
+- The system prompt structure (`BASE_RULES + kb.json + SPANISH_RULE`)
+- The control-token protocol (`<<CITATIONS>>`, `<<ACTION>>`)
+- The client-side parser (`parseResponse()` strips tokens after stream closes)
+- The five-gate pipeline (CORS, rate limit, validate, build prompt, stream)
+- Every L10N string, capability card, show-me target, and CSS file
+
+You're essentially swapping out one ~30-line block of code (the
+upstream fetch + the SSE-event-name parsing) and adjusting env
+vars. The rest of the codebase is provider-agnostic.
+
+### Where to make the change
+
+The two functions to edit in `api/chat.js`:
+
+1. **`handler()`** — the fetch call (lines ~117-140 in the
+   current file). Replace endpoint, auth headers, request body
+   shape per the scenario above.
+2. **The SSE parsing loop** — currently in `index.html` inside
+   `ask()` (the part that reads `eventName === 'content_block_delta'`).
+   For OpenAI-style providers, switch to reading `data: { choices: [...] }`
+   and the `[DONE]` terminator.
+
+### Recommended decision flow for Mayo
+
+1. **Do you already have an Anthropic contract / BAA?** → Stay
+   direct, easiest path
+2. **Do you have AWS with a BAA?** → Bedrock, ~30 lines of change
+3. **Are you standardizing on Azure?** → Azure OpenAI with a
+   GPT-class model, ~50 lines of change (different request shape)
+4. **Are you on GCP and want everything in one cloud?** → Vertex
+   AI with Claude (best balance) or Gemini (native GCP) — your call
+5. **Do you have an internal LLM platform?** → OpenAI-compatible
+   API against the internal endpoint, ~40 lines
+
+In every case, **test the control-token output first**. Ask the
+demo a question, inspect the raw response, confirm the model
+emits well-formed `<<CITATIONS>>` and `<<ACTION>>` blocks. If a
+weaker model drops them, tighten the system prompt with
+explicit examples before switching back to a stronger model.
+
+---
+
 ## Customizing the demo content
 
 | Want to change | File | Notes |
