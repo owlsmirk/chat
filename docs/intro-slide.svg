@@ -1,0 +1,197 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" font-family="Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" role="img" aria-label="Mayo Scheduling Assistant — introductory slide for executive presentation">
+  <title>Mayo Scheduling Assistant — Executive Intro Slide</title>
+
+  <defs>
+    <linearGradient id="phoneBezel" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#1A1F26"/>
+      <stop offset="100%" stop-color="#000000"/>
+    </linearGradient>
+    <linearGradient id="chatHeaderIntro" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#FFFFFF"/>
+      <stop offset="100%" stop-color="#FAFBFC"/>
+    </linearGradient>
+    <filter id="phoneShadow" x="-15%" y="-15%" width="130%" height="130%">
+      <feGaussianBlur in="SourceAlpha" stdDeviation="8"/>
+      <feOffset dx="0" dy="6" result="o"/>
+      <feComponentTransfer><feFuncA type="linear" slope="0.18"/></feComponentTransfer>
+      <feMerge><feMergeNode/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+
+  <rect width="1600" height="900" fill="#FFFFFF"/>
+
+  <!-- ═══════════════════════════════════════════════════════════════
+       HEADER — small Mayo-blue category tag, then big editorial title
+       ═══════════════════════════════════════════════════════════════ -->
+  <text x="80" y="76" font-size="16" font-weight="700" fill="#0057B8" letter-spacing="0.8">
+    <tspan>DIGITAL FRONT DOOR + </tspan>
+    <tspan fill="#0057B8" font-weight="400">| Chat</tspan>
+  </text>
+  <text x="80" y="124" font-size="44" font-weight="700" fill="#080808" letter-spacing="-0.8" font-family="Source Serif 4, Georgia, serif">Mayo Scheduling Assistant</text>
+
+  <!-- ═══════════════════════════════════════════════════════════════
+       LEFT COLUMN — short intro + three crisp value lines
+       ═══════════════════════════════════════════════════════════════ -->
+  <g transform="translate(80,210)">
+    <text x="0" y="0" font-size="20" font-weight="500" fill="#1A1F26" letter-spacing="-0.2" font-family="Inter">
+      <tspan x="0" dy="0">A grounded, multilingual chat assistant</tspan>
+      <tspan x="0" dy="30">that helps patients schedule, understand</tspan>
+      <tspan x="0" dy="30">billing, find locations, and prepare for visits</tspan>
+      <tspan x="0" dy="30">— with citations from <tspan font-weight="600">mayoclinic.org</tspan> on</tspan>
+      <tspan x="0" dy="30">every answer.</tspan>
+    </text>
+
+    <!-- Three value bullets -->
+    <g transform="translate(0,200)">
+      <line x1="0" y1="0" x2="500" y2="0" stroke="#E5E9EE"/>
+
+      <g transform="translate(0,30)">
+        <rect x="0" y="-2" width="4" height="44" fill="#0057B8" rx="2"/>
+        <text x="20" y="14" font-size="13" font-weight="700" fill="#0057B8" letter-spacing="2">TRUST</text>
+        <text x="20" y="34" font-size="15" font-weight="500" fill="#1A1F26">Every answer cites Mayo sources. No medical advice.</text>
+      </g>
+
+      <g transform="translate(0,94)">
+        <rect x="0" y="-2" width="4" height="44" fill="#0057B8" rx="2"/>
+        <text x="20" y="14" font-size="13" font-weight="700" fill="#0057B8" letter-spacing="2">REACH</text>
+        <text x="20" y="34" font-size="15" font-weight="500" fill="#1A1F26">English + Spanish, voice or text, mobile-ready.</text>
+      </g>
+
+      <g transform="translate(0,158)">
+        <rect x="0" y="-2" width="4" height="44" fill="#0057B8" rx="2"/>
+        <text x="20" y="14" font-size="13" font-weight="700" fill="#0057B8" letter-spacing="2">ACTION</text>
+        <text x="20" y="34" font-size="15" font-weight="500" fill="#1A1F26">Tap to call, navigate, or have the page react in place.</text>
+      </g>
+    </g>
+
+    <!-- Prototype link -->
+    <g transform="translate(0,470)">
+      <text x="0" y="0" font-size="16" font-weight="600" fill="#0057B8" text-decoration="underline">Prototype</text>
+      <text x="100" y="0" font-size="13" font-weight="400" fill="#5C6470">live demo · multilingual · streaming</text>
+    </g>
+  </g>
+
+  <!-- ═══════════════════════════════════════════════════════════════
+       RIGHT COLUMN — iPhone-style phone mockup with the chat widget
+       ═══════════════════════════════════════════════════════════════ -->
+  <g transform="translate(940,90)" filter="url(#phoneShadow)">
+    <!-- Phone bezel -->
+    <rect width="380" height="760" rx="44" fill="url(#phoneBezel)"/>
+    <!-- Screen -->
+    <rect x="10" y="10" width="360" height="740" rx="38" fill="#FFFFFF"/>
+    <!-- Dynamic island -->
+    <rect x="155" y="22" width="70" height="22" rx="11" fill="#000000"/>
+    <!-- Status bar text -->
+    <text x="40" y="40" font-size="12" font-weight="600" fill="#080808" font-family="Inter">9:41</text>
+    <g transform="translate(310,30)">
+      <!-- signal -->
+      <rect x="0" y="6" width="3" height="6" fill="#080808" rx="0.5"/>
+      <rect x="5" y="4" width="3" height="8" fill="#080808" rx="0.5"/>
+      <rect x="10" y="2" width="3" height="10" fill="#080808" rx="0.5"/>
+      <rect x="15" y="0" width="3" height="12" fill="#080808" rx="0.5"/>
+      <!-- wifi -->
+      <path d="M25 8 Q29 4, 33 8" stroke="#080808" stroke-width="1.2" fill="none"/>
+      <path d="M27 9.5 Q29 7.5, 31 9.5" stroke="#080808" stroke-width="1.2" fill="none"/>
+      <circle cx="29" cy="11" r="0.8" fill="#080808"/>
+      <!-- battery -->
+      <rect x="38" y="3" width="20" height="9" rx="2" fill="none" stroke="#080808" stroke-width="0.8"/>
+      <rect x="40" y="5" width="14" height="5" rx="1" fill="#080808"/>
+      <rect x="58" y="5" width="1.5" height="5" rx="0.5" fill="#080808"/>
+    </g>
+
+    <!-- ─── Chat widget contents inside the phone screen ─── -->
+    <g transform="translate(10,68)">
+      <!-- 2px Mayo-blue brand strip at top -->
+      <rect x="0" y="0" width="360" height="2" fill="#0057B8"/>
+      <!-- Header -->
+      <rect x="0" y="2" width="360" height="44" fill="url(#chatHeaderIntro)"/>
+      <line x1="0" y1="46" x2="360" y2="46" stroke="#E8E5DD"/>
+      <text x="20" y="30" font-size="14" font-weight="400" fill="#5C6470">×</text>
+      <rect x="38" y="16" width="26" height="16" rx="8" fill="white" stroke="#DDD9CF"/>
+      <text x="51" y="27" text-anchor="middle" font-size="9" font-weight="600" fill="#2D3540" letter-spacing="0.5">EN</text>
+      <text x="180" y="29" text-anchor="middle" font-size="14" font-weight="600" fill="#080808" letter-spacing="-0.2">Mayo Assistant</text>
+      <circle cx="320" cy="24" r="4" fill="#10B981"/>
+      <circle cx="344" cy="18" r="1.6" fill="#5C6470"/>
+      <circle cx="344" cy="24" r="1.6" fill="#5C6470"/>
+      <circle cx="344" cy="30" r="1.6" fill="#5C6470"/>
+
+      <!-- Safety banner -->
+      <rect x="0" y="47" width="360" height="26" fill="#FAFAF7"/>
+      <text x="14" y="64" font-size="10.5" font-weight="600" fill="#1A1F26">⚠</text>
+      <text x="26" y="64" font-size="11" fill="#5C6470">For medical emergencies, call 911.</text>
+
+      <!-- User message -->
+      <rect x="40" y="92" width="306" height="54" rx="14" fill="#EFEAE0"/>
+      <text x="54" y="113" font-size="12" fill="#1A1F26">I want to be seen for colon cancer</text>
+      <text x="54" y="129" font-size="12" fill="#1A1F26">in Rochester. How long until I'm</text>
+      <text x="54" y="145" font-size="12" fill="#1A1F26">offered an appointment?</text>
+
+      <!-- Bot reply -->
+      <rect x="14" y="160" width="324" height="118" rx="14" fill="#E1F0FF"/>
+      <text x="28" y="180" font-size="12" fill="#1A1F26">Colorectal cancer in Rochester</text>
+      <text x="28" y="196" font-size="12" fill="#1A1F26">triages new requests within 72</text>
+      <text x="28" y="212" font-size="12" fill="#1A1F26">hours. If medical records are</text>
+      <text x="28" y="228" font-size="12" fill="#1A1F26">needed, the wait may be longer.</text>
+      <text x="28" y="244" font-size="12" fill="#1A1F26">A coordinator will reach out as</text>
+      <text x="28" y="260" font-size="12" fill="#1A1F26">soon as possible.</text>
+      <!-- citation chip -->
+      <rect x="28" y="266" width="116" height="16" rx="8" fill="#F3F1ED"/>
+      <text x="36" y="278" font-size="9" fill="#5C6470">↗ mayoclinic.org +2</text>
+
+      <!-- Feedback (thumbs + speaker) -->
+      <g transform="translate(14,292)">
+        <circle cx="14" cy="14" r="13" fill="white" stroke="#E8E5DD"/>
+        <polygon points="9 13 12 16 6 16 6 13 9 13 14 9 14 17 9 13" fill="none" stroke="#5C6470" stroke-width="1.2" stroke-linejoin="round"/>
+        <path d="M18 11 a3 3 0 0 1 0 6" fill="none" stroke="#5C6470" stroke-width="1.1" stroke-linecap="round"/>
+        <circle cx="46" cy="14" r="13" fill="white" stroke="#E8E5DD"/>
+        <path d="M40 18 L40 12 L44 12 L48 8 L48 20 L44 16 L40 16 Z M48 8 V20" fill="none" stroke="#5C6470" stroke-width="1.2" transform="translate(-1,0)"/>
+        <circle cx="78" cy="14" r="13" fill="white" stroke="#E8E5DD"/>
+        <path d="M73 9 L82 9 L83 16 L77 22 L74 19 L77 16 L73 16 Z" fill="none" stroke="#5C6470" stroke-width="1.2" stroke-linejoin="round"/>
+      </g>
+
+      <!-- CTAs -->
+      <g transform="translate(14,332)">
+        <rect width="332" height="32" rx="16" fill="#0057B8"/>
+        <text x="20" y="20" font-size="12" fill="white">📞</text>
+        <text x="40" y="20" font-size="12" font-weight="500" fill="white">Call Rochester</text>
+        <text x="318" y="20" text-anchor="end" font-size="11" fill="rgba(255,255,255,0.85)">507-538-3270</text>
+      </g>
+      <g transform="translate(14,370)">
+        <rect width="332" height="32" rx="16" fill="white" stroke="#DDD9CF"/>
+        <text x="20" y="20" font-size="12" fill="#0057B8">📅</text>
+        <text x="40" y="20" font-size="12" font-weight="500" fill="#080808">Request appointment online</text>
+        <text x="318" y="20" text-anchor="end" font-size="12" fill="#8A929C">↗</text>
+      </g>
+
+      <!-- Follow-up chips -->
+      <g transform="translate(14,414)">
+        <rect width="126" height="22" rx="11" fill="white" stroke="#DDD9CF"/>
+        <text x="12" y="14" font-size="9" fill="#0057B8">↗</text>
+        <text x="26" y="14" font-size="10" font-weight="500" fill="#002443">What if records aren't ready?</text>
+      </g>
+      <g transform="translate(146,414)">
+        <rect width="120" height="22" rx="11" fill="white" stroke="#DDD9CF"/>
+        <text x="12" y="14" font-size="9" fill="#0057B8">↗</text>
+        <text x="26" y="14" font-size="10" font-weight="500" fill="#002443">Can I choose my doctor?</text>
+      </g>
+
+      <!-- Composer -->
+      <rect x="14" y="558" width="332" height="44" rx="22" fill="#F3F1ED"/>
+      <text x="28" y="585" font-size="12" fill="#8A929C">Type your question…</text>
+      <circle cx="298" cy="580" r="13" fill="white" stroke="#DDD9CF"/>
+      <path d="M295 575 v8 a3 3 0 0 0 6 0 v-8 a3 3 0 0 0 -6 0 z" fill="#5C6470"/>
+      <circle cx="328" cy="580" r="13" fill="#0057B8"/>
+
+      <!-- Disclaimer -->
+      <text x="180" y="624" text-anchor="middle" font-size="10" fill="#8A929C">AI can make mistakes. Verify important information.</text>
+    </g>
+  </g>
+
+  <!-- ═══════════════════════════════════════════════════════════════
+       FOOTER
+       ═══════════════════════════════════════════════════════════════ -->
+  <line x1="80" y1="850" x2="1520" y2="850" stroke="#E5E9EE"/>
+  <text x="80" y="876" font-size="11" fill="#5C6470">©2026 Mayo Foundation for Medical Education and Research</text>
+  <text x="1520" y="876" text-anchor="end" font-size="11" fill="#5C6470">Mayo Scheduling Assistant · Executive Introduction</text>
+</svg>
