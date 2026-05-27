@@ -2,7 +2,13 @@
 
 Deploy the chat widget + proxy to Vercel in about 10 minutes. No terminal, no
 Node.js install — everything happens in your browser.
- 
+
+> **For production / non-Vercel deployments**, see [HANDOFF.md](./HANDOFF.md).
+> It covers porting to GCP Cloud Run / Azure Container Apps, swapping the LLM
+> provider (Bedrock, Vertex, Azure OpenAI), enterprise secret management, and
+> the production hardening checklist. This README is the fastest path to a
+> working demo, not the production guide.
+
 ## What you're deploying
 
 ```
@@ -10,6 +16,7 @@ Node.js install — everything happens in your browser.
 ├── index.html       ← The chat widget (your existing UI)
 ├── api/
 │   └── chat.js      ← Serverless function that proxies to Anthropic
+├── kb.json          ← Knowledge base — 18 paraphrased Mayo entries
 ├── package.json
 └── vercel.json
 ```
@@ -57,7 +64,7 @@ Easiest path, no terminal:
    - Click **Add**
 6. (Optional) Add another env var:
    - Name: `CLAUDE_MODEL`
-   - Value: `claude-sonnet-4-5-20250929`
+   - Value: `claude-sonnet-4-6`
 7. Click **Deploy**
 
 Wait ~1 minute for the build to finish. Vercel gives you a URL like
@@ -96,7 +103,7 @@ domain you own, free with the Hobby plan. Vercel walks you through DNS.
 | Variable             | Required | Default                             |
 | -------------------- | -------- | ----------------------------------- |
 | `ANTHROPIC_API_KEY`  | yes      | —                                   |
-| `CLAUDE_MODEL`       | no       | `claude-sonnet-4-5-20250929`        |
+| `CLAUDE_MODEL`       | no       | `claude-sonnet-4-6`                 |
 | `ALLOWED_ORIGINS`    | no       | `*` (any origin can call the proxy) |
 
 For production, set `ALLOWED_ORIGINS` to a comma-separated list of
@@ -104,9 +111,14 @@ exact origins, e.g. `https://yourapp.vercel.app,https://your-domain.com`.
 
 ## What's in the box
 
-**`api/chat.js`** — Vercel serverless function. Receives `{system, messages}`
-from the browser, validates the request, rate-limits (20/min per IP), forwards
-to Anthropic with the API key, returns just `{text, usage}` to the browser.
+**`api/chat.js`** — Vercel serverless function. Receives `{lang, messages}`
+from the browser, validates the request, rate-limits (20/min per IP), builds
+the full system prompt from `BASE_RULES + kb.json + lang rule`, forwards to
+Anthropic with the API key, and streams the SSE response straight back to
+the browser (no buffering).
+
+**`kb.json`** — The knowledge base. 18 paraphrased entries from
+mayoclinic.org. Edit + redeploy to update answers without touching code.
 
 **`index.html`** — Your chat widget, identical to the local version, except
 it now calls `/api/chat` instead of `api.anthropic.com` directly.

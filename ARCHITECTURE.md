@@ -192,7 +192,7 @@ appear in the KB, so new IDs become citable automatically.
 
 | Env var | Required | Default | Notes |
 |---|---|---|---|
-| `ANTHROPIC_API_KEY` | yes | — | Vercel project setting |
+| `ANTHROPIC_API_KEY` | yes | — | Vercel project setting (or Secret Manager / Key Vault on GCP / Azure) |
 | `CLAUDE_MODEL` | no | `claude-sonnet-4-6` | Override per deploy |
 | `ALLOWED_ORIGINS` | no | `*` | Comma-separated for prod |
 
